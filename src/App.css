@@ -24,11 +24,14 @@ body {
   background-color: #222;
   padding: 30px;
   border-radius: 5px;
+  max-width: 300px;
+  width: 100%;
 }
 
 h1 {
   color: #fff;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 form {
@@ -56,8 +59,33 @@ button {
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-top: 10px;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 3px #007BFF;
+}
+
+.error-message-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 20px;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: #FF4136;
+  font-size: 14px;
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 20px;
+  }
 }
