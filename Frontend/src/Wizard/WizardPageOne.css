@@ -1,0 +1,62 @@
+.wizard-page-one {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.left-section,
+.right-section {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.left-section {
+  background-color: black;
+  color: white;
+  flex: 1;
+}
+
+.right-section {
+  text-align: center;
+  flex: 2;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+  background-color: white;
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}
+
+.back-button,
+.next-button,
+.cancel-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  padding: 10px 24px;
+}
+
+.back-button:disabled,
+.cancel-button
+{
+  background-color: #f44336;
+}
+
+.back-button:disabled {
+  cursor: not-allowed;
+}

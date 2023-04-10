@@ -1,0 +1,126 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: #1d1e24;
+  width: 235px;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.logo {
+  color: white;
+  font-size: 1.45rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+/* Add a style for the logo icon */
+.logo-icon {
+  font-size: 1.45rem;
+  display: inline-block;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.menu-item {
+  display: flex;
+    align-items: center;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .menu-item:hover {
+    background-color: #3f3f3f;
+  }
+  
+  .icon {
+    display: flex;
+    justify-content: center;
+    width: 24px;
+  }
+  
+  .title {
+    flex-grow: 1;
+    padding-left: 0.5rem;
+    font-weight: bold; /* Make the title bold */
+  }
+  
+  .title:hover {
+    text-decoration: none; /* Remove hover effect */
+  }
+  
+  .sub-item:hover {
+    text-decoration: underline; /* Add underline on hover for sub-items */
+  }
+  
+  .question-icon {
+    display: inline-block;
+    margin-left: 0.25rem;
+    vertical-align: middle;
+    position: relative;
+  }
+  
+  .tooltip {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    color: white;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    z-index: 10;
+    margin-left: 0.5rem;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow effect */
+    border: 2px solid #555; /* Add a border */
+  }
+  
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    left: -10px; /* Position the arrow */
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #555 transparent transparent; /* Create an arrow */
+  }
+  
+  .question-icon:hover .tooltip {
+    display: block;
+  }
+
+  .burger-menu {
+    font-size: 1.2rem;
+    color: white;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  .container.collapsed {
+    width: 20px;
+  }
+  
+  .burger-menu.collapsed {
+    margin-bottom: 0;
+  }
+  
+  .menu-item.collapsed,
+  .logo.collapsed {
+    display: none;
+  }  
