@@ -1,5 +1,5 @@
 import React from 'react';
-import LeftNavbar from './LeftBurgerItem/LeftNavbar';
+import LeftNavbar from './LeftNavBar/LeftNavbar';
 import styles from './TMG.module.css';
 
 const TMG = () => {
