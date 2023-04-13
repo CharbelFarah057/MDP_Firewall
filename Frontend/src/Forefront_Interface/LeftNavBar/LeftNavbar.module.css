@@ -5,6 +5,8 @@
   width: 235px;
   min-height: 100vh;
   padding: 1rem;
+  height: 100%;
+  overflow: auto;
 }
 
 .header-container {
@@ -124,3 +126,12 @@
   .logo.collapsed {
     display: none;
   }  
+
+  .selected {
+    background-color: #3f3f3f;
+  }
+  
+  .selected:hover {
+    background-color: #3f3f3f;
+  }
+  

@@ -1,0 +1,19 @@
+/* TabsComponent.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 16px 10px;
+  }
+  
+  .title {
+    font-weight: bold;
+    font-size: 2rem;
+    padding-bottom: 10px;
+  }
+  
+  .tabs {
+    background-color: #fff;
+  }
+  
