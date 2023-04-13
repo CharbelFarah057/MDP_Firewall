@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import styles from './TabsComponent.module.css';
+import styles from './NetworkingPageTabsComponent.module.css';
 
 const TABS = [
   { label: 'Networks', path: '/tmg/networking/networks' },
@@ -15,7 +15,7 @@ const TABS = [
   { label: 'Routing', path: '/tmg/networking/routing' },
 ];
 
-const TabsComponent = ({ activeTab, setActiveTab }) => {
+const NetworkingPageTabsComponent = ({ activeTab, setActiveTab }) => {
   const theme = useTheme();
   const location = useLocation();
 
@@ -69,4 +69,4 @@ const TabsComponent = ({ activeTab, setActiveTab }) => {
   );
 };
 
-export default TabsComponent;
+export default NetworkingPageTabsComponent;

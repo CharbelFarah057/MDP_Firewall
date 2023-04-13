@@ -15,6 +15,7 @@ root.render(
   <BrowserRouter>
     <Switch>
       <Route path="/login" exact render={() => <Login />} />
+      <Route path="/" exact render={() => <Redirect to="/login" />} />
       <Route path="/wizard" exact render={() => <WizardPageOne />} />
       <Route path="/tmg/firewall-policy" exact render={() => <FirewallPolicyPage />} />
       <Route path="/tmg/web-access-policy" exact render={() => <WebAccessPolicyPage />} />

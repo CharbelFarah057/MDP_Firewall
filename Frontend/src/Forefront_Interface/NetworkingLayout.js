@@ -1,8 +1,8 @@
 import React from 'react';
 import LeftNavbar from './LeftNavBar/LeftNavbar';
-import styles from './Layout.module.css';
+import styles from './NetworkingLayout.module.css';
 
-const Layout = ({ children }) => {
+const NetworkingLayout = ({ children }) => {
   return (
     <div className={styles.layout}>
       <div>
@@ -13,4 +13,4 @@ const Layout = ({ children }) => {
   );
 };
 
-export default Layout;
+export default NetworkingLayout;
