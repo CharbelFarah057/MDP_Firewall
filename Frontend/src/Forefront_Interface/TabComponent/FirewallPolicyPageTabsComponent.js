@@ -14,7 +14,7 @@ const FirewallPolicyTabsComponent = () => {
   return (
     <Box className={styles.container}>
       <Typography className={styles.title} variant="h4" component="div">
-        Networking
+        Firewall Policy
       </Typography>
       <Tabs
         className={styles.tabs}
