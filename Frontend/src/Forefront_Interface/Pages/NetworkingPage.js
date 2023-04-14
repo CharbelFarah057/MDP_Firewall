@@ -1,12 +1,12 @@
-import NetworkingLayout from '../NetworkingLayout';
+import Layout from '../Layouts/Layout';
 import React, { useState } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import NetworkingPageTabsComponent from '../TabComponent/NetworkingPageTabsComponent';
-import NetworksTable from '../Tables/NetworksTable';
-import NetworkSetTable from '../Tables/NetworkSetTable';
-import NetworkRulesTable from '../Tables/NetworkRulesTable';
-import NetworkAdaptersTable from '../Tables/NetworkAdaptersTable';
-import RoutingTable from '../Tables/RoutingTable';
+import NetworksTable from '../Tables/NetworkingTables/NetworksTable';
+import NetworkSetTable from '../Tables/NetworkingTables/NetworkSetTable';
+import NetworkRulesTable from '../Tables/NetworkingTables/NetworkRulesTable';
+import NetworkAdaptersTable from '../Tables/NetworkingTables/NetworkAdaptersTable';
+import RoutingTable from '../Tables/NetworkingTables/RoutingTable';
 import './NetworkingPageStyling.css';
 
 const NetworkingPage = () => {
@@ -26,7 +26,7 @@ const NetworkingPage = () => {
   }, [location]);
 
   return (
-    <NetworkingLayout>
+    <Layout>
       <div className="tabcomp">
         <NetworkingPageTabsComponent activeTab={activeTab} setActiveTab={setActiveTab} />
         <Switch>
@@ -37,7 +37,7 @@ const NetworkingPage = () => {
           <Route path="/tmg/networking/routing" component={RoutingTable} />
         </Switch>
       </div>
-    </NetworkingLayout>
+    </Layout>
   );
 };
 

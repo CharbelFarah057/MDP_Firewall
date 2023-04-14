@@ -1,13 +1,19 @@
 import React from 'react';
-import NetworkingLayout from '../NetworkingLayout';
+import Layout from '../Layouts/Layout';
+import { Route, Switch } from 'react-router-dom';
+import FirewallPolicyTabsComponent from '../TabComponent/FirewallPolicyPageTabsComponent';
+import AllFirewallPolicyTable from '../Tables/FirewalPolicyTables/AllFirewallPolicyTable';
 
 const FirewallPolicyPage = () => {
   return (
-    <NetworkingLayout>
-    <div>
-      <h1 style={{color:'black'}}>Hello</h1>
-    </div>
-    </NetworkingLayout>
+    <Layout>
+      <div className="tabcomp">
+        <FirewallPolicyTabsComponent/>
+        <Switch>
+          <Route path="/tmg/firewall-policy/all-firewall-policy" component={AllFirewallPolicyTable} />
+        </Switch>
+      </div>
+    </Layout>
   );
 };
 

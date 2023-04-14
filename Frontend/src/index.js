@@ -17,7 +17,8 @@ root.render(
       <Route path="/login" exact render={() => <Login />} />
       <Route path="/" exact render={() => <Redirect to="/login" />} />
       <Route path="/wizard" exact render={() => <WizardPageOne />} />
-      <Route path="/tmg/firewall-policy" exact render={() => <FirewallPolicyPage />} />
+      <Route path="/tmg/firewall-policy/" exact render={() => <Redirect to="/tmg/firewall-policy/all-firewall-policy" />} />
+      <Route path="/tmg/firewall-policy/all-firewall-policy" render={() => <FirewallPolicyPage />} />
       <Route path="/tmg/web-access-policy" exact render={() => <WebAccessPolicyPage />} />
       <Route path="/tmg/logging" exact render={() => <LoggingPage />} />
       <Route path="/tmg/networking/networks" render={() => <NetworkingPage />} />

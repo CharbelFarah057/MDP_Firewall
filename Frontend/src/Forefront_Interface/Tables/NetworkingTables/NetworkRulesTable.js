@@ -45,7 +45,7 @@ const NetworkRuleTable = () => {
     { headerName: 'Source Networks', field: 'srcnetworks', cellRenderer : 'sourceCellRenderer', sortable: true},
     { headerName: 'Destination Networks', field: 'dstnetworks', cellRenderer : 'destinationCellRenderer', sortable: true},
     { headerName: 'NAT Addresses', field: 'nataddress', sortable: true},
-    { headerName: 'Description', field: 'desc', sortable: true, flex: 1},
+    { headerName: 'Description', field: 'desc', sortable: true},
   ];
 
   const rowData = [

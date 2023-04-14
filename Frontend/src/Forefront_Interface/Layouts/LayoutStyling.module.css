@@ -1,11 +1,7 @@
 .layout {
     display: flex;
   }
-  
-/*  .leftNavbar {
-    /* No styles needed if you want the default behavior 
-  }*/
-  
+
   .content {
     flex-grow: 1;
     padding: 1rem;

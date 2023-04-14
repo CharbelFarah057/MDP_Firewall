@@ -12,8 +12,8 @@ const menuItems = [
     title: 'Firewall Policy',
     icon: <MdPolicy />,
     description: 'Manage firewall policies for your network.',
-    path: '/tmg/firewall-policy',
-    validpath : ['/tmg/firewall-policy']
+    path: '/tmg/firewall-policy/all-firewall-policy',
+    validpath : ['/tmg/firewall-policy/all-firewall-policy']
   },
   {
     id: 2,

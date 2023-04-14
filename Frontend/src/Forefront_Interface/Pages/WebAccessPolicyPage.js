@@ -1,13 +1,13 @@
 import React from 'react';
-import NetworkingLayout from '../NetworkingLayout';
+import Layout from '../Layouts/Layout';
 
 const WebAccessPolicyPage = () => {
   return (
-    <NetworkingLayout>
+    <Layout>
     <div>
       <h1 style={{color:'black'}}>Domo</h1>
     </div>
-    </NetworkingLayout>
+    </Layout>
   );
 };
 
