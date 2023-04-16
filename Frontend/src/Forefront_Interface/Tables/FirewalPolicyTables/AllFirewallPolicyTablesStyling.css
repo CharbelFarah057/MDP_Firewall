@@ -1,0 +1,5 @@
+/* AllFirewallPolicyTablesStyling.css */
+
+.last-row .ag-cell:not(.ag-cell-checkbox) {
+    pointer-events: none;
+  }
