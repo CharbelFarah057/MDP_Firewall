@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import './AllFirewallPolicyTablesStyling.css';
+// import './AllFirewallPolicyTablesStyling.css';
 import {rowData} from './firewallPolicyData';
 import {columnDefs, orderCellRenderer, actionCellRenderer, protocolsCellRenderer, fromCellRenderer, toCellRenderer, conditionCellRenderer} from './firewallPolicyColumns';
 
@@ -13,7 +13,7 @@ const AllFirewallPolicyTable = () => {
     <div
       className="ag-theme-alpine"
       style={{
-        height: 'calc(100vh - 100px)', // Adjust this to change the height of the table dynamically with the window
+        height: 'calc(100vh - 20vh)', // Adjust this to change the height of the table dynamically with the window
         width: '100%',
         overflow: 'auto',
       }}
@@ -32,7 +32,7 @@ const AllFirewallPolicyTable = () => {
           }}
         rowSelection='multiple'
         suppressRowClickSelection={false}
-        />
+      />
     </div>
   );
 };

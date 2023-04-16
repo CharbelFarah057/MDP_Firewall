@@ -91,7 +91,7 @@ const NetworkRuleTable = () => {
     <div
       className="ag-theme-alpine"
       style={{
-        height: 'calc(100vh - 100px)', // Adjust this value as needed
+        height: 'calc(100vh - 20vh)', // Adjust this value as needed
         width: '100%',
         overflow: 'auto',
       }}

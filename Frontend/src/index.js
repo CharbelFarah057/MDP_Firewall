@@ -1,3 +1,4 @@
+//index.js
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
@@ -26,7 +27,7 @@ root.render(
       <Route path="/tmg/networking/network-rules" render={() => <NetworkingPage />} />
       <Route path="/tmg/networking/network-adapters" render={() => <NetworkingPage />} />
       <Route path="/tmg/networking/routing" render={() => <NetworkingPage />} />
-      <Route path="/tmg" exact render={() => <Redirect to="/tmg/networking/networks" />} />
+      <Route path="/tmg" exact render={() => <Redirect to="/tmg/firewall-policy" />} />
     </Switch>
   </BrowserRouter>
 );

@@ -1,3 +1,4 @@
+//LeftNavbar.js
 import React, { useState } from 'react';
 import { AiOutlineQuestionCircle, AiOutlineMenu } from 'react-icons/ai';
 import { FaGlobe, FaRedhat, FaNetworkWired } from 'react-icons/fa';
@@ -67,8 +68,7 @@ const LeftNavbar = () => {
         </div>
         <div
           className={`${styles['burger-menu']} ${!isContentVisible ? styles.collapsed : ''}`}
-          onClick={handleBurgerMenuClick}
-        >
+          onClick={handleBurgerMenuClick}>
           <AiOutlineMenu />
         </div>
       </div>
@@ -76,8 +76,7 @@ const LeftNavbar = () => {
         <div key={item.id}>
           <div
             className={`${styles['menu-item']} ${!isContentVisible ? styles.collapsed : ''} ${item.validpath.includes(location.pathname) ? styles.selected : ''}`}
-            onClick={() => handleMenuItemClick(item.path)}
-          >
+            onClick={() => handleMenuItemClick(item.path)}>
             <div className={styles.icon}>{item.icon}</div>
             <div className={styles.title}>{item.title}</div>
             <div className={styles['question-icon']}>

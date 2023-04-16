@@ -1,9 +1,10 @@
 .layout {
-    display: flex;
-  }
+  display: flex;
+  position : relative
+}
 
-  .content {
-    flex-grow: 1;
-    padding: 1rem;
-    /* Add any other styles you want for the content area */
-  }
+.content {
+  flex-grow: 1;
+  padding: 1rem;
+  position : relative;
+}

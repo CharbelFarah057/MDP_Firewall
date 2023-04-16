@@ -1,3 +1,4 @@
+//Networks.js
 import React from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -61,7 +62,7 @@ const NetworksTable = () => {
     <div
       className="ag-theme-alpine"
       style={{
-        height: 'calc(100vh - 100px)', // Adjust this value as needed
+        height: 'calc(100vh - 20vh)', // Adjust this value as needed
         width: '100%',
         overflow: 'auto',
       }}

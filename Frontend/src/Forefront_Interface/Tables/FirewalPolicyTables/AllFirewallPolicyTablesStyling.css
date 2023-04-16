@@ -1,5 +1,12 @@
 /* AllFirewallPolicyTablesStyling.css */
 
-.last-row .ag-cell:not(.ag-cell-checkbox) {
-    pointer-events: none;
-  }
+.ag-cell-focus {
+  background-color: #2e325f;
+  border-color : #2e325f;
+  color: white !important;
+}
+
+.ag-cell-no-focus {
+  background-color: default;
+  color: white !important;
+}
