@@ -1,3 +1,4 @@
+//FirewallPolicyData.js
 import React from "react";
 import { AiOutlineNumber, AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import { FiUsers } from 'react-icons/fi';
