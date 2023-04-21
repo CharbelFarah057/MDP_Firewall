@@ -1,15 +1,17 @@
 //AllFirewallPolicyTable.js
 import React, { useState, useEffect  } from "react";
-import { rowData } from "./FirewallPolicyData";
 import FirewallPolicyRow from "./FirewallPolicyRow";
 import ContextMenu from "./ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
+import { FaNetworkWired } from 'react-icons/fa';
+import { rowData as initialRowData } from "./FirewallPolicyData";
 import "./FirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
   const [selectedCells, setSelectedCells] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
+  const [rowData, setRowData] = useState(initialRowData);
 
   const handleRowContextMenu = (event, rowIndex) => {
     // Check if the row is selected
@@ -34,7 +36,6 @@ const AllFirewallPolicyTable = () => {
           ? []
           : [
               { label: "Delete", onClick: () => console.log("Delete clicked") },
-              { label: "Copy", onClick: () => console.log("Copy clicked") },
               { label: "Create Group", onClick: () => console.log("Create Group clicked") },
               ...(isFirstRow
                 ? []
@@ -79,14 +80,14 @@ const AllFirewallPolicyTable = () => {
 
   const handleCellClick = (rowIndex, cellIndex) => {
     const totalColumns = Object.keys(rowData[0]).filter(key => !key.endsWith("icon")).length;
-
+    const value = rowData[rowIndex][Object.keys(rowData[0])[cellIndex]];
     if (
       rowIndex === rowData.length - 1 ||
       cellIndex < 2 ||
-      cellIndex >= totalColumns - 2
-    ) {
-      return;
-    }
+      cellIndex >= totalColumns - 2 ||
+      value === "All Outbound Traffic" || 
+      value === ""
+    ) { return; }
     if (selectedRows.includes(rowIndex)) {
       const cell = { rowIndex, cellIndex };
       setSelectedCells([cell]);
@@ -101,28 +102,74 @@ const AllFirewallPolicyTable = () => {
     event.preventDefault();
     const x = event.clientX;
     const y = event.clientY;
+    let items = [];
 
-    const items = [
-      {
-        label: "Allow",
-        checked: rowData[rowIndex].act === "Allow",
-        onClick: () => {
-          rowData[rowIndex].act = "Allow";
-          rowData[rowIndex].actionicon = () => <i className="fas fa-check-circle"></i>;
-          setSelectedCells([]);
-        },
-      },
-      {
-        label: "Deny",
-        checked: rowData[rowIndex].act === "Deny",
-        onClick: () => {
-          rowData[rowIndex].act = "Deny";
-          rowData[rowIndex].actionicon = () => <i className="fas fa-times-circle"></i>;
-          setSelectedCells([]);
-        },
-      },
-    ];
-
+    switch(cellIndex) {
+      case 2 :
+        items = [
+          {
+            label: "Allow",
+            checked: rowData[rowIndex].act === "Allow",
+            onClick: () => {
+              setRowData((prevRowData) => {
+                const newRowData = [...prevRowData];
+                newRowData[rowIndex].act = "Allow";
+                newRowData[rowIndex].actionicon = (props) => (
+                  <AiFillCheckCircle
+                    {...props}
+                    style={{
+                      ...props.style,
+                      color: 'white',
+                      backgroundColor: 'green',
+                      borderRadius: '50%',
+                    }}
+                  />
+                );
+                return newRowData;
+              });
+              setSelectedCells([]);
+            },
+          },
+          {
+            label: "Deny",
+            checked: rowData[rowIndex].act === "Deny",
+            onClick: () => {
+              setRowData((prevRowData) => {
+                const newRowData = [...prevRowData];
+                newRowData[rowIndex].act = "Deny";
+                newRowData[rowIndex].actionicon = (props) => (
+                  <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />);
+                return newRowData;
+              });
+              setSelectedCells([]);
+            },
+          },
+        ];
+        break
+      case 3:
+        items = [
+          {
+            label: "Properties",
+            onClick: () => {
+              console.log(rowData[rowIndex].act);
+              setSelectedCells([]);
+            },
+          },
+          {
+            label: "Remove",
+            onClick: () => {
+              setRowData((prevRowData) => {
+                const newRowData = [...prevRowData];
+                newRowData[rowIndex].protoc = "All Outbound Traffic";
+                newRowData[rowIndex].protocicon = (props) => <FaNetworkWired {...props} />;
+                return newRowData;
+              });
+              setSelectedCells([]);
+            },
+          },
+        ];
+        break
+    }
     setContextMenu({ x, y, items });
   };
 

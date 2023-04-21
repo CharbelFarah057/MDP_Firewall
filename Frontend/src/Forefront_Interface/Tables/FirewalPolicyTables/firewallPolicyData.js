@@ -10,7 +10,7 @@ export const rowData = [
         order : '1',
         name : 'Rule 1',
         act : 'Deny',
-        protoc : 'All Outbound Traffic',
+        protoc : 'SSH',
         FL : 'External',
         to : 'Internal',
         cond : 'All Users',
