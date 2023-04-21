@@ -3,6 +3,7 @@ import React, { useState, useEffect  } from "react";
 import { rowData } from "./FirewallPolicyData";
 import FirewallPolicyRow from "./FirewallPolicyRow";
 import ContextMenu from "./ContextMenu";
+import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import "./FirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
@@ -93,6 +94,38 @@ const AllFirewallPolicyTable = () => {
     }
   };
 
+  const handleCellContextMenu = (event, rowIndex, cellIndex) => {
+    if (!selectedCells.some((cell) => cell.rowIndex === rowIndex && cell.cellIndex === cellIndex)) {
+      return;
+    }
+    event.preventDefault();
+    const x = event.clientX;
+    const y = event.clientY;
+
+    const items = [
+      {
+        label: "Allow",
+        checked: rowData[rowIndex].act === "Allow",
+        onClick: () => {
+          rowData[rowIndex].act = "Allow";
+          rowData[rowIndex].actionicon = () => <i className="fas fa-check-circle"></i>;
+          setSelectedCells([]);
+        },
+      },
+      {
+        label: "Deny",
+        checked: rowData[rowIndex].act === "Deny",
+        onClick: () => {
+          rowData[rowIndex].act = "Deny";
+          rowData[rowIndex].actionicon = () => <i className="fas fa-times-circle"></i>;
+          setSelectedCells([]);
+        },
+      },
+    ];
+
+    setContextMenu({ x, y, items });
+  };
+
   const handleRowCheckboxChange = (rowIndex) => {
     // If the last row is selected, deselect all other rows.
     if (rowIndex === rowData.length - 1) {
@@ -163,6 +196,7 @@ const AllFirewallPolicyTable = () => {
               selectedRows={selectedRows}
               onRowCheckboxChange={handleRowCheckboxChange}
               onRowContextMenu={handleRowContextMenu}
+              onCellContextMenu={handleCellContextMenu} 
             />
           ))}
         </tbody>

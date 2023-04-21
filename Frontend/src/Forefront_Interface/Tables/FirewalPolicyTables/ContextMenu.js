@@ -1,13 +1,12 @@
-// ContextMenu.js
 import React from "react";
 import "./ContextMenu.css";
 
-const ContextMenu = ({ x, y, items }) => {
+const ContextMenu = ({ x, y, items, onClose }) => {
   return (
     <div
       className="context-menu"
       style={{
-        position: "absolute",
+        position: "fixed",
         top: y,
         left: x,
         zIndex: 1000,
@@ -15,7 +14,10 @@ const ContextMenu = ({ x, y, items }) => {
     >
       <ul>
         {items.map((item, index) => (
-          <li key={index} onClick={item.onClick}>
+          <li key={index} onClick={() => {item.onClick(); onClose();}}>
+            <span className={item.checked ? "context-menu-checkmark" : ""}>
+              {item.checked && "✓"}
+            </span>
             {item.label}
           </li>
         ))}

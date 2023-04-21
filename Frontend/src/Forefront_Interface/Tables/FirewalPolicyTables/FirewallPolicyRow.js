@@ -9,17 +9,9 @@ selectedCells,
 selectedRows,
 onRowCheckboxChange,
 onRowContextMenu,
+onCellContextMenu,
 }) => {
     const {
-        order,
-        name,
-        act,
-        protoc,
-        FL,
-        to,
-        cond,
-        desc,
-        pol,
         ordicon: OrderIcon,
         actionicon: ActionIcon,
         protocicon: ProtocIcon,
@@ -94,8 +86,12 @@ onRowContextMenu,
             </td>
             {Object.entries(row).filter(([key]) => !key.endsWith("icon")).map(([key, value], cellIndex) => (
                 <td key={key} 
-                    onClick={() => {handleCellClick(rowIndex, cellIndex);
-                    }}
+                onClick={() => {
+                    handleCellClick(rowIndex, cellIndex);
+                  }}
+                  onContextMenu={(event) => {
+                    onCellContextMenu(event, rowIndex, cellIndex);
+                  }}
                     className={ isSelected(cellIndex) || selectedRows.includes(rowIndex) ? "selected" : "" } >
                 {renderCellContent(key, value)}
                 </td>

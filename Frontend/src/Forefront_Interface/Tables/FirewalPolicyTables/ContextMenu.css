@@ -24,3 +24,10 @@
 .context-menu li:hover {
   background-color: #f0f0f0;
 }
+
+.context-menu-checkmark {
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+  color: green;
+}
