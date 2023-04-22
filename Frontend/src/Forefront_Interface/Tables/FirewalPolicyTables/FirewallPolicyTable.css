@@ -40,13 +40,3 @@
   .firewall-policy-table tr {
     transition: background-color 0.3s ease-in-out;
   }
-  
-  .action-icon-allow {
-    color: 'white';
-    background-color: green;
-    border-radius: 50%;
-  };
-
-  .action-icon-deny {
-    color : red;
-  }

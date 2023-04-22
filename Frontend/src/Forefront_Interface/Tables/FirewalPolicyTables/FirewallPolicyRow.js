@@ -1,5 +1,6 @@
 //FirewallPolicyRow.js
 import React from "react";
+import './FirewallPolicyRow.css'
 
 const FirewallPolicyRow = ({
 row,
@@ -10,6 +11,8 @@ selectedRows,
 onRowCheckboxChange,
 onRowContextMenu,
 onCellContextMenu,
+selectedMultiCellClick,
+handleMultiCellClick,
 }) => {
     const {
         ordicon: OrderIcon,
@@ -20,11 +23,15 @@ onCellContextMenu,
         condicon: CondIcon,
     } = row;
 
-    const isSelected = (cellIndex) => selectedCells.some(
-        (cell) => cell.rowIndex === rowIndex && cell.cellIndex === cellIndex
+    const isCellSelected = (cellIndex) => selectedCells.some(
+        cell => cell.rowIndex === rowIndex && cell.cellIndex === cellIndex
     );
 
-    const renderCellContent = (key, value) => {
+    const isProcSelected = (protocolIndex, cellIndex) => selectedMultiCellClick.some(
+        multi => multi.rowIndex === rowIndex && multi.cellIndex === cellIndex && multi.protocolIndex === protocolIndex
+    );
+
+    const renderCellContent = (key, value, cellIndex) => {
         switch (key) {
             case "order":
                 return (
@@ -43,8 +50,22 @@ onCellContextMenu,
             case "protoc":
                 return (
                     <>
-                        <ProtocIcon />
-                        <span style={{ marginLeft: "5px" }}>{value}</span>
+                    <ul className="protocol-list">
+                        {value.map((protocol, protocolIndex) => (
+                        <li
+                            key={protocolIndex}
+                            onClick={() => {
+                                handleMultiCellClick(rowIndex, cellIndex, protocolIndex);
+                                }}
+                                className={
+                                isProcSelected(protocolIndex, cellIndex) || selectedRows.includes(rowIndex) ? "selected-protocol" : ""
+                            }
+                        >
+                            <ProtocIcon className="icon-padding" />
+                            {protocol}
+                        </li>
+                        ))}
+                    </ul>
                     </>
                 );
             case "FL":
@@ -86,14 +107,14 @@ onCellContextMenu,
             </td>
             {Object.entries(row).filter(([key]) => !key.endsWith("icon")).map(([key, value], cellIndex) => (
                 <td key={key} 
-                onClick={() => {
-                    handleCellClick(rowIndex, cellIndex);
-                  }}
-                  onContextMenu={(event) => {
-                    onCellContextMenu(event, rowIndex, cellIndex);
-                  }}
-                    className={ isSelected(cellIndex) || selectedRows.includes(rowIndex) ? "selected" : "" } >
-                {renderCellContent(key, value)}
+                    onClick={() => {
+                        handleCellClick(rowIndex, cellIndex);
+                    }}
+                    onContextMenu={(event) => {
+                        onCellContextMenu(event, rowIndex, cellIndex);
+                    }}
+                    className={ isCellSelected(cellIndex) || selectedRows.includes(rowIndex) ? "selected" : "" } >
+                {renderCellContent(key, value, cellIndex)}
                 </td>
             ))}
         </tr>

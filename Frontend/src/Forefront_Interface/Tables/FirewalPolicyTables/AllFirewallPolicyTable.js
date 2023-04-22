@@ -3,7 +3,6 @@ import React, { useState, useEffect  } from "react";
 import FirewallPolicyRow from "./FirewallPolicyRow";
 import ContextMenu from "./ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
-import { FaNetworkWired } from 'react-icons/fa';
 import { rowData as initialRowData } from "./FirewallPolicyData";
 import "./FirewallPolicyTable.css";
 
@@ -12,6 +11,8 @@ const AllFirewallPolicyTable = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
   const [rowData, setRowData] = useState(initialRowData);
+  const [selectedMultiCellClick, setselectedMultiCellClick] = useState([]);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
 
   const handleRowContextMenu = (event, rowIndex) => {
     // Check if the row is selected
@@ -79,14 +80,10 @@ const AllFirewallPolicyTable = () => {
   }, []);
 
   const handleCellClick = (rowIndex, cellIndex) => {
-    const totalColumns = Object.keys(rowData[0]).filter(key => !key.endsWith("icon")).length;
-    const value = rowData[rowIndex][Object.keys(rowData[0])[cellIndex]];
     if (
       rowIndex === rowData.length - 1 ||
-      cellIndex < 2 ||
-      cellIndex >= totalColumns - 2 ||
-      value === "All Outbound Traffic" || 
-      value === ""
+      cellIndex !== 2 ||
+      rowData[rowIndex].act === ""
     ) { return; }
     if (selectedRows.includes(rowIndex)) {
       const cell = { rowIndex, cellIndex };
@@ -146,29 +143,6 @@ const AllFirewallPolicyTable = () => {
           },
         ];
         break
-      case 3:
-        items = [
-          {
-            label: "Properties",
-            onClick: () => {
-              console.log(rowData[rowIndex].act);
-              setSelectedCells([]);
-            },
-          },
-          {
-            label: "Remove",
-            onClick: () => {
-              setRowData((prevRowData) => {
-                const newRowData = [...prevRowData];
-                newRowData[rowIndex].protoc = "All Outbound Traffic";
-                newRowData[rowIndex].protocicon = (props) => <FaNetworkWired {...props} />;
-                return newRowData;
-              });
-              setSelectedCells([]);
-            },
-          },
-        ];
-        break
     }
     setContextMenu({ x, y, items });
   };
@@ -192,6 +166,7 @@ const AllFirewallPolicyTable = () => {
       });
     }
     setSelectedCells([]);
+    setselectedMultiCellClick([]);
   };
     
   const handleSelectAllCheckboxChange = () => {
@@ -201,9 +176,70 @@ const AllFirewallPolicyTable = () => {
       setSelectedRows(rowData.slice(0, -1).map((_, index) => index));
     }
     setSelectedCells([]);
+    setselectedMultiCellClick([]);
   };
 
+  const handleMultiCellClick = (rowIndex, cellIndex, protocolIndex) => {
+    if (cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5 ||
+      rowIndex === rowData.length - 1 ||
+      JSON.stringify(rowData[rowIndex].protoc) === JSON.stringify(["All Outbound Traffic"])
+      ) { return; }
+    if ( selectedRows.includes(rowIndex) ) {
+      const multi = {rowIndex, cellIndex, protocolIndex};
+      setselectedMultiCellClick([multi]);
+      setSelectedCells([]);
+      setSelectedRows([]);
+    }
+  };
+
+  const sortData = (key) => {
+    let direction;
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = 'default';
+    } else {
+      direction = 'asc';
+    }
+
+    if (direction === 'default') {
+      setRowData(initialRowData);
+      setSortConfig({ key: null, direction: 'default' });
+    } else {
+      const sortedData = [...rowData].sort((a, b) => {
+        if (a[key] < b[key]) {
+          return direction === 'asc' ? -1 : 1;
+        }
+        if (a[key] > b[key]) {
+          return direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+      setRowData(sortedData);
+      setSortConfig({ key, direction });
+    }
+  };
+
+  const Arrow = ({ direction }) => (
+    <span className="arrow">
+      {direction === "asc" ? "↑" : "↓"}
+    </span>
+  );
+
+  const renderHeader = (key, label) => (
+    <th
+      onClick={() => sortData(key)}
+      style={{ cursor: "pointer" }}
+    >
+      {label}
+      {sortConfig.key === key && sortConfig.direction !== "default" && (
+        <Arrow direction={sortConfig.direction} />
+      )}
+    </th>
+  );
+
   return (
+    
     <div
       style={{
         height: "calc(100vh - 20vh)",
@@ -221,15 +257,15 @@ const AllFirewallPolicyTable = () => {
                 onChange={handleSelectAllCheckboxChange}
               />
             </th>
-            <th>Order</th>
-            <th>Name</th>
-            <th>Action</th>
-            <th>Protocols</th>
-            <th>From / Listener</th>
-            <th>To</th>
-            <th>Condition</th>
-            <th>Description</th>
-            <th>Policy</th>
+            {renderHeader("order", "Order")}
+            {renderHeader("name", "Name")}
+            {renderHeader("act", "Action")}
+            {renderHeader("protoc", "Protocols")}
+            {renderHeader("from", "From / Listener")}
+            {renderHeader("to", "To")}
+            {renderHeader("cond", "Condition")}
+            {renderHeader("desc", "Description")}
+            {renderHeader("policy", "Policy")}
           </tr>
         </thead>
         <tbody>
@@ -243,8 +279,10 @@ const AllFirewallPolicyTable = () => {
               selectedRows={selectedRows}
               onRowCheckboxChange={handleRowCheckboxChange}
               onRowContextMenu={handleRowContextMenu}
-              onCellContextMenu={handleCellContextMenu} 
-            />
+              onCellContextMenu={handleCellContextMenu}
+              selectedMultiCellClick={selectedMultiCellClick}
+              handleMultiCellClick={handleMultiCellClick}
+          />
           ))}
         </tbody>
       </table>
