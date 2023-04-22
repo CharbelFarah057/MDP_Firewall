@@ -14,9 +14,9 @@ const AllFirewallPolicyTable = () => {
   const [selectedMultiCellClick, setselectedMultiCellClick] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
 
-  const handleRowContextMenu = (event, rowIndex) => {
+  const handleRowContextMenu = (event, rowId) => {
     // Check if the row is selected
-    if (!selectedRows.includes(rowIndex)) {
+    if (!selectedRows.includes(rowId)) {
       // Do not show the context menu if the row is not selected
       return;
     }
@@ -24,9 +24,9 @@ const AllFirewallPolicyTable = () => {
     const x = event.clientX;
     const y = event.clientY;
   
-    const isLastRow = rowIndex === rowData.length - 1;
-    const isFirstRow = rowIndex === 0;
-    const isSecondToLastRow = rowIndex === rowData.length - 2;
+    const isLastRow = rowId === rowData.length - 1;
+    const isFirstRow = rowId === 0;
+    const isSecondToLastRow = rowId === rowData.length - 2;
   
     let items;
   
@@ -79,21 +79,21 @@ const AllFirewallPolicyTable = () => {
     };
   }, []);
 
-  const handleCellClick = (rowIndex, cellIndex) => {
+  const handleCellClick = (rowId, cellIndex) => {
     if (
-      rowIndex === rowData.length - 1 ||
+      rowId === rowData.length - 1 ||
       cellIndex !== 2 ||
-      rowData[rowIndex].act === ""
+      rowData[rowId].act === ""
     ) { return; }
-    if (selectedRows.includes(rowIndex)) {
-      const cell = { rowIndex, cellIndex };
+    if (selectedRows.includes(rowId)) {
+      const cell = { rowId, cellIndex };
       setSelectedCells([cell]);
       setSelectedRows([]);
     }
   };
 
-  const handleCellContextMenu = (event, rowIndex, cellIndex) => {
-    if (!selectedCells.some((cell) => cell.rowIndex === rowIndex && cell.cellIndex === cellIndex)) {
+  const handleCellContextMenu = (event, rowId, cellIndex) => {
+    if (!selectedCells.some((cell) => cell.rowId === rowId && cell.cellIndex === cellIndex)) {
       return;
     }
     event.preventDefault();
@@ -106,12 +106,12 @@ const AllFirewallPolicyTable = () => {
         items = [
           {
             label: "Allow",
-            checked: rowData[rowIndex].act === "Allow",
+            checked: rowData[rowId].act === "Allow",
             onClick: () => {
               setRowData((prevRowData) => {
                 const newRowData = [...prevRowData];
-                newRowData[rowIndex].act = "Allow";
-                newRowData[rowIndex].actionicon = (props) => (
+                newRowData[rowId].act = "Allow";
+                newRowData[rowId].actionicon = (props) => (
                   <AiFillCheckCircle
                     {...props}
                     style={{
@@ -129,12 +129,12 @@ const AllFirewallPolicyTable = () => {
           },
           {
             label: "Deny",
-            checked: rowData[rowIndex].act === "Deny",
+            checked: rowData[rowId].act === "Deny",
             onClick: () => {
               setRowData((prevRowData) => {
                 const newRowData = [...prevRowData];
-                newRowData[rowIndex].act = "Deny";
-                newRowData[rowIndex].actionicon = (props) => (
+                newRowData[rowId].act = "Deny";
+                newRowData[rowId].actionicon = (props) => (
                   <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />);
                 return newRowData;
               });
@@ -147,21 +147,21 @@ const AllFirewallPolicyTable = () => {
     setContextMenu({ x, y, items });
   };
 
-  const handleRowCheckboxChange = (rowIndex) => {
+  const handleRowCheckboxChange = (rowId) => {
     // If the last row is selected, deselect all other rows.
-    if (rowIndex === rowData.length - 1) {
+    if (rowId === rowData.length - 1) {
       setSelectedRows((prevRows) =>
-        prevRows.includes(rowIndex)
-          ? prevRows.filter((row) => row !== rowIndex)
-          : [rowIndex]
+        prevRows.includes(rowId)
+          ? prevRows.filter((row) => row !== rowId)
+          : [rowId]
       );
     } else {
       // If any other row is selected, deselect the last row.
       setSelectedRows((prevRows) => {
-        if (prevRows.includes(rowIndex)) {
-          return prevRows.filter((row) => row !== rowIndex);
+        if (prevRows.includes(rowId)) {
+          return prevRows.filter((row) => row !== rowId);
         } else {
-          return [...prevRows.filter((row) => row !== rowData.length - 1), rowIndex];
+          return [...prevRows.filter((row) => row !== rowData.length - 1), rowId];
         }
       });
     }
@@ -179,13 +179,13 @@ const AllFirewallPolicyTable = () => {
     setselectedMultiCellClick([]);
   };
 
-  const handleMultiCellClick = (rowIndex, cellIndex, protocolIndex) => {
+  const handleMultiCellClick = (rowId, cellIndex, protocolIndex) => {
     if (cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5 ||
-      rowIndex === rowData.length - 1 ||
-      JSON.stringify(rowData[rowIndex].protoc) === JSON.stringify(["All Outbound Traffic"])
+      rowId === rowData.length - 1 ||
+      JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All Outbound Traffic"])
       ) { return; }
-    if ( selectedRows.includes(rowIndex) ) {
-      const multi = {rowIndex, cellIndex, protocolIndex};
+    if ( selectedRows.includes(rowId) ) {
+      const multi = {rowId, cellIndex, protocolIndex};
       setselectedMultiCellClick([multi]);
       setSelectedCells([]);
       setSelectedRows([]);
@@ -269,11 +269,11 @@ const AllFirewallPolicyTable = () => {
           </tr>
         </thead>
         <tbody>
-          {rowData.map((row, rowIndex) => (
+          {rowData.map((row) => (
             <FirewallPolicyRow
-              key={rowIndex}
+              key={row.id}
               row={row}
-              rowIndex={rowIndex}
+              rowId={row.id}
               handleCellClick={handleCellClick}
               selectedCells={selectedCells}
               selectedRows={selectedRows}

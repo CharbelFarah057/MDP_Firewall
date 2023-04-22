@@ -4,7 +4,7 @@ import './FirewallPolicyRow.css'
 
 const FirewallPolicyRow = ({
 row,
-rowIndex,
+rowId,
 handleCellClick,
 selectedCells,
 selectedRows,
@@ -24,11 +24,11 @@ handleMultiCellClick,
     } = row;
 
     const isCellSelected = (cellIndex) => selectedCells.some(
-        cell => cell.rowIndex === rowIndex && cell.cellIndex === cellIndex
+        cell => cell.rowId === rowId && cell.cellIndex === cellIndex
     );
 
     const isProcSelected = (protocolIndex, cellIndex) => selectedMultiCellClick.some(
-        multi => multi.rowIndex === rowIndex && multi.cellIndex === cellIndex && multi.protocolIndex === protocolIndex
+        multi => multi.rowId === rowId && multi.cellIndex === cellIndex && multi.protocolIndex === protocolIndex
     );
 
     const renderCellContent = (key, value, cellIndex) => {
@@ -55,10 +55,10 @@ handleMultiCellClick,
                         <li
                             key={protocolIndex}
                             onClick={() => {
-                                handleMultiCellClick(rowIndex, cellIndex, protocolIndex);
+                                handleMultiCellClick(rowId, cellIndex, protocolIndex);
                                 }}
                                 className={
-                                isProcSelected(protocolIndex, cellIndex) || selectedRows.includes(rowIndex) ? "selected-protocol" : ""
+                                isProcSelected(protocolIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
                             <ProtocIcon className="icon-padding" />
@@ -95,25 +95,25 @@ handleMultiCellClick,
     };
 
     return (
-        <tr onContextMenu={(event) => onRowContextMenu(event, rowIndex)}>
+        <tr onContextMenu={(event) => onRowContextMenu(event, rowId)}>
             <td>
                 <input
                 type="checkbox"
-                checked={selectedRows.includes(rowIndex)}
+                checked={selectedRows.includes(rowId)}
                 onChange={() => {
-                onRowCheckboxChange(rowIndex);
+                onRowCheckboxChange(rowId);
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => !key.endsWith("icon")).map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
-                        handleCellClick(rowIndex, cellIndex);
+                        handleCellClick(rowId, cellIndex);
                     }}
                     onContextMenu={(event) => {
-                        onCellContextMenu(event, rowIndex, cellIndex);
+                        onCellContextMenu(event, rowId, cellIndex);
                     }}
-                    className={ isCellSelected(cellIndex) || selectedRows.includes(rowIndex) ? "selected" : "" } >
+                    className={ isCellSelected(cellIndex) || selectedRows.includes(rowId) ? "selected" : "" } >
                 {renderCellContent(key, value, cellIndex)}
                 </td>
             ))}
