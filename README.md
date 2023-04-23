@@ -6,7 +6,7 @@ Done:
 What to do:
 - Copy the Frontend of the Networking page onto the other pages. (Should be done by the 23rd)
 - For the 22nd of april Charbel needs to do:
-	- ~~Finish the sorting problem by adding an ID in FirewallPolicyData.js~~ 
+	- Finish the sorting problem where the data is acting bat fucking shit crazy
 	- Finish the custom context menu 
 	- Implement the toolbar
 	- Install the Search Bar
