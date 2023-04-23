@@ -1,6 +1,8 @@
 //FirewallPolicyRow.js
 import React from "react";
 import './FirewallPolicyRow.css'
+import MultiCellContextMenu from "./MultiCellContextMenu";
+import { rowData } from "./FirewallPolicyData";
 
 const FirewallPolicyRow = ({
 row,
@@ -13,6 +15,7 @@ onRowContextMenu,
 onCellContextMenu,
 selectedMultiCellClick,
 handleMultiCellClick,
+onMultiCellContextMenu,
 }) => {
     const {
         ordicon: OrderIcon,
@@ -27,8 +30,8 @@ handleMultiCellClick,
         cell => cell.rowId === rowId && cell.cellIndex === cellIndex
     );
 
-    const isProcSelected = (protocolIndex, cellIndex) => selectedMultiCellClick.some(
-        multi => multi.rowId === rowId && multi.cellIndex === cellIndex && multi.protocolIndex === protocolIndex
+    const isMultiCellSelected = (MultiCellIndex, cellIndex) => selectedMultiCellClick.some(
+        multi => multi.rowId === rowId && multi.cellIndex === cellIndex && multi.MultiCellIndex === MultiCellIndex
     );
 
     const renderCellContent = (key, value, cellIndex) => {
@@ -51,14 +54,18 @@ handleMultiCellClick,
                 return (
                     <>
                     <ul className="protocol-list">
-                        {value.map((protocol, protocolIndex) => (
+                        {value.map((protocol, MultiCellIndex) => (
                         <li
-                            key={protocolIndex}
+                            key={MultiCellIndex}
                             onClick={() => {
-                                handleMultiCellClick(rowId, cellIndex, protocolIndex);
+                                handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                                }}
+                                onContextMenu={(event) => {
+                                    event.preventDefault();
+                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value.length);
                                 }}
                                 className={
-                                isProcSelected(protocolIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
+                                isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
                             <ProtocIcon className="icon-padding" />
@@ -71,17 +78,51 @@ handleMultiCellClick,
             case "FL":
                 return (
                     <>
-                        <FromIcon />
-                        <span style={{ marginLeft: "5px" }}>{value}</span>
+                    <ul className="protocol-list">
+                        {value.map((FL, MultiCellIndex) => (
+                        <li
+                            key={MultiCellIndex}
+                            onClick={() => {
+                                handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                                }}
+                                onContextMenu={(event) => {
+                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value.length);
+                                }}
+                                className={
+                                isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
+                            }
+                        >
+                            <FromIcon className="icon-padding" />
+                            {FL}
+                        </li>
+                        ))}
+                    </ul>
                     </>
                 );
-                case "to":
-                    return (
-                        <>
-                            <ToIcon />
-                            <span style={{ marginLeft: "5px" }}>{value}</span>
-                        </>
-                    );
+            case "to":
+                return (
+                    <>
+                    <ul className="protocol-list">
+                        {value.map((To, MultiCellIndex) => (
+                        <li
+                            key={MultiCellIndex}
+                            onClick={() => {
+                                handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                            }}
+                            onContextMenu={(event) => {
+                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value.length);
+                                }}
+                                className={
+                                isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
+                            }
+                        >
+                            <ToIcon className="icon-padding" />
+                            {To}
+                        </li>
+                        ))}
+                    </ul>
+                    </>
+                );
             case "cond":
                 return (
                     <>

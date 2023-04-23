@@ -99,51 +99,45 @@ const AllFirewallPolicyTable = () => {
     event.preventDefault();
     const x = event.clientX;
     const y = event.clientY;
-    let items = [];
-
-    switch(cellIndex) {
-      case 2 :
-        items = [
-          {
-            label: "Allow",
-            checked: rowData[rowId].act === "Allow",
-            onClick: () => {
-              setRowData((prevRowData) => {
-                const newRowData = [...prevRowData];
-                newRowData[rowId].act = "Allow";
-                newRowData[rowId].actionicon = (props) => (
-                  <AiFillCheckCircle
-                    {...props}
-                    style={{
-                      ...props.style,
-                      color: 'white',
-                      backgroundColor: 'green',
-                      borderRadius: '50%',
-                    }}
-                  />
-                );
-                return newRowData;
-              });
-              setSelectedCells([]);
-            },
-          },
-          {
-            label: "Deny",
-            checked: rowData[rowId].act === "Deny",
-            onClick: () => {
-              setRowData((prevRowData) => {
-                const newRowData = [...prevRowData];
-                newRowData[rowId].act = "Deny";
-                newRowData[rowId].actionicon = (props) => (
-                  <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />);
-                return newRowData;
-              });
-              setSelectedCells([]);
-            },
-          },
-        ];
-        break
-    }
+    const items = [
+      {
+        label: "Allow",
+        checked: rowData[rowId].act === "Allow",
+        onClick: () => {
+          setRowData((prevRowData) => {
+            const newRowData = [...prevRowData];
+            newRowData[rowId].act = "Allow";
+            newRowData[rowId].actionicon = (props) => (
+              <AiFillCheckCircle
+                {...props}
+                style={{
+                  ...props.style,
+                  color: 'white',
+                  backgroundColor: 'green',
+                  borderRadius: '50%',
+                }}
+              />
+            );
+            return newRowData;
+          });
+          setSelectedCells([]);
+        },
+      },
+      {
+        label: "Deny",
+        checked: rowData[rowId].act === "Deny",
+        onClick: () => {
+          setRowData((prevRowData) => {
+            const newRowData = [...prevRowData];
+            newRowData[rowId].act = "Deny";
+            newRowData[rowId].actionicon = (props) => (
+              <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />);
+            return newRowData;
+          });
+          setSelectedCells([]);
+        },
+      },
+    ];
     setContextMenu({ x, y, items });
   };
 
@@ -151,9 +145,9 @@ const AllFirewallPolicyTable = () => {
     // If the last row is selected, deselect all other rows.
     if (rowId === rowData.length - 1) {
       setSelectedRows((prevRows) =>
-        prevRows.includes(rowId)
-          ? prevRows.filter((row) => row !== rowId)
-          : [rowId]
+      prevRows.includes(rowId)
+      ? prevRows.filter((row) => row !== rowId)
+      : [rowId]
       );
     } else {
       // If any other row is selected, deselect the last row.
@@ -179,45 +173,97 @@ const AllFirewallPolicyTable = () => {
     setselectedMultiCellClick([]);
   };
 
-  const handleMultiCellClick = (rowId, cellIndex, protocolIndex) => {
-    if (cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5 ||
+  const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
+    if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
       rowId === rowData.length - 1 ||
-      JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All Outbound Traffic"])
-      ) { return; }
+      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All Outbound Traffic"]))
+      ) { 
+        return; }
     if ( selectedRows.includes(rowId) ) {
-      const multi = {rowId, cellIndex, protocolIndex};
+      const multi = {rowId, cellIndex, MultiCellIndex};
       setselectedMultiCellClick([multi]);
       setSelectedCells([]);
       setSelectedRows([]);
     }
   };
 
+  const handleMultiCellContextMenu = (event, rowId, cellIndex, MultiCellIndex, cellDataLength) => {
+    if (!selectedMultiCellClick.some((cell) => cell.rowId === rowId && cell.cellIndex === cellIndex && cell.MultiCellIndex === MultiCellIndex)) {
+      return;
+    }
+    event.preventDefault();
+    const x = event.clientX;
+    const y = event.clientY;
+
+    const items = [
+      ...(cellDataLength === 1 ? [] : [
+        {
+          label: "Remove",
+          onClick: () => {
+            setRowData((prevRowData) => {
+              const newRowData = [...prevRowData];
+              if (cellIndex === 3) {
+                newRowData[rowId].protoc.splice(MultiCellIndex, 1);
+              }
+              if (cellIndex === 4) {
+                newRowData[rowId].FL.splice(MultiCellIndex, 1);
+              }
+              if (cellIndex === 5) {
+                newRowData[rowId].to.splice(MultiCellIndex, 1);
+              }
+              return newRowData;
+            });
+            setselectedMultiCellClick([]);
+          },
+        }
+      ]),
+      { label: "Properties", onClick: () => console.log("Properties clicked") }
+    ];
+  
+    setContextMenu({ x, y, items });
+  };
+
   const sortData = (key) => {
     let direction;
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
-      direction = 'default';
+    if (sortConfig.key === key) {
+      if (sortConfig.direction === 'asc') {
+        direction = 'desc';
+      } else if (sortConfig.direction === 'desc') {
+        direction = 'default';
+      }
     } else {
       direction = 'asc';
     }
-
+  
+    let sortedData;
     if (direction === 'default') {
-      setRowData(initialRowData);
+      sortedData = initialRowData;
       setSortConfig({ key: null, direction: 'default' });
     } else {
-      const sortedData = [...rowData].sort((a, b) => {
-        if (a[key] < b[key]) {
+      sortedData = [...rowData].sort((a, b) => {
+        if (Array.isArray(a[key]) && Array.isArray(b[key])) {
+          console.log("here");
+          // Join the arrays as strings for comparison
+          const aString = a[key].join(", ");
+          const bString = b[key].join(", ");
+    
+          if (aString < bString) {
+            return direction === 'asc' ? -1 : 1;
+          }
+          if (aString > bString) {
+            return direction === 'asc' ? 1 : -1;
+          }
+        } else if (a[key] < b[key]) {
           return direction === 'asc' ? -1 : 1;
-        }
-        if (a[key] > b[key]) {
+        } else if (a[key] > b[key]) {
           return direction === 'asc' ? 1 : -1;
         }
         return 0;
       });
-      setRowData(sortedData);
+    
       setSortConfig({ key, direction });
     }
+    setRowData(sortedData);
   };
 
   const Arrow = ({ direction }) => (
@@ -282,6 +328,7 @@ const AllFirewallPolicyTable = () => {
               onCellContextMenu={handleCellContextMenu}
               selectedMultiCellClick={selectedMultiCellClick}
               handleMultiCellClick={handleMultiCellClick}
+              onMultiCellContextMenu={handleMultiCellContextMenu}
           />
           ))}
         </tbody>
