@@ -143,9 +143,18 @@ const AllFirewallPolicyTable = () => {
       setRowData(updatedData);
       setSelectedRows([]);
     };
+
+    const areSelectedRowsContiguous = () => {
+      const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
+      for (let i = 1; i < sortedSelectedRows.length; i++) {
+        if (sortedSelectedRows[i] !== sortedSelectedRows[i - 1] + 1) {
+          return false;
+        }
+      }
+      return true;
+    };
         
     if (selectedRows.length === 1) {
-      console.log("if")
       items = [
         { label: "Properties", onClick: () => console.log("Properties clicked") },
         ...(isLastRow
@@ -166,12 +175,18 @@ const AllFirewallPolicyTable = () => {
             ]),
       ];
     } else {
-      console.log("else")
       const firstSelectedRow = Math.min(...selectedRows);
       const lastSelectedRow = Math.max(...selectedRows);
       items = [
         { label: "Delete", onClick: () => deleteSelectedRows() },
-        { label: "Create Group", onClick: () => console.log("Create Group clicked") },
+        ...(areSelectedRowsContiguous()
+          ? [
+              {
+                label: "Create Group",
+                onClick: () => console.log("Create Group clicked"),
+              },
+            ]
+          : []),
         ...(firstSelectedRow === 0
           ? []
           : [{ label: "Move Up", onClick: () => moveSelectedRowsUp() },]),
