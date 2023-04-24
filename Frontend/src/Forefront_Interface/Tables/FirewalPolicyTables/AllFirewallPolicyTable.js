@@ -48,8 +48,92 @@ const AllFirewallPolicyTable = () => {
       });
       setRowData(updatedData);
     };
-  
+
+    const moveRowUp = (rowId) => {
+      const updatedData = [...rowData];
+      const temp = updatedData[rowId - 1];
+      updatedData[rowId - 1] = updatedData[rowId];
+      updatedData[rowId] = temp;
+    
+      // Swap the order and id values
+      updatedData[rowId - 1].order = String(rowId);
+      updatedData[rowId].order = String(rowId + 1);
+      updatedData[rowId - 1].id = rowId - 1;
+      updatedData[rowId].id = rowId;
+    
+      setRowData(updatedData);
+      setSelectedRows([rowId - 1])
+    };
+    
+    const moveRowDown = (rowId) => {
+      const updatedData = [...rowData];
+      const temp = updatedData[rowId + 1];
+      updatedData[rowId + 1] = updatedData[rowId];
+      updatedData[rowId] = temp;
+    
+      // Swap the order and id values
+      updatedData[rowId + 1].order = String(rowId + 2);
+      updatedData[rowId].order = String(rowId + 1);
+      updatedData[rowId + 1].id = rowId + 1;
+      updatedData[rowId].id = rowId;
+    
+      setRowData(updatedData);
+      setSelectedRows([rowId + 1])
+    };
+
+    const moveSelectedRowsUp = () => {
+      const updatedData = [...rowData];
+      const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
+    
+      sortedSelectedRows.forEach((rowId, index) => {
+        if (rowId > index) {
+          const temp = updatedData[rowId - 1];
+          updatedData[rowId - 1] = updatedData[rowId];
+          updatedData[rowId] = temp;
+    
+          // Swap the order and id values
+          updatedData[rowId - 1].order = String(rowId);
+          updatedData[rowId].order = String(rowId + 1);
+          updatedData[rowId - 1].id = rowId - 1;
+          updatedData[rowId].id = rowId;
+    
+          // Update selected rows array
+          sortedSelectedRows[index] = rowId - 1;
+        }
+      });
+    
+      setRowData(updatedData);
+      setSelectedRows(sortedSelectedRows);
+    };
+    
+    const moveSelectedRowsDown = () => {
+      const updatedData = [...rowData];
+      const sortedSelectedRows = [...selectedRows].sort((a, b) => b - a);
+    
+      sortedSelectedRows.forEach((rowId, index) => {
+        if (rowId < rowData.length - 1 - index) {
+          const temp = updatedData[rowId + 1];
+          updatedData[rowId + 1] = updatedData[rowId];
+          updatedData[rowId] = temp;
+    
+          // Swap the order and id values
+          updatedData[rowId + 1].order = String(rowId + 2);
+          updatedData[rowId].order = String(rowId + 1);
+          updatedData[rowId + 1].id = rowId + 1;
+          updatedData[rowId].id = rowId;
+    
+          // Update selected rows array
+          sortedSelectedRows[index] = rowId + 1;
+        }
+      });
+    
+      setRowData(updatedData);
+      setSelectedRows(sortedSelectedRows);
+    };
+      
+    
     if (selectedRows.length === 1) {
+      console.log("if")
       items = [
         { label: "Properties", onClick: () => console.log("Properties clicked") },
         ...(isLastRow
@@ -59,10 +143,10 @@ const AllFirewallPolicyTable = () => {
               { label: "Create Group", onClick: () => console.log("Create Group clicked") },
               ...(isFirstRow
                 ? []
-                : [{ label: "Move Up", onClick: () => console.log("Move Up clicked") }]),
+                : [{ label: "Move Up", onClick: () => moveRowUp(rowId) }]),
               ...(isSecondToLastRow
                 ? []
-                : [{ label: "Move Down", onClick: () => console.log("Move Down clicked") }]),
+                : [{ label: "Move Down", onClick: () => moveRowDown(rowId) }]),
                 {
                   label: isRowDisabled ? "Enable" : "Disable",
                   onClick: () => toggleDisableEnable(isRowDisabled),
@@ -70,6 +154,7 @@ const AllFirewallPolicyTable = () => {
             ]),
       ];
     } else {
+      console.log("else")
       const firstSelectedRow = Math.min(...selectedRows);
       const lastSelectedRow = Math.max(...selectedRows);
       items = [
@@ -77,10 +162,10 @@ const AllFirewallPolicyTable = () => {
         { label: "Create Group", onClick: () => console.log("Create Group clicked") },
         ...(firstSelectedRow === 0
           ? []
-          : [{ label: "Move Up", onClick: () => console.log("Move Up clicked") }]),
+          : [{ label: "Move Up", onClick: () => moveSelectedRowsUp() },]),
         ...(lastSelectedRow === rowData.length - 2
           ? []
-          : [{ label: "Move Down", onClick: () => console.log("Move Down clicked") }]),
+          : [{ label: "Move Down", onClick: () => moveSelectedRowsDown() },]),
       ];
       
       if (areAllSelectedRowsEnabled) {
