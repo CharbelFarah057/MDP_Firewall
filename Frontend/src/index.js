@@ -5,7 +5,6 @@ import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import './index.css';
 
 import Login from './LoginPage/Login';
-import WizardPageOne from './Wizard/WizardPageOne';
 import NetworkingPage from './Forefront_Interface/Pages/NetworkingPage';
 import FirewallPolicyPage from "./Forefront_Interface/Pages/FirewallPolicyPage";
 import WebAccessPolicyPage from "./Forefront_Interface/Pages/WebAccessPolicyPage";
@@ -17,7 +16,6 @@ root.render(
     <Switch>
       <Route path="/login" exact render={() => <Login />} />
       <Route path="/" exact render={() => <Redirect to="/login" />} />
-      <Route path="/wizard" exact render={() => <WizardPageOne />} />
       <Route path="/tmg/firewall-policy/" exact render={() => <Redirect to="/tmg/firewall-policy/all-firewall-policy" />} />
       <Route path="/tmg/firewall-policy/all-firewall-policy" render={() => <FirewallPolicyPage />} />
       <Route path="/tmg/web-access-policy" exact render={() => <WebAccessPolicyPage />} />

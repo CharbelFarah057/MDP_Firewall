@@ -1,8 +1,6 @@
 //FirewallPolicyRow.js
 import React from "react";
 import './FirewallPolicyRow.css'
-import MultiCellContextMenu from "./MultiCellContextMenu";
-import { rowData } from "./FirewallPolicyData";
 
 const FirewallPolicyRow = ({
 row,
@@ -24,6 +22,7 @@ onMultiCellContextMenu,
         fromicon: FromIcon,
         toicon: ToIcon,
         condicon: CondIcon,
+        disabledicon: DisabledIcon,
     } = row;
 
     const isCellSelected = (cellIndex) => selectedCells.some(
@@ -40,6 +39,11 @@ onMultiCellContextMenu,
                 return (
                     <>
                         <OrderIcon />
+                        {row.disabled && (
+                            <DisabledIcon
+                            style={{ marginLeft: "5px", marginRight: "5px" }}
+                            />
+                        )}
                         <span style={{ marginLeft: "5px" }}>{value}</span>
                     </>
                 );
@@ -146,7 +150,7 @@ onMultiCellContextMenu,
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id").map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id" && key !== "disabled").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
                         handleCellClick(rowId, cellIndex);

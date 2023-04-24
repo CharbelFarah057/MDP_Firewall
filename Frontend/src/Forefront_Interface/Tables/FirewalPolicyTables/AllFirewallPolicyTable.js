@@ -27,8 +27,27 @@ const AllFirewallPolicyTable = () => {
     const isLastRow = rowId === rowData.length - 1;
     const isFirstRow = rowId === 0;
     const isSecondToLastRow = rowId === rowData.length - 2;
+    const isRowDisabled = rowData[rowId].disabled;
+
+    // Check if all selected rows are enabled
+    const areAllSelectedRowsEnabled = selectedRows.every(
+      (selectedRowId) => !rowData[selectedRowId].disabled
+    );
+
+    // Check if all selected rows are disabled
+    const areAllSelectedRowsDisabled = selectedRows.every(
+      (selectedRowId) => rowData[selectedRowId].disabled
+    );
   
     let items;
+
+    const toggleDisableEnable = (action) => {
+      const updatedData = [...rowData];
+      selectedRows.forEach((selectedRowId) => {
+        updatedData[selectedRowId].disabled = !action;
+      });
+      setRowData(updatedData);
+    };
   
     if (selectedRows.length === 1) {
       items = [
@@ -44,7 +63,10 @@ const AllFirewallPolicyTable = () => {
               ...(isSecondToLastRow
                 ? []
                 : [{ label: "Move Down", onClick: () => console.log("Move Down clicked") }]),
-              { label: "Disable", onClick: () => console.log("Disable clicked") },
+                {
+                  label: isRowDisabled ? "Enable" : "Disable",
+                  onClick: () => toggleDisableEnable(isRowDisabled),
+                },
             ]),
       ];
     } else {
@@ -59,13 +81,28 @@ const AllFirewallPolicyTable = () => {
         ...(lastSelectedRow === rowData.length - 2
           ? []
           : [{ label: "Move Down", onClick: () => console.log("Move Down clicked") }]),
-        { label: "Disable", onClick: () => console.log("Disable clicked") },
       ];
+      
+      if (areAllSelectedRowsEnabled) {
+        items.push({
+          label: "Disable",
+          onClick: () => toggleDisableEnable(false),
+        });
+      } else if (areAllSelectedRowsDisabled) {
+        items.push({
+          label: "Enable",
+          onClick: () => toggleDisableEnable(true),
+        });
+      } else {
+        items.push(
+          { label: "Enable", onClick: () => toggleDisableEnable(true) },
+          { label: "Disable", onClick: () => toggleDisableEnable(false) }
+        );
+      }
     }
-  
     setContextMenu({ x, y, items });
   };
-
+  
   const handleGlobalClick = (event) => {
     if (!event.target.closest(".context-menu")) {
       setContextMenu(null);

@@ -3,6 +3,7 @@ import React from "react";
 import { AiOutlineNumber, AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import { FiUsers } from 'react-icons/fi';
 import { FaNetworkWired } from 'react-icons/fa';
+import { MdDisabledByDefault } from 'react-icons/md';
 import { FcGlobe } from 'react-icons/fc';
 
 export const rowData = [
@@ -17,6 +18,7 @@ export const rowData = [
     cond : 'All Users',
     desc : '',
     pol : 'Array',
+    disabled: false,
     ordicon: AiOutlineNumber,
     actionicon: (props) => (
       <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />
@@ -25,6 +27,7 @@ export const rowData = [
     fromicon: FcGlobe,
     toicon: FaNetworkWired,
     condicon: FiUsers,
+    disabledicon: MdDisabledByDefault,
   },
   {
     id : 1,
@@ -37,6 +40,7 @@ export const rowData = [
     cond : 'All Users',
     desc : '',
     pol : 'Array',
+    disabled: false,
     ordicon: AiOutlineNumber,
     actionicon: (props) => (
       <AiFillCheckCircle
@@ -53,6 +57,7 @@ export const rowData = [
     fromicon: FcGlobe,
     toicon: FaNetworkWired,
     condicon: FiUsers,
+    disabledicon: MdDisabledByDefault,
   },
   {
     id : 2,
@@ -65,6 +70,7 @@ export const rowData = [
     cond : 'All Users',
     desc : '',
     pol : 'Array',
+    disabled: false,
     ordicon: AiOutlineNumber,
     actionicon: (props) => (
       <AiFillCheckCircle
@@ -81,6 +87,7 @@ export const rowData = [
     fromicon: FcGlobe,
     toicon: FaNetworkWired,
     condicon: FiUsers,
+    disabledicon: MdDisabledByDefault,
   },
   {
     id : 3,
@@ -93,6 +100,7 @@ export const rowData = [
     cond : 'All Users',
     desc : '',
     pol : 'Array',
+    disabled: false,
     ordicon: AiOutlineNumber,
     actionicon: (props) => (
       <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />
@@ -101,5 +109,6 @@ export const rowData = [
     fromicon: FaNetworkWired,
     toicon: FaNetworkWired,
     condicon: FiUsers,
+    disabledicon: MdDisabledByDefault,
   },
 ];
