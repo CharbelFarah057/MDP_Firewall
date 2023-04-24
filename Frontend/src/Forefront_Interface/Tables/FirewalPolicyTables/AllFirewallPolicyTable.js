@@ -1,7 +1,7 @@
 //AllFirewallPolicyTable.js
 import React, { useState, useEffect  } from "react";
 import FirewallPolicyRow from "./FirewallPolicyRow";
-import ContextMenu from "./ContextMenu";
+import ContextMenu from "../ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import { rowData as initialRowData } from "./FirewallPolicyData";
 import "./FirewallPolicyTable.css";
