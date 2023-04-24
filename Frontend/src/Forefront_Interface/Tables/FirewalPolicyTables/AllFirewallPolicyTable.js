@@ -130,8 +130,20 @@ const AllFirewallPolicyTable = () => {
       setRowData(updatedData);
       setSelectedRows(sortedSelectedRows);
     };
-      
     
+    const deleteSelectedRows = () => {
+      const updatedData = rowData.filter((_, index) => !selectedRows.includes(index));
+    
+      // Update the order values
+      updatedData.forEach((row, index) => {
+        row.order = String(index + 1);
+        row.id = index;
+      });
+    
+      setRowData(updatedData);
+      setSelectedRows([]);
+    };
+        
     if (selectedRows.length === 1) {
       console.log("if")
       items = [
@@ -139,7 +151,7 @@ const AllFirewallPolicyTable = () => {
         ...(isLastRow
           ? []
           : [
-              { label: "Delete", onClick: () => console.log("Delete clicked") },
+            { label: "Delete", onClick: () => deleteSelectedRows() },
               { label: "Create Group", onClick: () => console.log("Create Group clicked") },
               ...(isFirstRow
                 ? []
@@ -158,7 +170,7 @@ const AllFirewallPolicyTable = () => {
       const firstSelectedRow = Math.min(...selectedRows);
       const lastSelectedRow = Math.max(...selectedRows);
       items = [
-        { label: "Delete", onClick: () => console.log("Delete clicked") },
+        { label: "Delete", onClick: () => deleteSelectedRows() },
         { label: "Create Group", onClick: () => console.log("Create Group clicked") },
         ...(firstSelectedRow === 0
           ? []
