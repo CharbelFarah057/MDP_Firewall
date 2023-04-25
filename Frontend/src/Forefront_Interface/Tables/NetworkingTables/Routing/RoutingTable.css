@@ -1,0 +1,42 @@
+/* FirewallPolicyTable.css */
+.firewall-policy-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .firewall-policy-table th,
+  .firewall-policy-table td {
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  .firewall-policy-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .firewall-policy-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .firewall-policy-table tr:hover {
+    background-color: white;
+  }
+  
+  .firewall-policy-table td.selected {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  .firewall-policy-table tr.selected {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  .firewall-policy-table tr.selected:hover {
+    background-color: #2196F3;
+  }
+  
+  .firewall-policy-table tr {
+    transition: background-color 0.3s ease-in-out;
+  }

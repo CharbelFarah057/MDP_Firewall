@@ -3,11 +3,11 @@ import Layout from '../Layouts/Layout';
 import React, { useState } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import NetworkingPageTabsComponent from '../TabComponent/NetworkingPageTabsComponent';
-import NetworksTable from '../Tables/NetworkingTables/NetworksTable';
-import NetworkSetTable from '../Tables/NetworkingTables/NetworkSetTable';
-import NetworkRulesTable from '../Tables/NetworkingTables/NetworkRulesTable';
-import NetworkAdaptersTable from '../Tables/NetworkingTables/NetworkAdaptersTable';
-import RoutingTable from '../Tables/NetworkingTables/RoutingTable';
+import NetworksTable from '../Tables/NetworkingTables/Networks/NetworksTable';
+import NetworkSetTable from '../Tables/NetworkingTables/NetworkSet/NetworkSetTable';
+import NetworkRulesTable from '../Tables/NetworkingTables/NetworkRules/NetworkRulesTable';
+import NetworkAdaptersTable from '../Tables/NetworkingTables/NetworkAdapter/NetworkAdaptersTable';
+import RoutingTable from '../Tables/NetworkingTables/Routing/RoutingTable';
 
 const NetworkingPage = () => {
   const location = useLocation();

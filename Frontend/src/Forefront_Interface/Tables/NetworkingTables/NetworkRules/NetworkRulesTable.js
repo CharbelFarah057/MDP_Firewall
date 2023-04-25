@@ -1,10 +1,9 @@
 //AllFirewallPolicyTable.js
 import React, { useState, useEffect } from "react";
-import FirewallPolicyRow from "./FirewallPolicyRow";
-import ContextMenu from "../ContextMenu";
-import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
-import { rowData as initialRowData } from "./FirewallPolicyData";
-import "./FirewallPolicyTable.css";
+import NetworkRulesRow from "./NetworkRulesRows";
+import ContextMenu from "../../ContextMenu";
+import { rowData as initialRowData } from "./NetworkRulesData";
+import "./NetworkRulesTable.css";
 
 const AllFirewallPolicyTable = () => {
   const [selectedCells, setSelectedCells] = useState([]);
@@ -26,7 +25,7 @@ const AllFirewallPolicyTable = () => {
   
     const isLastRow = rowId === rowData.length - 1;
     const isFirstRow = rowId === 0;
-    const isSecondToLastRow = rowId === rowData.length - 2;
+    const isSecondRow = rowId === 1;
     const isRowDisabled = rowData[rowId].disabled;
 
     // Check if all selected rows are enabled
@@ -39,8 +38,6 @@ const AllFirewallPolicyTable = () => {
       (selectedRowId) => rowData[selectedRowId].disabled
     );
   
-    let items;
-
     const toggleDisableEnable = (action) => {
       const updatedData = [...rowData];
       selectedRows.forEach((selectedRowId) => {
@@ -144,28 +141,19 @@ const AllFirewallPolicyTable = () => {
       setSelectedRows([]);
     };
 
-    const areSelectedRowsContiguous = () => {
-      const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
-      for (let i = 1; i < sortedSelectedRows.length; i++) {
-        if (sortedSelectedRows[i] !== sortedSelectedRows[i - 1] + 1) {
-          return false;
-        }
-      }
-      return true;
-    };
-        
+    let items;
+ 
     if (selectedRows.length === 1) {
       items = [
         { label: "Properties", onClick: () => console.log("Properties clicked") },
-        ...(isLastRow
+        ...(isFirstRow
           ? []
           : [
             { label: "Delete", onClick: () => deleteSelectedRows() },
-              { label: "Create Group", onClick: () => console.log("Create Group clicked") },
-              ...(isFirstRow
+              ...(isSecondRow
                 ? []
                 : [{ label: "Move Up", onClick: () => moveRowUp(rowId) }]),
-              ...(isSecondToLastRow
+              ...(isLastRow
                 ? []
                 : [{ label: "Move Down", onClick: () => moveRowDown(rowId) }]),
                 {
@@ -175,22 +163,14 @@ const AllFirewallPolicyTable = () => {
             ]),
       ];
     } else {
-      const firstSelectedRow = Math.min(...selectedRows);
+      const SecondSelectedRow = Math.min(...selectedRows);
       const lastSelectedRow = Math.max(...selectedRows);
       items = [
         { label: "Delete", onClick: () => deleteSelectedRows() },
-        ...(areSelectedRowsContiguous()
-          ? [
-              {
-                label: "Create Group",
-                onClick: () => console.log("Create Group clicked"),
-              },
-            ]
-          : []),
-        ...(firstSelectedRow === 0
+        ...(lastSelectedRow === rowData.length - 1
           ? []
           : [{ label: "Move Up", onClick: () => moveSelectedRowsUp() },]),
-        ...(lastSelectedRow === rowData.length - 2
+        ...(SecondSelectedRow === 1
           ? []
           : [{ label: "Move Down", onClick: () => moveSelectedRowsDown() },]),
       ];
@@ -230,9 +210,9 @@ const AllFirewallPolicyTable = () => {
 
   const handleCellClick = (rowId, cellIndex) => {
     if (
-      rowId === rowData.length - 1 ||
+      rowId === 0 ||
       cellIndex !== 2 ||
-      rowData[rowId].act === ""
+      rowData[rowId].relation === ""
     ) { return; }
     if (selectedRows.includes(rowId)) {
       const cell = { rowId, cellIndex };
@@ -250,37 +230,24 @@ const AllFirewallPolicyTable = () => {
     const y = event.clientY;
     const items = [
       {
-        label: "Allow",
-        checked: rowData[rowId].act === "Allow",
+        label: "Route",
+        checked: rowData[rowId].relation === "Route",
         onClick: () => {
           setRowData((prevRowData) => {
             const newRowData = [...prevRowData];
-            newRowData[rowId].act = "Allow";
-            newRowData[rowId].actionicon = (props) => (
-              <AiFillCheckCircle
-                {...props}
-                style={{
-                  ...props.style,
-                  color: 'white',
-                  backgroundColor: 'green',
-                  borderRadius: '50%',
-                }}
-              />
-            );
+            newRowData[rowId].relation = "Route";
             return newRowData;
           });
           setSelectedCells([]);
         },
       },
       {
-        label: "Deny",
-        checked: rowData[rowId].act === "Deny",
+        label: "NAT",
+        checked: rowData[rowId].relation === "NAT",
         onClick: () => {
           setRowData((prevRowData) => {
             const newRowData = [...prevRowData];
-            newRowData[rowId].act = "Deny";
-            newRowData[rowId].actionicon = (props) => (
-              <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />);
+            newRowData[rowId].relation = "NAT";
             return newRowData;
           });
           setSelectedCells([]);
@@ -292,7 +259,7 @@ const AllFirewallPolicyTable = () => {
 
   const handleRowCheckboxChange = (rowId) => {
     // If the last row is selected, deselect all other rows.
-    if (rowId === rowData.length - 1) {
+    if (rowId === 0) {
       setSelectedRows((prevRows) =>
       prevRows.includes(rowId)
       ? prevRows.filter((row) => row !== rowId)
@@ -304,7 +271,7 @@ const AllFirewallPolicyTable = () => {
         if (prevRows.includes(rowId)) {
           return prevRows.filter((row) => row !== rowId);
         } else {
-          return [...prevRows.filter((row) => row !== rowData.length - 1), rowId];
+          return [...prevRows, rowId];
         }
       });
     }
@@ -316,16 +283,15 @@ const AllFirewallPolicyTable = () => {
     if (selectedRows.length === rowData.length - 1) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(rowData.slice(0, -1).map((_, index) => index));
+      setSelectedRows(rowData.filter(row => row.id !== 0).map(row => row.id));
     }
     setSelectedCells([]);
     setselectedMultiCellClick([]);
   };
 
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
-    if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
-      rowId === rowData.length - 1 ||
-      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All Outbound Traffic"]))
+    if ((cellIndex !== 3 && cellIndex !== 4) ||
+      rowId === 0
       ) { 
         return; }
     if ( selectedRows.includes(rowId) ) {
@@ -352,13 +318,10 @@ const AllFirewallPolicyTable = () => {
             setRowData((prevRowData) => {
               const newRowData = [...prevRowData];
               if (cellIndex === 3) {
-                newRowData[rowId].protoc.splice(MultiCellIndex, 1);
+                newRowData[rowId].srcnetworks.splice(MultiCellIndex, 1);
               }
               if (cellIndex === 4) {
-                newRowData[rowId].FL.splice(MultiCellIndex, 1);
-              }
-              if (cellIndex === 5) {
-                newRowData[rowId].to.splice(MultiCellIndex, 1);
+                newRowData[rowId].dstnetworks.splice(MultiCellIndex, 1);
               }
               return newRowData;
             });
@@ -391,7 +354,6 @@ const AllFirewallPolicyTable = () => {
     } else {
       sortedData = [...rowData].sort((a, b) => {
         if (Array.isArray(a[key]) && Array.isArray(b[key])) {
-          console.log("here");
           // Join the arrays as strings for comparison
           const aString = a[key].join(", ");
           const bString = b[key].join(", ");
@@ -413,6 +375,8 @@ const AllFirewallPolicyTable = () => {
       setSortConfig({ key, direction });
     }
     setRowData(sortedData);
+    console.log(sortedData)
+    console.log(rowData)
   };
 
   const Arrow = ({ direction }) => (
@@ -453,18 +417,16 @@ const AllFirewallPolicyTable = () => {
             </th>
             {renderHeader("order", "Order")}
             {renderHeader("name", "Name")}
-            {renderHeader("act", "Action")}
-            {renderHeader("protoc", "Protocols")}
-            {renderHeader("from", "From / Listener")}
-            {renderHeader("to", "To")}
-            {renderHeader("cond", "Condition")}
+            {renderHeader("relation", "Relation")}
+            {renderHeader("srcnetworks", "Source Netowrks")}
+            {renderHeader("dstnetworks", "Destination Networks")}
+            {renderHeader("nataddress", "NAT Address")}
             {renderHeader("desc", "Description")}
-            {renderHeader("policy", "Policy")}
           </tr>
         </thead>
         <tbody>
           {rowData.map((row) => (
-            <FirewallPolicyRow
+            <NetworkRulesRow
               key={row.id}
               row={row}
               rowId={row.id}
