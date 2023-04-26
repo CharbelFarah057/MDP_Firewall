@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import NetworkSetRows from "./NetworkSetRows";
 import ContextMenu from "../../ContextMenu";
 import { rowData as initialRowData } from "./NetworkSetData";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import "./NetworkSetTable.css";
 
 const AllFirewallPolicyTable = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
-  const [rowData, setRowData] = useState(initialRowData);
+  const [rowData] = useState(initialRowData);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
 
   const handleRowContextMenu = (event, rowId) => {
@@ -61,66 +63,64 @@ const AllFirewallPolicyTable = () => {
       setSelectedRows(rowData.map(row => row.id));
     }
   };
-
-  const sortData = (key) => {
-    let direction;
-    if (sortConfig.key === key) {
-      if (sortConfig.direction === 'asc') {
-        direction = 'desc';
-      } else if (sortConfig.direction === 'desc') {
-        direction = 'default';
-      }
-    } else {
-      direction = 'asc';
-    }
   
-    let sortedData;
-    if (direction === 'default') {
-      sortedData = initialRowData;
-      setSortConfig({ key: null, direction: 'default' });
-    } else {
-      sortedData = [...rowData].sort((a, b) => {
-        if (Array.isArray(a[key]) && Array.isArray(b[key])) {
-          // Join the arrays as strings for comparison
-          const aString = a[key].join(", ");
-          const bString = b[key].join(", ");
+  const requestSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = 'default';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortRows = (rows) => {
+      const sortedRows = [...rows];
     
-          if (aString < bString) {
-            return direction === 'asc' ? -1 : 1;
+      sortedRows.sort((a, b) => {
+        if (Array.isArray(a[sortConfig.key]) && Array.isArray(b[sortConfig.key])) {
+          const arrayA = a[sortConfig.key].join(',').toLowerCase();
+          const arrayB = b[sortConfig.key].join(',').toLowerCase();
+          if (arrayA < arrayB) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
           }
-          if (aString > bString) {
-            return direction === 'asc' ? 1 : -1;
+          if (arrayA > arrayB) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
           }
-        } else if (a[key] < b[key]) {
-          return direction === 'asc' ? -1 : 1;
-        } else if (a[key] > b[key]) {
-          return direction === 'asc' ? 1 : -1;
+        } else {
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
         }
         return 0;
       });
     
-      setSortConfig({ key, direction });
-    }
-    setRowData(sortedData);
-  };
+      if (sortConfig.direction === 'default') {
+        return rowData;
+      }
+    
+      return sortedRows;
+    };
 
-  const Arrow = ({ direction }) => (
-    <span className="arrow">
-      {direction === "asc" ? "↑" : "↓"}
-    </span>
-  );
+  const renderArrowIcon = (key) => {
+      const iconStyle = {
+        fontSize: "0.8rem",
+        marginLeft: "5px",
+      };
 
-  const renderHeader = (key, label) => (
-    <th
-      onClick={() => sortData(key)}
-      style={{ cursor: "pointer" }}
-    >
-      {label}
-      {sortConfig.key === key && sortConfig.direction !== "default" && (
-        <Arrow direction={sortConfig.direction} />
-      )}
-    </th>
-  );
+      if (sortConfig.key === key) {
+        if (sortConfig.direction === 'asc') {
+          return <FontAwesomeIcon icon={faArrowUp} size="sm" style={iconStyle} />;
+        }
+        if (sortConfig.direction === 'desc') {
+          return <FontAwesomeIcon icon={faArrowDown} size="sm" style={iconStyle} />;
+        }
+      }
+      return null;
+    };
 
   return (
     <div
@@ -140,14 +140,22 @@ const AllFirewallPolicyTable = () => {
                 onChange={handleSelectAllCheckboxChange}
               />
             </th>
-            {renderHeader("name", "Name")}
-            {renderHeader("description", "Description")}
-            {renderHeader("type", "Type")}
-            {renderHeader("networks", "Networks")}
+            <th onClick={() => requestSort('name')}>
+              Name {renderArrowIcon('name')}
+            </th>
+            <th onClick={() => requestSort('description')}>
+              Description {renderArrowIcon('description')}
+            </th>
+            <th onClick={() => requestSort('type')}>
+              Type {renderArrowIcon('type')}
+            </th>
+            <th onClick={() => requestSort('networks')}>
+              Networks {renderArrowIcon('networks')}
+            </th>
           </tr>
         </thead>
         <tbody>
-          {rowData.map((row) => (
+          {sortRows(rowData).map((row) => (
             <NetworkSetRows
               key={row.id}
               row={row}
