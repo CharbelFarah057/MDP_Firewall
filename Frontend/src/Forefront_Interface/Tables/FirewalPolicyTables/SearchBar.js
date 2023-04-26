@@ -1,16 +1,40 @@
-import React from "react";
+//SearchBar.js
+import React, { useState } from "react";
 import "./SearchBar.css";
-import searchIcon from '../../../Images/search-magnifying-glass.svg';
+import searchIcon from "../../../Images/search-magnifying-glass.svg";
+import closeIcon from "../../../Images/cross-close.svg";
 
 const SearchBar = ({ onSearch }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
+    onSearch(e.target.value);
+  };
+
+  const handleClear = () => {
+    setInputValue("");
+    onSearch("");
+  };
+
   return (
     <div className="search-bar-container">
+      {inputValue ? (
+        <img
+          src={closeIcon}
+          alt="Clear"
+          className="icon close-icon"
+          onClick={handleClear}
+        />
+      ) : (
+        <img src={searchIcon} alt="Search" className="icon search-icon" />
+      )}
       <input
         className="search-input"
         type="text"
         placeholder="Search..."
-        onChange={(e) => onSearch(e.target.value)}
-        style={{ backgroundImage: `url(${searchIcon})` }}
+        value={inputValue}
+        onChange={handleChange}
       />
     </div>
   );

@@ -480,8 +480,8 @@ const AllFirewallPolicyTable = () => {
             <th onClick={() => requestSort('protoc')}>
               Protocols {renderArrowIcon('protoc')}
             </th>
-            <th onClick={() => requestSort('from')}>
-              From / Listener {renderArrowIcon('from')}
+            <th onClick={() => requestSort('FL')}>
+              From / Listener {renderArrowIcon('FL')}
             </th>
             <th onClick={() => requestSort('to')}>
               To {renderArrowIcon('to')}
