@@ -24,7 +24,7 @@ onRowCheckboxChange,
                 />
             </td>
             {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id").map(([key, value]) => (
-                <td className={ selectedRows.includes(rowId) ? "selected" : "" } >
+                <td key = {key} className={ selectedRows.includes(rowId) ? "selected" : "" } >
                 {renderCellContent(value)}
                 </td>
             ))}

@@ -6,6 +6,7 @@ import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import { rowData as initialRowData } from "./FirewallPolicyData";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import SearchBar from "./SearchBar";
 import "./FirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
@@ -15,6 +16,7 @@ const AllFirewallPolicyTable = () => {
   const [rowData, setRowData] = useState(initialRowData);
   const [selectedMultiCellClick, setselectedMultiCellClick] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
+  const [searchValue, setSearchValue] = useState("");
 
   const handleRowContextMenu = (event, rowId) => {
     // Check if the row is selected
@@ -432,6 +434,21 @@ const AllFirewallPolicyTable = () => {
       return null;
   };
 
+  const filterRows = (rows) => {
+    if (searchValue.trim() === "") {
+      return rows;
+    }
+
+    return rows.filter((row) =>
+      Object.values(row).some((cellValue) =>
+        cellValue
+          .toString()
+          .toLowerCase()
+          .includes(searchValue.trim().toLowerCase())
+      )
+    );
+  };
+
   return (
     <div
       style={{
@@ -440,6 +457,7 @@ const AllFirewallPolicyTable = () => {
         overflow: "auto",
       }}
     >
+      <SearchBar onSearch={(value) => setSearchValue(value)} />
       <table className="firewall-policy-table">
         <thead>
           <tr>
@@ -480,7 +498,7 @@ const AllFirewallPolicyTable = () => {
           </tr>
         </thead>
         <tbody>
-          {sortRows(rowData).map((row) => (
+          {filterRows(sortRows(rowData)).map((row) => (
             <FirewallPolicyRow
               key={row.id}
               row={row}

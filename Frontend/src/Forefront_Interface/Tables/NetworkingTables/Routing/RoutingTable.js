@@ -1,4 +1,4 @@
-//AllFirewallPolicyTable.js
+//RoutingTable.js
 import React, { useState } from "react";
 import RoutingRow from "./RoutingRows.js";
 import { rowData as initialRowData } from "./RoutingData";
@@ -68,7 +68,7 @@ const AllFirewallPolicyTable = () => {
       }
     
       return sortedRows;
-    };
+  };
 
   const renderArrowIcon = (key) => {
       const iconStyle = {
@@ -85,7 +85,7 @@ const AllFirewallPolicyTable = () => {
         }
       }
       return null;
-    };
+  };
 
   return (
     <div
@@ -120,7 +120,7 @@ const AllFirewallPolicyTable = () => {
           </tr>
         </thead>
         <tbody>
-          {sortRows(rowData).map((row) => (
+          {sortRows((initialRowData)).map((row) => (
             <RoutingRow
               key={row.id}
               row={row}
