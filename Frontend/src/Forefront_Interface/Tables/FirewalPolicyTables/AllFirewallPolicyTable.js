@@ -169,7 +169,17 @@ const AllFirewallPolicyTable = () => {
     setSelectedCells([]);
     setselectedMultiCellClick([]);
   };
-
+  
+  const handleSelectAllCheckboxChange = () => {
+    if (selectedRows.length === rowData.length - 1) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(rowData.slice(0, -1).map((_, index) => index));
+    }
+    setSelectedCells([]);
+    setselectedMultiCellClick([]);
+  };
+  
   useEffect(() => {
     if (selectedRows.length === 0) {
       setItemsSelectedRows([]);
@@ -211,17 +221,6 @@ const AllFirewallPolicyTable = () => {
     }
   }, [selectedRows, rowData]);
   
-    
-  const handleSelectAllCheckboxChange = () => {
-    if (selectedRows.length === rowData.length - 1) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(rowData.slice(0, -1).map((_, index) => index));
-    }
-    setSelectedCells([]);
-    setselectedMultiCellClick([]);
-  };
-
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
     if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
       rowId === rowData.length - 1 ||
