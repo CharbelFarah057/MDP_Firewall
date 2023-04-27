@@ -4,8 +4,18 @@ import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
 import ContextMenu from "../ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import initialRowData from "./AllFirewallPolicyData.json";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { toggleDisableEnable, 
+        moveRowDown,
+        moveRowUp, 
+        moveSelectedRowsDown, 
+        moveSelectedRowsUp, 
+        deleteSelectedRows, 
+        areSelectedRowsContiguous,
+        requestSort,
+        sortRows,
+        renderArrowIcon,
+        filterRows
+      } from "./AllFirewllPolicyUtilities";
 import SearchBar from "./SearchBar";
 import "./AllFirewallPolicyTable.css";
 
@@ -45,136 +55,23 @@ const AllFirewallPolicyTable = () => {
   
     let items;
 
-    const toggleDisableEnable = (action) => {
-      const updatedData = [...rowData];
-      selectedRows.forEach((selectedRowId) => {
-        updatedData[selectedRowId].disabled = !action;
-      });
-      setRowData(updatedData);
-    };
-
-    const moveRowUp = (rowId) => {
-      const updatedData = [...rowData];
-      const temp = updatedData[rowId - 1];
-      updatedData[rowId - 1] = updatedData[rowId];
-      updatedData[rowId] = temp;
-    
-      // Swap the order and id values
-      updatedData[rowId - 1].order = String(rowId);
-      updatedData[rowId].order = String(rowId + 1);
-      updatedData[rowId - 1].id = rowId - 1;
-      updatedData[rowId].id = rowId;
-    
-      setRowData(updatedData);
-      setSelectedRows([rowId - 1])
-    };
-    
-    const moveRowDown = (rowId) => {
-      const updatedData = [...rowData];
-      const temp = updatedData[rowId + 1];
-      updatedData[rowId + 1] = updatedData[rowId];
-      updatedData[rowId] = temp;
-    
-      // Swap the order and id values
-      updatedData[rowId + 1].order = String(rowId + 2);
-      updatedData[rowId].order = String(rowId + 1);
-      updatedData[rowId + 1].id = rowId + 1;
-      updatedData[rowId].id = rowId;
-    
-      setRowData(updatedData);
-      setSelectedRows([rowId + 1])
-    };
-
-    const moveSelectedRowsUp = () => {
-      const updatedData = [...rowData];
-      const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
-    
-      sortedSelectedRows.forEach((rowId, index) => {
-        if (rowId > index) {
-          const temp = updatedData[rowId - 1];
-          updatedData[rowId - 1] = updatedData[rowId];
-          updatedData[rowId] = temp;
-    
-          // Swap the order and id values
-          updatedData[rowId - 1].order = String(rowId);
-          updatedData[rowId].order = String(rowId + 1);
-          updatedData[rowId - 1].id = rowId - 1;
-          updatedData[rowId].id = rowId;
-    
-          // Update selected rows array
-          sortedSelectedRows[index] = rowId - 1;
-        }
-      });
-    
-      setRowData(updatedData);
-      setSelectedRows(sortedSelectedRows);
-    };
-    
-    const moveSelectedRowsDown = () => {
-      const updatedData = [...rowData];
-      const sortedSelectedRows = [...selectedRows].sort((a, b) => b - a);
-    
-      sortedSelectedRows.forEach((rowId, index) => {
-        if (rowId < rowData.length - 1 - index) {
-          const temp = updatedData[rowId + 1];
-          updatedData[rowId + 1] = updatedData[rowId];
-          updatedData[rowId] = temp;
-    
-          // Swap the order and id values
-          updatedData[rowId + 1].order = String(rowId + 2);
-          updatedData[rowId].order = String(rowId + 1);
-          updatedData[rowId + 1].id = rowId + 1;
-          updatedData[rowId].id = rowId;
-    
-          // Update selected rows array
-          sortedSelectedRows[index] = rowId + 1;
-        }
-      });
-    
-      setRowData(updatedData);
-      setSelectedRows(sortedSelectedRows);
-    };
-    
-    const deleteSelectedRows = () => {
-      const updatedData = rowData.filter((_, index) => !selectedRows.includes(index));
-    
-      // Update the order values
-      updatedData.forEach((row, index) => {
-        row.order = String(index + 1);
-        row.id = index;
-      });
-    
-      setRowData(updatedData);
-      setSelectedRows([]);
-    };
-
-    const areSelectedRowsContiguous = () => {
-      const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
-      for (let i = 1; i < sortedSelectedRows.length; i++) {
-        if (sortedSelectedRows[i] !== sortedSelectedRows[i - 1] + 1) {
-          return false;
-        }
-      }
-      return true;
-    };
-        
     if (selectedRows.length === 1) {
       items = [
         { label: "Properties", onClick: () => console.log("Properties clicked") },
         ...(isLastRow
           ? []
           : [
-            { label: "Delete", onClick: () => deleteSelectedRows() },
+            { label: "Delete", onClick: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows) },
               { label: "Create Group", onClick: () => console.log("Create Group clicked") },
               ...(isFirstRow
                 ? []
-                : [{ label: "Move Up", onClick: () => moveRowUp(rowId) }]),
+                : [{ label: "Move Up", onClick: () => moveRowUp(rowData, setRowData, setSelectedRows, rowId) }]),
               ...(isSecondToLastRow
                 ? []
-                : [{ label: "Move Down", onClick: () => moveRowDown(rowId) }]),
+                : [{ label: "Move Down", onClick: () => moveRowDown(rowData, setRowData, setSelectedRows, rowId) }]),
                 {
                   label: isRowDisabled ? "Enable" : "Disable",
-                  onClick: () => toggleDisableEnable(isRowDisabled),
+                  onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
                 },
             ]),
       ];
@@ -182,8 +79,8 @@ const AllFirewallPolicyTable = () => {
       const firstSelectedRow = Math.min(...selectedRows);
       const lastSelectedRow = Math.max(...selectedRows);
       items = [
-        { label: "Delete", onClick: () => deleteSelectedRows() },
-        ...(areSelectedRowsContiguous()
+        { label: "Delete", onClick: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows) },
+        ...(areSelectedRowsContiguous(selectedRows)
           ? [
               {
                 label: "Create Group",
@@ -193,26 +90,26 @@ const AllFirewallPolicyTable = () => {
           : []),
         ...(firstSelectedRow === 0
           ? []
-          : [{ label: "Move Up", onClick: () => moveSelectedRowsUp() },]),
+          : [{ label: "Move Up", onClick: () => moveSelectedRowsUp(rowData, selectedRows, setRowData, setSelectedRows) },]),
         ...(lastSelectedRow === rowData.length - 2
           ? []
-          : [{ label: "Move Down", onClick: () => moveSelectedRowsDown() },]),
+          : [{ label: "Move Down", onClick: () => moveSelectedRowsDown(rowData, selectedRows, setRowData, setSelectedRows) },]),
       ];
       
       if (areAllSelectedRowsEnabled) {
         items.push({
           label: "Disable",
-          onClick: () => toggleDisableEnable(false),
+          onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, false),
         });
       } else if (areAllSelectedRowsDisabled) {
         items.push({
           label: "Enable",
-          onClick: () => toggleDisableEnable(true),
+          onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, true),
         });
       } else {
         items.push(
-          { label: "Enable", onClick: () => toggleDisableEnable(true) },
-          { label: "Disable", onClick: () => toggleDisableEnable(false) }
+          { label: "Enable", onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, true) },
+          { label: "Disable", onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, false) }
         );
       }
     }
@@ -376,79 +273,6 @@ const AllFirewallPolicyTable = () => {
     setContextMenu({ x, y, items });
   };
 
-  const requestSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
-      direction = 'default';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const sortRows = (rows) => {
-      const sortedRows = [...rows];
-    
-      sortedRows.sort((a, b) => {
-        if (Array.isArray(a[sortConfig.key]) && Array.isArray(b[sortConfig.key])) {
-          const arrayA = a[sortConfig.key].join(',').toLowerCase();
-          const arrayB = b[sortConfig.key].join(',').toLowerCase();
-          if (arrayA < arrayB) {
-            return sortConfig.direction === 'asc' ? -1 : 1;
-          }
-          if (arrayA > arrayB) {
-            return sortConfig.direction === 'asc' ? 1 : -1;
-          }
-        } else {
-          if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === 'asc' ? -1 : 1;
-          }
-          if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === 'asc' ? 1 : -1;
-          }
-        }
-        return 0;
-      });
-    
-      if (sortConfig.direction === 'default') {
-        return rowData;
-      }
-    
-      return sortedRows;
-  };
-
-  const renderArrowIcon = (key) => {
-      const iconStyle = {
-        fontSize: "0.8rem",
-        marginLeft: "5px",
-      };
-
-      if (sortConfig.key === key) {
-        if (sortConfig.direction === 'asc') {
-          return <FontAwesomeIcon icon={faArrowUp} size="sm" style={iconStyle} />;
-        }
-        if (sortConfig.direction === 'desc') {
-          return <FontAwesomeIcon icon={faArrowDown} size="sm" style={iconStyle} />;
-        }
-      }
-      return null;
-  };
-
-  const filterRows = (rows) => {
-    if (searchValue.trim() === "") {
-      return rows;
-    }
-
-    return rows.filter((row) =>
-      Object.values(row).some((cellValue) =>
-        cellValue
-          .toString()
-          .toLowerCase()
-          .includes(searchValue.trim().toLowerCase())
-      )
-    );
-  };
-
   return (
     <div
       style={{
@@ -468,37 +292,37 @@ const AllFirewallPolicyTable = () => {
                 onChange={handleSelectAllCheckboxChange}
               />
             </th>
-            <th onClick={() => requestSort('order')}>
-              Order {renderArrowIcon('order')}
+            <th onClick={() => requestSort('order', sortConfig, setSortConfig)}>
+              Order {renderArrowIcon('order', sortConfig)}
             </th>
-            <th onClick={() => requestSort('name')}>
-              Name {renderArrowIcon('name')}
+            <th onClick={() => requestSort('name', sortConfig, setSortConfig)}>
+              Name {renderArrowIcon('name', sortConfig)}
             </th>
-            <th onClick={() => requestSort('act')}>
-              Action {renderArrowIcon('act')}
+            <th onClick={() => requestSort('act', sortConfig, setSortConfig)}>
+              Action {renderArrowIcon('act', sortConfig)}
             </th>
-            <th onClick={() => requestSort('protoc')}>
-              Protocols {renderArrowIcon('protoc')}
+            <th onClick={() => requestSort('protoc', sortConfig, setSortConfig)}>
+              Protocols {renderArrowIcon('protoc', sortConfig)}
             </th>
-            <th onClick={() => requestSort('FL')}>
-              From / Listener {renderArrowIcon('FL')}
+            <th onClick={() => requestSort('FL', sortConfig, setSortConfig)}>
+              From / Listener {renderArrowIcon('FL', sortConfig)}
             </th>
-            <th onClick={() => requestSort('to')}>
-              To {renderArrowIcon('to')}
+            <th onClick={() => requestSort('to', sortConfig, setSortConfig)}>
+              To {renderArrowIcon('to', sortConfig)}
             </th>
-            <th onClick={() => requestSort('cond')}>
-              Condition {renderArrowIcon('cond')}
+            <th onClick={() => requestSort('cond', sortConfig, setSortConfig)}>
+              Condition {renderArrowIcon('cond', sortConfig)}
             </th>
-            <th onClick={() => requestSort('desc')}>
-              Description {renderArrowIcon('desc')}
+            <th onClick={() => requestSort('desc', sortConfig, setSortConfig)}>
+              Description {renderArrowIcon('desc', sortConfig)}
             </th>
-            <th onClick={() => requestSort('policy')}>
-              Policy {renderArrowIcon('policy')}
+            <th onClick={() => requestSort('policy', sortConfig, setSortConfig)}>
+              Policy {renderArrowIcon('policy', sortConfig)}
             </th>
           </tr>
         </thead>
         <tbody>
-          {filterRows(sortRows(rowData)).map((row) => (
+          {filterRows(sortRows(rowData, sortConfig, rowData), searchValue).map((row) => (
             <AllFirewallPolicyRow
               key={row.id}
               row={row}
