@@ -10,7 +10,7 @@ import {areSelectedRowsContiguous,
         renderArrowIcon,
         filterRows,
         SingleRowContextMenu,
-        MultiRowContextMenu} from "./AllFirewllPolicyUtilities";
+        MultiRowContextMenu} from "./AllFirewallPolicyUtilities.js";
 import ToolBarComponent from "./ToolBarComponent.js";
 import "./AllFirewallPolicyTable.css";
 

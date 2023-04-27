@@ -9,7 +9,7 @@ import {MultiRowContextMenu,
         SingleRowContextMenu, 
         SingleRowToolbarIcons, 
         MultiRowToolbarIcons,
-        tooltip_text} from "./AllFirewllPolicyUtilities";
+        tooltip_text} from "./AllFirewallPolicyUtilities.js";
 
 const ToolBarComponent = ({ onSearch, itemsSelectedRows, rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled }) => {
   const [inputValue, setInputValue] = useState("");
