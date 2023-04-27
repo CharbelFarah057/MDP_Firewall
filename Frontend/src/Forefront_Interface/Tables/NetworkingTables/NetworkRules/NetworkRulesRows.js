@@ -1,6 +1,10 @@
 //NetworkRulesRow.js
 import React from "react";
-import './NetworkRulesRow.css'
+import './NetworkRulesRow.css';
+import { FaNetworkWired } from 'react-icons/fa';
+import { FcGlobe } from 'react-icons/fc';
+import {HiOutlineDesktopComputer} from 'react-icons/hi';
+import { MdDisabledByDefault } from 'react-icons/md';
 
 const NetworkRulesRow = ({
 row,
@@ -15,12 +19,6 @@ selectedMultiCellClick,
 handleMultiCellClick,
 onMultiCellContextMenu,
 }) => {
-    const {
-        icon : Icon,
-        srcicon : SrcIcon,
-        dsticon : DstIcon,
-        disabledicon : DisabledIcon,
-    } = row;
 
     const isCellSelected = (cellIndex) => selectedCells.some(
         cell => cell.rowId === rowId && cell.cellIndex === cellIndex
@@ -35,9 +33,9 @@ onMultiCellContextMenu,
             case "order":
                 return (
                     <>
-                        <Icon />
+                        <HiOutlineDesktopComputer />
                         {row.disabled && (
-                            <DisabledIcon
+                            <MdDisabledByDefault
                             style={{ marginLeft: "5px", marginRight: "5px" }}
                             />
                         )}
@@ -62,7 +60,7 @@ onMultiCellContextMenu,
                                 isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
-                            <SrcIcon className="icon-padding" />
+                            {srcnetwork === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
                             {srcnetwork}
                         </li>
                         ))}
@@ -86,7 +84,7 @@ onMultiCellContextMenu,
                                 isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
-                            <DstIcon className="icon-padding" />
+                            {dstnetworks === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
                             {dstnetworks}
                         </li>
                         ))}

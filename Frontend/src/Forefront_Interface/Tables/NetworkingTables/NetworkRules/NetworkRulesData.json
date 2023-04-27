@@ -1,0 +1,35 @@
+[
+    {
+    "id" : 0,
+    "order" : "1",
+    "name" : "Local Host Access",
+    "relation" : "Route",
+    "srcnetworks" : ["Local Host"],
+    "dstnetworks" : ["All Networks (and Local Host)"],
+    "nataddress" : "",
+    "desc" : "",
+    "disabled": false
+    },
+    {
+    "id" : 1,
+    "order" : "2",
+    "name" : "VPN Clients to Internal Network",
+    "relation" : "Route",
+    "srcnetworks" : ["Internal"],
+    "dstnetworks" : ["Internal"],
+    "nataddress" : "",
+    "desc" : "",
+    "disabled": false
+    },
+    {
+    "id" : 2,
+    "order" : "3",
+    "name" : "Internet Access",
+    "relation" : "NAT",
+    "srcnetworks" : ["Internal"],
+    "dstnetworks" : ["External", "Internal"],
+    "nataddress" : "Default IP address",
+    "desc" : "",
+    "disabled": false
+    }
+]

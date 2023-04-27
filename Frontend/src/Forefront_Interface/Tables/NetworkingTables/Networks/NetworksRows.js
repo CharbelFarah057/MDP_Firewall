@@ -1,6 +1,9 @@
 //NetworksRows.js
 import React from "react";
-import './NetworksRow.css'
+import './NetworksRow.css';
+import { FcGlobe } from 'react-icons/fc';
+import { FaNetworkWired } from 'react-icons/fa';
+import { VscSymbolEnum, VscSymbolConstant } from 'react-icons/vsc';
 
 const NetworksRows = ({
 row,
@@ -9,17 +12,13 @@ selectedRows,
 onRowCheckboxChange,
 onRowContextMenu,
 }) => {
-    const {
-        icon : Icon,
-        adicon : AddressRangeIcon,
-    } = row;
 
     const renderCellContent = (key, value) => {
         switch (key) {
             case "name":
                 return (
                     <>
-                        <Icon />
+                        {value === 'External' ? <FcGlobe /> : <FaNetworkWired />}
                         <span style={{ marginLeft: "5px" }}>{value}</span>
                     </>
                 );
@@ -29,8 +28,19 @@ onRowContextMenu,
                     <ul className="protocol-list">
                         {value.map((addressrange, index) => (
                         <li key={index}>
-                            <AddressRangeIcon className="icon-padding" />
-                            {addressrange}
+                            {value.length > 1 ? (
+                            <>
+                                <VscSymbolEnum className="icon-padding" />
+                                {addressrange}
+                            </>
+                            ) : value.length === 1 ? (
+                            <>
+                                <VscSymbolConstant className="icon-padding" />
+                                {addressrange}
+                            </>
+                            ) : (
+                            addressrange
+                            )}
                         </li>
                         ))}
                     </ul>

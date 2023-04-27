@@ -1,13 +1,13 @@
 //AllFirewallPolicyTable.js
 import React, { useState, useEffect } from "react";
-import FirewallPolicyRow from "./FirewallPolicyRow";
+import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
 import ContextMenu from "../ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
-import { rowData as initialRowData } from "./FirewallPolicyData";
+import initialRowData from "./AllFirewallPolicyData.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import SearchBar from "./SearchBar";
-import "./FirewallPolicyTable.css";
+import "./AllFirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
   const [selectedCells, setSelectedCells] = useState([]);
@@ -499,7 +499,7 @@ const AllFirewallPolicyTable = () => {
         </thead>
         <tbody>
           {filterRows(sortRows(rowData)).map((row) => (
-            <FirewallPolicyRow
+            <AllFirewallPolicyRow
               key={row.id}
               row={row}
               rowId={row.id}

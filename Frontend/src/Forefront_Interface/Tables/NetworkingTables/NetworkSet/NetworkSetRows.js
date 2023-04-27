@@ -1,6 +1,7 @@
 //NetworkSetRows.js
 import React from "react";
 import './NetworkSetRows.css'
+import { FaNetworkWired } from 'react-icons/fa';
 
 const NetworkSetRows = ({
 row,
@@ -9,17 +10,13 @@ selectedRows,
 onRowCheckboxChange,
 onRowContextMenu,
 }) => {
-    const {
-        icon : Icon,
-        neticon : NetIcon,
-    } = row;
 
     const renderCellContent = (key, value) => {
         switch (key) {
             case "name":
                 return (
                     <>
-                        <Icon />
+                        <FaNetworkWired />
                         <span style={{ marginLeft: "5px" }}>{value}</span>
                     </>
                 );
@@ -30,7 +27,7 @@ onRowContextMenu,
                           <ul className="protocol-list">
                             {value.map((network, index) => (
                               <li key={index}>
-                                {NetIcon && <NetIcon className="icon-padding" />}
+                                {<FaNetworkWired className="icon-padding" />}
                                 {network}
                               </li>
                             ))}

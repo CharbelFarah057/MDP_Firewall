@@ -1,5 +1,7 @@
 //NetworkRulesRow.js
 import React from "react";
+import {TbNetwork} from 'react-icons/tb';
+import { MdDisabledByDefault } from 'react-icons/md';
 
 const NetworkAdadptersRows = ({
 row,
@@ -8,19 +10,15 @@ selectedRows,
 onRowCheckboxChange,
 onRowContextMenu,
 }) => {
-    const {
-        icon : Icon,
-        disabledicon : DisabledIcon,
-    } = row;
 
     const renderCellContent = (key, value) => {
         switch (key) {
             case "name":
                 return (
                     <>
-                        <Icon />
+                        <TbNetwork />
                         {row.disabled && (
-                            <DisabledIcon
+                            <MdDisabledByDefault
                             style={{ marginLeft: "5px", marginRight: "5px" }}
                             />
                         )}

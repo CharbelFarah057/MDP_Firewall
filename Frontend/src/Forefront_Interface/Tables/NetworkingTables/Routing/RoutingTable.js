@@ -1,7 +1,7 @@
 //RoutingTable.js
 import React, { useState } from "react";
 import RoutingRow from "./RoutingRows.js";
-import { rowData as initialRowData } from "./RoutingData";
+import initialRowData from "./RoutingData.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import "./RoutingTable.css";

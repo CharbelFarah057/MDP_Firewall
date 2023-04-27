@@ -1,8 +1,13 @@
 //FirewallPolicyRow.js
 import React from "react";
-import './FirewallPolicyRow.css'
+import './AllFirewallPolicyRow.css';
+import { AiOutlineNumber, AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
+import { FiUsers } from 'react-icons/fi';
+import { FaNetworkWired } from 'react-icons/fa';
+import { MdDisabledByDefault } from 'react-icons/md';
+import { FcGlobe } from 'react-icons/fc';
 
-const FirewallPolicyRow = ({
+const AllFirewallPolicyRow = ({
 row,
 rowId,
 handleCellClick,
@@ -15,15 +20,6 @@ selectedMultiCellClick,
 handleMultiCellClick,
 onMultiCellContextMenu,
 }) => {
-    const {
-        ordicon: OrderIcon,
-        actionicon: ActionIcon,
-        protocicon: ProtocIcon,
-        fromicon: FromIcon,
-        toicon: ToIcon,
-        condicon: CondIcon,
-        disabledicon: DisabledIcon,
-    } = row;
 
     const isCellSelected = (cellIndex) => selectedCells.some(
         cell => cell.rowId === rowId && cell.cellIndex === cellIndex
@@ -38,9 +34,9 @@ onMultiCellContextMenu,
             case "order":
                 return (
                     <>
-                        <OrderIcon />
+                        <AiOutlineNumber />
                         {row.disabled && (
-                            <DisabledIcon
+                            <MdDisabledByDefault
                             style={{ marginLeft: "5px", marginRight: "5px" }}
                             />
                         )}
@@ -50,7 +46,14 @@ onMultiCellContextMenu,
             case "act":
                 return (
                     <>
-                        <ActionIcon />
+                        {value === 'Deny' ? 
+                        <AiOutlineStop style={{ color: 'red' }} /> : 
+                        <AiFillCheckCircle style={{
+                            color: 'white',
+                            backgroundColor: 'green',
+                            borderRadius: '50%',
+                        }} />
+                        }
                         <span style={{ marginLeft: "5px" }}>{value}</span>
                     </>
                 );
@@ -72,7 +75,7 @@ onMultiCellContextMenu,
                                 isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
-                            <ProtocIcon className="icon-padding" />
+                            <FaNetworkWired className="icon-padding" />
                             {protocol}
                         </li>
                         ))}
@@ -96,7 +99,7 @@ onMultiCellContextMenu,
                                 isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
-                            <FromIcon className="icon-padding" />
+                            {FL === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
                             {FL}
                         </li>
                         ))}
@@ -120,7 +123,7 @@ onMultiCellContextMenu,
                                 isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
-                            <ToIcon className="icon-padding" />
+                            {To === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
                             {To}
                         </li>
                         ))}
@@ -130,7 +133,7 @@ onMultiCellContextMenu,
             case "cond":
                 return (
                     <>
-                        <CondIcon />
+                        <FiUsers />
                         <span style={{ marginLeft: "5px" }}>{value}</span>
                     </>
                 );
@@ -166,4 +169,4 @@ onMultiCellContextMenu,
     );
 };
 
-export default FirewallPolicyRow;
+export default AllFirewallPolicyRow;

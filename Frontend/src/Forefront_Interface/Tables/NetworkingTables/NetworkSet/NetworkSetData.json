@@ -1,0 +1,23 @@
+[
+    {
+      "id" : 0,
+      "name": "All Networks (and Local Host)",
+      "description": "This predefined network set includes all networks. Predefined network sets cannot be modified.",
+      "type": "Exclude",
+      "networks": ["External"]
+    },
+    {
+      "id" : 1,
+      "name": "All Networks (and Local Host)",
+      "description": "This predefined network set includes all networks. Predefined network sets cannot be modified.",
+      "type": "Exclude",
+      "networks": []
+    },
+    {
+      "id" : 2,
+      "name": "Forefront Protection Manager Monitored Networks",
+      "description": "This Predefined Network set of networks monitored by Forefront Protection Manager",
+      "type": "Include",
+      "networks": ["Internal", "External"]
+    }
+]

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import NetworkSetRows from "./NetworkSetRows";
 import ContextMenu from "../../ContextMenu";
-import { rowData as initialRowData } from "./NetworkSetData";
+import initialRowData from "./NetworkSetData.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import "./NetworkSetTable.css";
