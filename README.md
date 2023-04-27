@@ -11,4 +11,4 @@ What to do:
 	- ~~Implement the toolbar~~
 	- ~~Install the Search Bar~~
 	- Properties
-	- semi done with the add
+	- semi done with the add left the 3 other pages and to show the add
