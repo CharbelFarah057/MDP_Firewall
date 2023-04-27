@@ -1,6 +1,6 @@
 //SearchBar.js
 import React, { useState } from "react";
-import "./SearchBar.css";
+import "./ToolBarComponent.css";
 import searchIcon from "../../../Images/search-magnifying-glass.svg";
 import closeIcon from "../../../Images/cross-close.svg";
 

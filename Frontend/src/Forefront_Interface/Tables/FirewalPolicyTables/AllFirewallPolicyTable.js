@@ -15,7 +15,7 @@ import {toggleDisableEnable,
         sortRows,
         renderArrowIcon,
         filterRows} from "./AllFirewllPolicyUtilities";
-import SearchBar from "./SearchBar";
+import SearchBar from "./ToolBarComponent";
 import "./AllFirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
