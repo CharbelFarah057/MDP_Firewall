@@ -8,7 +8,7 @@ export const toggleDisableEnable = (rowData, selectedRows, setRowData, action) =
       updatedData[selectedRowId].disabled = !action;
     });
     setRowData(updatedData);
-  };
+};
 
 export const moveRowUp = (rowData, setRowData, setSelectedRows, rowId) => {
     const updatedData = [...rowData];
