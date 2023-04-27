@@ -4,7 +4,7 @@ import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
 import ContextMenu from "../ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import initialRowData from "./AllFirewallPolicyData.json";
-import { toggleDisableEnable, 
+import {toggleDisableEnable, 
         moveRowDown,
         moveRowUp, 
         moveSelectedRowsDown, 
@@ -14,8 +14,7 @@ import { toggleDisableEnable,
         requestSort,
         sortRows,
         renderArrowIcon,
-        filterRows
-      } from "./AllFirewllPolicyUtilities";
+        filterRows} from "./AllFirewllPolicyUtilities";
 import SearchBar from "./SearchBar";
 import "./AllFirewallPolicyTable.css";
 
