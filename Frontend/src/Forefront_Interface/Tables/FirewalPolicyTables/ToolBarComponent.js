@@ -1,10 +1,10 @@
-//SearchBar.js
+//ToolBarComponent.js
 import React, { useState } from "react";
 import "./ToolBarComponent.css";
 import searchIcon from "../../../Images/search-magnifying-glass.svg";
 import closeIcon from "../../../Images/cross-close.svg";
 
-const SearchBar = ({ onSearch }) => {
+const ToolBarComponent = ({ onSearch }) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleChange = (e) => {
@@ -18,7 +18,7 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div className="search-bar-container">
+    <div className="tool-bar-container">
       {inputValue ? (
         <img
           src={closeIcon}
@@ -40,4 +40,4 @@ const SearchBar = ({ onSearch }) => {
   );
 };
 
-export default SearchBar;
+export default ToolBarComponent;

@@ -15,12 +15,13 @@ import {toggleDisableEnable,
         sortRows,
         renderArrowIcon,
         filterRows} from "./AllFirewllPolicyUtilities";
-import SearchBar from "./ToolBarComponent";
+import ToolBarComponent from "./ToolBarComponent.js";
 import "./AllFirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
   const [selectedCells, setSelectedCells] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [itemsselectedRows, setItemsSelectedRows] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
   const [rowData, setRowData] = useState(initialRowData);
   const [selectedMultiCellClick, setselectedMultiCellClick] = useState([]);
@@ -37,80 +38,38 @@ const AllFirewallPolicyTable = () => {
     const x = event.clientX;
     const y = event.clientY;
   
-    const isLastRow = rowId === rowData.length - 1;
-    const isFirstRow = rowId === 0;
-    const isSecondToLastRow = rowId === rowData.length - 2;
     const isRowDisabled = rowData[rowId].disabled;
-
-    // Check if all selected rows are enabled
-    const areAllSelectedRowsEnabled = selectedRows.every(
-      (selectedRowId) => !rowData[selectedRowId].disabled
-    );
-
-    // Check if all selected rows are disabled
-    const areAllSelectedRowsDisabled = selectedRows.every(
-      (selectedRowId) => rowData[selectedRowId].disabled
-    );
   
     let items;
 
     if (selectedRows.length === 1) {
-      items = [
-        { label: "Properties", onClick: () => console.log("Properties clicked") },
-        ...(isLastRow
-          ? []
-          : [
-            { label: "Delete", onClick: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows) },
-              { label: "Create Group", onClick: () => console.log("Create Group clicked") },
-              ...(isFirstRow
-                ? []
-                : [{ label: "Move Up", onClick: () => moveRowUp(rowData, setRowData, setSelectedRows, rowId) }]),
-              ...(isSecondToLastRow
-                ? []
-                : [{ label: "Move Down", onClick: () => moveRowDown(rowData, setRowData, setSelectedRows, rowId) }]),
-                {
-                  label: isRowDisabled ? "Enable" : "Disable",
-                  onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
-                },
-            ]),
-      ];
-    } else {
-      const firstSelectedRow = Math.min(...selectedRows);
-      const lastSelectedRow = Math.max(...selectedRows);
-      items = [
-        { label: "Delete", onClick: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows) },
-        ...(areSelectedRowsContiguous(selectedRows)
-          ? [
-              {
-                label: "Create Group",
-                onClick: () => console.log("Create Group clicked"),
-              },
-            ]
-          : []),
-        ...(firstSelectedRow === 0
-          ? []
-          : [{ label: "Move Up", onClick: () => moveSelectedRowsUp(rowData, selectedRows, setRowData, setSelectedRows) },]),
-        ...(lastSelectedRow === rowData.length - 2
-          ? []
-          : [{ label: "Move Down", onClick: () => moveSelectedRowsDown(rowData, selectedRows, setRowData, setSelectedRows) },]),
-      ];
+      const labelToFunctionMap = {
+        Properties: () => console.log("Properties clicked"),
+        Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
+        "Create Group": () => console.log("Create Group clicked"),
+        "Move Up": () => moveRowUp(rowData, setRowData, setSelectedRows, rowId),
+        "Move Down": () => moveRowDown(rowData, setRowData, setSelectedRows, rowId),
+        Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
+        Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
+      };
       
-      if (areAllSelectedRowsEnabled) {
-        items.push({
-          label: "Disable",
-          onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, false),
-        });
-      } else if (areAllSelectedRowsDisabled) {
-        items.push({
-          label: "Enable",
-          onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, true),
-        });
-      } else {
-        items.push(
-          { label: "Enable", onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, true) },
-          { label: "Disable", onClick: () => toggleDisableEnable(rowData, selectedRows, setRowData, false) }
-        );
-      }
+      items = itemsselectedRows.map((label) => ({
+        label: label === "Enable" && isRowDisabled ? "Disable" : label,
+        onClick: labelToFunctionMap[label],
+      }));
+    } else {
+      const labelToFunctionMap = {
+        Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
+        "Create Group": () => console.log("Create Group clicked"),
+        "Move Up":  () => moveSelectedRowsUp(rowData, selectedRows, setRowData, setSelectedRows),
+        "Move Down":  () => moveSelectedRowsDown(rowData, selectedRows, setRowData, setSelectedRows),
+        Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, true),
+        Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, false),
+      };
+      items = itemsselectedRows.map((label) => ({
+        label,
+        onClick: labelToFunctionMap[label],
+      }));
     }
     setContextMenu({ x, y, items });
   };
@@ -191,7 +150,6 @@ const AllFirewallPolicyTable = () => {
   };
 
   const handleRowCheckboxChange = (rowId) => {
-    // If the last row is selected, deselect all other rows.
     if (rowId === rowData.length - 1) {
       setSelectedRows((prevRows) =>
       prevRows.includes(rowId)
@@ -211,6 +169,48 @@ const AllFirewallPolicyTable = () => {
     setSelectedCells([]);
     setselectedMultiCellClick([]);
   };
+
+  useEffect(() => {
+    if (selectedRows.length === 0) {
+      setItemsSelectedRows([]);
+    } else if (selectedRows.length === 1)  {
+      const rowId = selectedRows[0];
+      const isLastRow = rowId === rowData.length - 1;
+      const isFirstRow = rowId === 0;
+      const isSecondToLastRow = rowId === rowData.length - 2;
+      const isRowDisabled = rowData[rowId].disabled;
+  
+      setItemsSelectedRows([
+        "Properties",
+        ...(isLastRow ? [] : ["Delete", "Create Group"]),
+        ...(isFirstRow ? [] : ["Move Up"]),
+        ...(isSecondToLastRow ? [] : ["Move Down", isRowDisabled ? "Enable" : "Disable"]),
+      ]);
+    } else {
+      const firstSelectedRow = Math.min(...selectedRows);
+      const lastSelectedRow = Math.max(...selectedRows);
+      const areAllSelectedRowsEnabled = selectedRows.every((rowId) => !rowData[rowId].disabled);
+      const areAllSelectedRowsDisabled = selectedRows.every((rowId) => rowData[rowId].disabled);
+
+      let multiSelectedItems = [
+        "Delete",
+        ...(areSelectedRowsContiguous(selectedRows) ? ["Create Group"] : []),
+        ...(firstSelectedRow === 0 ? [] : ["Move Up"]),
+        ...(lastSelectedRow === rowData.length - 2 ? [] : ["Move Down"]),
+      ];
+  
+      if (areAllSelectedRowsEnabled) {
+        multiSelectedItems.push("Disable");
+      } else if (areAllSelectedRowsDisabled) {
+        multiSelectedItems.push("Enable");
+      } else {
+        multiSelectedItems.push("Enable", "Disable");
+      }
+  
+      setItemsSelectedRows(multiSelectedItems);
+    }
+  }, [selectedRows, rowData]);
+  
     
   const handleSelectAllCheckboxChange = () => {
     if (selectedRows.length === rowData.length - 1) {
@@ -280,7 +280,7 @@ const AllFirewallPolicyTable = () => {
         overflow: "auto",
       }}
     >
-      <SearchBar onSearch={(value) => setSearchValue(value)} />
+      <ToolBarComponent onSearch={(value) => setSearchValue(value)} />
       <table className="firewall-policy-table">
         <thead>
           <tr>

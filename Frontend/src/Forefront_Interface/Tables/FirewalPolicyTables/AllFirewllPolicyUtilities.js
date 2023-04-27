@@ -1,4 +1,4 @@
-//AllFirewllPolicyUtilities.js
+//AllFirewallPolicyUtilities.js
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
