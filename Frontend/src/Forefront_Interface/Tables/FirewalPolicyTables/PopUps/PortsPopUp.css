@@ -1,0 +1,49 @@
+.ports-popup {
+    position: fixed;
+    z-index: 1000;
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    left: 50
+}
+
+.ports-popup {
+    position: fixed;
+    z-index: 1000;
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+  }
+  
+  .ports-range {
+    margin: 10px 0;
+  }
+  
+  .ports-range.enabled label {
+    color: black;
+    cursor: pointer ;
+  }
+
+  .ports-range.enabled input {
+    color: white;
+    cursor: text;
+  }
+  
+  .ports-range label,
+  .ports-range input {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .popup-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }

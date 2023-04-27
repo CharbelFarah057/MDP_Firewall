@@ -8,6 +8,7 @@ What to do:
 - For the 22nd of april Charbel needs to do:
 	- ~~Finish the sorting problem ~~
 	- ~~Finish the custom context menu~~ 
-	- Implement the toolbar
-	- Install the Search Bar
+	- ~~Implement the toolbar~~
+	- ~~Install the Search Bar~~
 	- Properties
+	- semi done with the add
