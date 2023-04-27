@@ -2,8 +2,16 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import propertiesIcon from '../../../Images/properties-icon.svg';
+import deleteIcon from '../../../Images/delete-icon.svg';
+import createGroupIcon from '../../../Images/create-group-icon.svg';
+import deleteGroupIcon from '../../../Images/delete-group-icon.svg';
+import moveUpIcon from '../../../Images/move-up-icon.svg';
+import moveDownIcon from '../../../Images/move-down-icon.svg';
+import enableIcon from '../../../Images/enable-icon.svg';
+import disableIcon from '../../../Images/disable-icon.svg';
 
-export const toggleDisableEnable = (rowData, selectedRows, setRowData, action) => {
+const toggleDisableEnable = (rowData, selectedRows, setRowData, action) => {
     const updatedData = [...rowData];
     selectedRows.forEach((selectedRowId) => {
       updatedData[selectedRowId].disabled = !action;
@@ -11,7 +19,7 @@ export const toggleDisableEnable = (rowData, selectedRows, setRowData, action) =
     setRowData(updatedData);
 };
 
-export const moveRowUp = (rowData, setRowData, setSelectedRows, rowId) => {
+const moveRowUp = (rowData, setRowData, setSelectedRows, rowId) => {
     const updatedData = [...rowData];
     const temp = updatedData[rowId - 1];
     updatedData[rowId - 1] = updatedData[rowId];
@@ -27,7 +35,7 @@ export const moveRowUp = (rowData, setRowData, setSelectedRows, rowId) => {
     setSelectedRows([rowId - 1])
 };
   
-export const moveRowDown = (rowData, setRowData, setSelectedRows, rowId) => {
+const moveRowDown = (rowData, setRowData, setSelectedRows, rowId) => {
     const updatedData = [...rowData];
     const temp = updatedData[rowId + 1];
     updatedData[rowId + 1] = updatedData[rowId];
@@ -43,7 +51,7 @@ export const moveRowDown = (rowData, setRowData, setSelectedRows, rowId) => {
     setSelectedRows([rowId + 1])
 };
 
-export const moveSelectedRowsUp = (rowData, selectedRows, setRowData, setSelectedRows) => {
+const moveSelectedRowsUp = (rowData, selectedRows, setRowData, setSelectedRows) => {
     const updatedData = [...rowData];
     const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
   
@@ -68,7 +76,7 @@ export const moveSelectedRowsUp = (rowData, selectedRows, setRowData, setSelecte
     setSelectedRows(sortedSelectedRows);
 };
   
-export const moveSelectedRowsDown = (rowData, selectedRows, setRowData, setSelectedRows) => {
+const moveSelectedRowsDown = (rowData, selectedRows, setRowData, setSelectedRows) => {
     const updatedData = [...rowData];
     const sortedSelectedRows = [...selectedRows].sort((a, b) => b - a);
   
@@ -93,7 +101,7 @@ export const moveSelectedRowsDown = (rowData, selectedRows, setRowData, setSelec
     setSelectedRows(sortedSelectedRows);
 };
   
-export const deleteSelectedRows = (rowData, selectedRows, setRowData, setSelectedRows) => {
+const deleteSelectedRows = (rowData, selectedRows, setRowData, setSelectedRows) => {
     const updatedData = rowData.filter((_, index) => !selectedRows.includes(index));
   
     // Update the order values
@@ -188,3 +196,55 @@ export const filterRows = (rows, searchValue) => {
     )
   );
 };
+
+export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled) => {
+  return {
+    Properties: () => console.log("Properties clicked"),
+    Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
+    "Create Group": () => console.log("Create Group clicked"),
+    "Move Up": () => moveRowUp(rowData, setRowData, setSelectedRows, rowId),
+    "Move Down": () => moveRowDown(rowData, setRowData, setSelectedRows, rowId),
+    Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
+    Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
+  };
+};
+
+export const MultiRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows) => {
+  return {
+    Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
+    "Create Group": () => console.log("Create Group clicked"),
+    "Move Up":  () => moveSelectedRowsUp(rowData, selectedRows, setRowData, setSelectedRows),
+    "Move Down":  () => moveSelectedRowsDown(rowData, selectedRows, setRowData, setSelectedRows),
+    Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, true),
+    Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, false),
+  };
+};
+
+export const SingleRowToolbarIcons = {
+  Properties: propertiesIcon,
+  Delete: deleteIcon,
+  "Create Group": createGroupIcon,
+  "Move Up": moveUpIcon,
+  "Move Down": moveDownIcon,
+  Enable: enableIcon,
+  Disable: disableIcon,
+};
+
+export const MultiRowToolbarIcons = {
+  Delete: deleteIcon,
+  "Create Group": createGroupIcon,
+  "Move Up": moveUpIcon,
+  "Move Down": moveDownIcon,
+  Enable: enableIcon,
+  Disable: disableIcon,
+};
+
+export const tooltip_text = {
+  Properties: "Properties",
+  Delete: "Delete",
+  "Create Group": "Create Group",
+  "Move Up": "Move Up",
+  "Move Down": "Move Down",
+  Enable: "Enable",
+  Disable: "Disable",
+}

@@ -43,3 +43,36 @@
   border-color: #007bff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.right-side-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: auto;
+}
+
+.create-policy-icon {
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.icon-container {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.9;
+  white-space: wrap;
+  z-index: 100;
+  margin-top: 8px;
+  max-width: 90vw;
+}

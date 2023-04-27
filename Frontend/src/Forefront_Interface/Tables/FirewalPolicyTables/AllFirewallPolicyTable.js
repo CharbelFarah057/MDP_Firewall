@@ -4,17 +4,13 @@ import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
 import ContextMenu from "../ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import initialRowData from "./AllFirewallPolicyData.json";
-import {toggleDisableEnable,
-        moveRowDown,
-        moveRowUp,
-        moveSelectedRowsDown,
-        moveSelectedRowsUp,
-        deleteSelectedRows,
-        areSelectedRowsContiguous,
+import {areSelectedRowsContiguous,
         requestSort,
         sortRows,
         renderArrowIcon,
-        filterRows} from "./AllFirewllPolicyUtilities";
+        filterRows,
+        SingleRowContextMenu,
+        MultiRowContextMenu} from "./AllFirewllPolicyUtilities";
 import ToolBarComponent from "./ToolBarComponent.js";
 import "./AllFirewallPolicyTable.css";
 
@@ -29,9 +25,7 @@ const AllFirewallPolicyTable = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const handleRowContextMenu = (event, rowId) => {
-    // Check if the row is selected
     if (!selectedRows.includes(rowId)) {
-      // Do not show the context menu if the row is not selected
       return;
     }
     event.preventDefault();
@@ -43,32 +37,14 @@ const AllFirewallPolicyTable = () => {
     let items;
 
     if (selectedRows.length === 1) {
-      const labelToFunctionMap = {
-        Properties: () => console.log("Properties clicked"),
-        Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
-        "Create Group": () => console.log("Create Group clicked"),
-        "Move Up": () => moveRowUp(rowData, setRowData, setSelectedRows, rowId),
-        "Move Down": () => moveRowDown(rowData, setRowData, setSelectedRows, rowId),
-        Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
-        Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
-      };
-      
       items = itemsselectedRows.map((label) => ({
-        label: label === "Enable" && isRowDisabled ? "Disable" : label,
-        onClick: labelToFunctionMap[label],
+        label : label,
+        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled)[label],
       }));
     } else {
-      const labelToFunctionMap = {
-        Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
-        "Create Group": () => console.log("Create Group clicked"),
-        "Move Up":  () => moveSelectedRowsUp(rowData, selectedRows, setRowData, setSelectedRows),
-        "Move Down":  () => moveSelectedRowsDown(rowData, selectedRows, setRowData, setSelectedRows),
-        Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, true),
-        Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, false),
-      };
       items = itemsselectedRows.map((label) => ({
-        label,
-        onClick: labelToFunctionMap[label],
+        label : label,
+        onClick: MultiRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows)[label],
       }));
     }
     setContextMenu({ x, y, items });
@@ -220,7 +196,7 @@ const AllFirewallPolicyTable = () => {
       setItemsSelectedRows(multiSelectedItems);
     }
   }, [selectedRows, rowData]);
-  
+
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
     if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
       rowId === rowData.length - 1 ||
@@ -279,7 +255,16 @@ const AllFirewallPolicyTable = () => {
         overflow: "auto",
       }}
     >
-      <ToolBarComponent onSearch={(value) => setSearchValue(value)} />
+      <ToolBarComponent 
+        onSearch={(value) => setSearchValue(value)} 
+        itemsSelectedRows={itemsselectedRows}
+        rowData = {rowData}
+        selectedRows = {selectedRows}
+        setRowData = {setRowData}
+        setSelectedRows = {setSelectedRows}
+        rowId = {selectedRows[0]}
+        isRowDisabled = {rowData[selectedRows[0]]?.disabled}
+      />
       <table className="firewall-policy-table">
         <thead>
           <tr>
