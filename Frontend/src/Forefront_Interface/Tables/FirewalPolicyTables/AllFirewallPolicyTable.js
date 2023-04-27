@@ -4,12 +4,12 @@ import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
 import ContextMenu from "../ContextMenu";
 import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import initialRowData from "./AllFirewallPolicyData.json";
-import {toggleDisableEnable, 
+import {toggleDisableEnable,
         moveRowDown,
-        moveRowUp, 
-        moveSelectedRowsDown, 
-        moveSelectedRowsUp, 
-        deleteSelectedRows, 
+        moveRowUp,
+        moveSelectedRowsDown,
+        moveSelectedRowsUp,
+        deleteSelectedRows,
         areSelectedRowsContiguous,
         requestSort,
         sortRows,
