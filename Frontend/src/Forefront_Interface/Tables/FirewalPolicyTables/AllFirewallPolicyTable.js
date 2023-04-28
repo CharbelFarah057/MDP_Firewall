@@ -12,7 +12,7 @@ import {areSelectedRowsContiguous,
         SingleRowContextMenu,
         MultiRowContextMenu} from "./AllFirewallPolicyUtilities.js";
 import ToolBarComponent from "./ToolBarComponent.js";
-import NewAccessRule from "./PopUps/NewAccessRule";
+import NewAccessRule from "./PopUps/AccessRulePopUp/NewAccessRule";
 import "./AllFirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
