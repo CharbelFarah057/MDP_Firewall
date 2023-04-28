@@ -12,6 +12,7 @@ import {areSelectedRowsContiguous,
         SingleRowContextMenu,
         MultiRowContextMenu} from "./AllFirewallPolicyUtilities.js";
 import ToolBarComponent from "./ToolBarComponent.js";
+import NewAccessRule from "./PopUps/NewAccessRule";
 import "./AllFirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
@@ -23,6 +24,19 @@ const AllFirewallPolicyTable = () => {
   const [selectedMultiCellClick, setselectedMultiCellClick] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
   const [searchValue, setSearchValue] = useState("");
+  // Add Rule States
+  const [showPopup, setShowPopup] = useState(false);
+  const [ruleName, setRuleName] = useState('');
+  const [ruleAction, setRuleAction] = useState('Deny');
+  const [ruleAppliesTo, setRuleAppliesTo] = useState("selectedProtocols");
+  const [items, setItems] = useState([]);
+  const [sourceItems, setSourceItems] = useState([]);
+  const [destinationItems, setDestinationItems] = useState([]);
+  const [PortsPopupData, setPortsPopupData] = useState([
+    "anySourcePort",
+    0,
+    0,
+  ]);
 
   const handleRowContextMenu = (event, rowId) => {
     if (!selectedRows.includes(rowId)) {
@@ -200,7 +214,7 @@ const AllFirewallPolicyTable = () => {
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
     if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
       rowId === rowData.length - 1 ||
-      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All Outbound Traffic"]))
+      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All outbound traffic"]))
       ) { 
         return; }
     if ( selectedRows.includes(rowId) ) {
@@ -247,6 +261,15 @@ const AllFirewallPolicyTable = () => {
     setContextMenu({ x, y, items });
   };
 
+  const openPopup = () => {
+    setShowPopup(true);
+  };
+
+  const handleAccessRuleData = (data) => {
+    console.log('Access Rule Data:', data);
+    // Do something with the data here, e.g., store it, send it to the server, etc.
+  }
+
   return (
     <div
       style={{
@@ -264,6 +287,7 @@ const AllFirewallPolicyTable = () => {
         setSelectedRows = {setSelectedRows}
         rowId = {selectedRows[0]}
         isRowDisabled = {rowData[selectedRows[0]]?.disabled}
+        openPopup = {openPopup}
       />
       <table className="firewall-policy-table">
         <thead>
@@ -323,14 +347,33 @@ const AllFirewallPolicyTable = () => {
           ))}
         </tbody>
       </table>
-      {contextMenu && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          items={contextMenu.items}
-          onClose={() => setContextMenu(null)}
-        />
-      )}
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            items={contextMenu.items}
+            onClose={() => setContextMenu(null)}
+          />
+        )}
+      <NewAccessRule
+        isOpen={showPopup}
+        onClose={() => setShowPopup(false)}
+        onFinish={handleAccessRuleData}
+        ruleName={ruleName}
+        setRuleName={setRuleName}
+        ruleAction={ruleAction}
+        setRuleAction={setRuleAction}
+        ruleAppliesTo={ruleAppliesTo}
+        setRuleAppliesTo={setRuleAppliesTo}
+        items={items}
+        setItems={setItems}
+        PortsPopupData={PortsPopupData}
+        setPortsPopupData={setPortsPopupData}
+        sourceItems={sourceItems}
+        setSourceItems={setSourceItems}
+        destinationItems={destinationItems}
+        setDestinationItems={setDestinationItems}
+      />
     </div>
   );
 };

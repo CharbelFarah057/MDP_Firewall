@@ -7,36 +7,46 @@ import { handleRuleActionChange } from "./Page2Utilities";
 import Page3 from "./Page3";
 import Page4 from "./Page4";
 import Page5 from "./Page5";
-import { handleRuleAppliesToChange, handleAddItem, handleRemoveItems, handleSelectItem, handleSavePortsPopup } from "./Page3-4-5Utilities";
+import {handleRuleAppliesToChange,
+  handleAddItem, 
+  handleRemoveItems, 
+  handleSelectItem, 
+  handleSavePortsPopup } from "./Page3-4-5Utilities.js";
 import Page6 from "./Page6";
 import Page7 from "./Page7";
 
-const NewAccessRule = ({ isOpen, onClose }) => {
+const NewAccessRule = ({ 
+  isOpen, 
+  onClose,
+  onFinish,
+  ruleName,
+  setRuleName,
+  ruleAction,
+  setRuleAction,
+  ruleAppliesTo,
+  setRuleAppliesTo,
+  items, 
+  setItems,
+  PortsPopupData,
+  setPortsPopupData,
+  sourceItems,
+  setSourceItems,
+  destinationItems,
+  setDestinationItems}) => {
   // Next State
   const [step, setStep] = useState(1);
   // Page 1 State
-  const [ruleName, setRuleName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  // Page 2 State
-  const [ruleAction, setRuleAction] = useState("deny");
+  // Page 2 State in AllFirewallPolicyTable.js
   // Exit Confirmation State
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   // Page 3 States 
-  const [ruleAppliesTo, setRuleAppliesTo] = useState("selectedProtocols");
-  const [items, setItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [page3ErrorMessage, setPage3ErrorMessage] = useState("");
-  const [PortsPopupData, setPortsPopupData] = useState([
-    "anySourcePort",
-    0,
-    0,
-  ]);
   // Page 4 State
-  const [sourceItems, setSourceItems] = useState([]);
   const [selectedRuleSources, setSelectedRuleSources] = useState(new Set());
   const [page4ErrorMessage, setPage4ErrorMessage] = useState("");
   // Page 5 State
-  const [destinationItems, setDestinationItems] = useState([]);
   const [selectedRuleDestinations, setSelectedRuleDestinations] = useState(new Set());
   const [page5ErrorMessage, setPage5ErrorMessage] = useState("");
 
@@ -53,7 +63,24 @@ const NewAccessRule = ({ isOpen, onClose }) => {
       setPage4ErrorMessage("At least one source must be added to the list of selected sources.");
     } else if (step === 5 && destinationItems.length === 0) {
       setPage5ErrorMessage("At least one destination must be added to the list of selected destinations.");
-    } else {
+    } else if (step === 7) {
+      onFinish(
+        {
+          "id" : 0,
+          "order" : "1",
+          "name" : ruleName,
+          "act" : ruleAction,
+          "protoc" : {ruleAppliesTo : items},
+          "FL" : sourceItems,
+          "to" : destinationItems,
+          "cond" : "All Users",
+          "desc" : "",
+          "pol" : "Array",
+          "disabled": false
+          });
+      handleExitConfirmation(true);
+    }
+    else {
       setErrorMessage("");
       setPage3ErrorMessage("");
       if (step < 7) {
@@ -68,11 +95,18 @@ const NewAccessRule = ({ isOpen, onClose }) => {
       setStep(1);
       setRuleName("");
       setErrorMessage("");
-      setRuleAction("deny");
+      setRuleAction("Deny");
       setRuleAppliesTo("selectedProtocols");
       setItems([]);
       setSelectedItems(new Set());
       setPage3ErrorMessage("");
+      setSourceItems([]);
+      setSelectedRuleSources(new Set());
+      setPage4ErrorMessage("");
+      setDestinationItems([]);
+      setSelectedRuleDestinations(new Set());
+      setPage5ErrorMessage("");
+      setPortsPopupData(["anySourcePort", 0, 0]);
       setShowExitConfirmation(false);
       onClose();
     } else {
@@ -102,7 +136,7 @@ const NewAccessRule = ({ isOpen, onClose }) => {
         {step === 3 && (
           <Page3
             ruleAppliesTo={ruleAppliesTo}
-            handleRuleAppliesToChange={handleRuleAppliesToChange(setRuleAppliesTo)}
+            handleRuleAppliesToChange={handleRuleAppliesToChange(setRuleAppliesTo, setItems)}
             items={items}
             handleAddItem={() => handleAddItem(setItems, items)}
             handleRemoveItems={() => handleRemoveItems(setItems, items, selectedItems, setSelectedItems)}
@@ -119,7 +153,7 @@ const NewAccessRule = ({ isOpen, onClose }) => {
             handleAddItem={() => handleAddItem(setSourceItems, sourceItems)}
             handleRemoveItems={() => handleRemoveItems(setSourceItems, sourceItems, selectedRuleSources, setSelectedRuleSources)}
             handleSelectItem={(index, event) => handleSelectItem(selectedRuleSources, setSelectedRuleSources)(index, event)}
-            selectedItems={selectedRuleSources}
+            selectedRuleSources={selectedRuleSources}
             errorMessage={page4ErrorMessage}
           />
         )}
@@ -133,7 +167,7 @@ const NewAccessRule = ({ isOpen, onClose }) => {
             errorMessage={page5ErrorMessage}
           />
         )}
-        {step === 6 && <Page6 />}
+        {step === 6 && <Page6/>}
         {step === 7 && (<Page7 
           ruleName={ruleName}
           ruleAction={ruleAction}

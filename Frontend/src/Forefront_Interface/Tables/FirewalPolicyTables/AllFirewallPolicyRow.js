@@ -3,7 +3,7 @@ import React from "react";
 import './AllFirewallPolicyRow.css';
 import { AiOutlineNumber, AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import { FiUsers } from 'react-icons/fi';
-import { FaNetworkWired } from 'react-icons/fa';
+import { FaNetworkWired, FaSlash } from 'react-icons/fa';
 import { MdDisabledByDefault } from 'react-icons/md';
 import { FcGlobe } from 'react-icons/fc';
 
@@ -57,31 +57,51 @@ onMultiCellContextMenu,
                         <span style={{ marginLeft: "5px" }}>{value}</span>
                     </>
                 );
-            case "protoc":
-                return (
-                    <>
-                    <ul className="protocol-list">
-                        {value.map((protocol, MultiCellIndex) => (
-                        <li
-                            key={MultiCellIndex}
-                            onClick={() => {
-                                handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                case "protoc":
+                    const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+                      (key) => key in value
+                    );
+                    if (availableKey) {
+                      return (
+                        <>
+                          <ul className="protocol-list">
+                            {value[availableKey].map((protocol, MultiCellIndex) => (
+                              <li
+                                key={MultiCellIndex}
+                                onClick={() => {
+                                  handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
                                 }}
                                 onContextMenu={(event) => {
-                                    event.preventDefault();
-                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value.length);
+                                  event.preventDefault();
+                                  onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value[availableKey].length);
                                 }}
                                 className={
-                                isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
-                            }
-                        >
-                            <FaNetworkWired className="icon-padding" />
-                            {protocol}
-                        </li>
-                        ))}
-                    </ul>
-                    </>
-                );
+                                  isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
+                                }
+                              >
+                                <div style={{ position: 'relative' }}>
+                                  <FaNetworkWired className="icon-padding" />
+                                  {availableKey === 'allOutboundExcept' && (
+                                    <FaSlash
+                                      className="icon-padding"
+                                      style={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-379%, -45%)',
+                                      }}
+                                    />
+                                  )}
+                                  {protocol}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      );
+                    } else {
+                      return () => null;
+                    }                  
             case "FL":
                 return (
                     <>
@@ -153,7 +173,7 @@ onMultiCellContextMenu,
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id" && key !== "disabled").map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id" && key !== "disabled" && key!=="ports" && key !== "ruleappliedto").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
                         handleCellClick(rowId, cellIndex);

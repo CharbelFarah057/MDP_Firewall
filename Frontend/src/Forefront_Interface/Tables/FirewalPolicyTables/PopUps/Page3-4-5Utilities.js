@@ -1,5 +1,12 @@
-export const handleRuleAppliesToChange = (setRuleAppliesTo) => (e) => {
-    setRuleAppliesTo(e.target.value);
+export const handleRuleAppliesToChange = (setRuleAppliesTo, setItems) => (e) => {
+  const selectedValue = e.target.value;
+  if (selectedValue === "allOutbound") {
+    setRuleAppliesTo(selectedValue);
+    setItems(["All outbound traffic"]);
+  } else {
+    setRuleAppliesTo(selectedValue);
+    setItems([]);
+  }
 };
 
 export const handleAddItem = (setItems, items) => {

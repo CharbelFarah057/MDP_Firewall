@@ -24,6 +24,8 @@ const Page3 = ({
       setIsPortsPopupOpen(true);
   };
 
+  const disableLowerPart = ruleAppliesTo === "allOutbound";
+
   return (
     <>
       <h3>Protocols</h3>
@@ -40,7 +42,7 @@ const Page3 = ({
       </select>
       <p>Protocols:</p>
       <div className="page3-container">
-        <div className="page3-items">
+        <div className={`page3-items${disableLowerPart ? " disabled" : ""}`}>
           {items.map((item, index) => (
             <div
               key={index}
@@ -51,13 +53,14 @@ const Page3 = ({
             </div>
           ))}
         </div>
-        <div className="page3-controls">
-          <button onClick={handleAddItem}>Add</button>
-          <button onClick={handleRemoveItems} disabled={selectedItems.size === 0}>
+        <div className={`page3-controls${disableLowerPart ? " disabled" : ""}`}>
+            <button onClick={handleAddItem} disabled={disableLowerPart}> Add</button>
+          <button onClick={handleRemoveItems} disabled={disableLowerPart || selectedItems.size === 0}
+          >
             Remove
           </button>
-          <button onClick={handlePortsClick}>Ports</button>
-        </div>
+          <button onClick={handlePortsClick} disabled={disableLowerPart}>Ports</button>
+        </div> 
       </div>
       {errorMessage && (
         <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>

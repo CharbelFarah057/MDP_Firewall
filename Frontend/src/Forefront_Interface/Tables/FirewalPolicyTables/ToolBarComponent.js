@@ -4,7 +4,6 @@ import "./ToolBarComponent.css";
 import searchIcon from "../../../Images/search-magnifying-glass.svg";
 import closeIcon from "../../../Images/cross-close.svg";
 import placeholderIcon from "../../../Images/plus-circle.svg";
-import NewAccessRule from "./PopUps/NewAccessRule";
 
 import {MultiRowContextMenu,
         SingleRowContextMenu, 
@@ -12,10 +11,18 @@ import {MultiRowContextMenu,
         MultiRowToolbarIcons,
         tooltip_text} from "./AllFirewallPolicyUtilities.js";
 
-const ToolBarComponent = ({ onSearch, itemsSelectedRows, rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled }) => {
+const ToolBarComponent = ({ 
+  onSearch,
+  itemsSelectedRows, 
+  rowData, 
+  selectedRows, 
+  setRowData, 
+  setSelectedRows, 
+  rowId, 
+  isRowDisabled,
+  openPopup }) => {
   const [inputValue, setInputValue] = useState("");
   const [showTooltip, setShowTooltip] = useState({});
-  const [showPopup, setShowPopup] = useState(false);
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
@@ -92,7 +99,7 @@ const ToolBarComponent = ({ onSearch, itemsSelectedRows, rowData, selectedRows, 
             className="icon create-policy-icon"
             onMouseEnter={() => setShowTooltip({ ...showTooltip, CreateAccessRule: true })}
             onMouseLeave={() => setShowTooltip({ ...showTooltip, CreateAccessRule: false })}
-            onClick={() => setShowPopup(true)}
+            onClick={openPopup}
           />
           {showTooltip.CreateAccessRule && (
             <div className="tooltip">
@@ -102,10 +109,6 @@ const ToolBarComponent = ({ onSearch, itemsSelectedRows, rowData, selectedRows, 
         </div>
         {selectedRowButtons}
       </div>
-      <NewAccessRule
-      isOpen={showPopup}
-      onClose={() => setShowPopup(false)}
-    />
     </div>
   );
 };
