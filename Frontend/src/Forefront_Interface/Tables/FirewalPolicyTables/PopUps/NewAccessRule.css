@@ -126,3 +126,17 @@
     color: white;
     border-color: #007bff;
   }
+
+  .icon-text-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .configurations-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-width: 100%;
+    max-height: 200px; /* Adjust this value for the desired height */
+    overflow: auto;
+  }

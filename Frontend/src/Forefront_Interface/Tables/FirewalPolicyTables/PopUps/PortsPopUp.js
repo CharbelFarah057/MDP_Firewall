@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import "./PortsPopUp.css";
 
-const PortsPopup = ({ isOpen, onClose, onSave }) => {
-  const [radioValue, setRadioValue] = useState("anySourcePort");
-  const [fromPort, setFromPort] = useState(0);
-  const [toPort, setToPort] = useState(0);
+const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPortSaved }) => {
+  const [radioValue, setRadioValue] = useState(radionSaved);
+  const [fromPort, setFromPort] = useState(FromPortSave);
+  const [toPort, setToPort] = useState(ToPortSaved);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleRadioChange = (event) => {
     setFromPort(0);
@@ -13,32 +14,28 @@ const PortsPopup = ({ isOpen, onClose, onSave }) => {
   };
 
   const handleFromPortChange = (e) => {
-    const value = parseInt(e.target.value);
-    if (value >= 0 && value <= 65535) {
-      setFromPort(value);
-    }
-  };
-  
-  const handleToPortChange = (e) => {
-    const value = parseInt(e.target.value);
-    if (value >= 0 && value <= 65535 && value >= fromPort) {
-      setToPort(value);
-    }
+    setFromPort(e.target.value);
   };
 
-  const handleSave = () => {
-    onSave({ radioValue, fromPort, toPort });
+  const handleToPortChange = (e) => {
+    setToPort(e.target.value);
+  };
+
+  const handleOk = () => {
+    const from = parseInt(fromPort, 10);
+    const to = parseInt(toPort, 10);
+  
+    if (from < 0 || from > 65535 || to < 0 || to > 65535 || to < from) {
+      setErrorMessage("Invalid port range.");
+      return;
+    }
+    onSave([radioValue, fromPort, toPort]);
+    setErrorMessage("");
     onClose();
   };
 
-  const resetState = () => {
-    setRadioValue("anySourcePort");
-    setFromPort(0);
-    setToPort(0);
-  };
-
   const handleCancel = () => {
-    resetState();
+    onSave(["anySourcePort", 0, 0])
     onClose();
   };
 
@@ -97,12 +94,17 @@ const PortsPopup = ({ isOpen, onClose, onSave }) => {
                 disabled={radioValue === "anySourcePort"}
             />
         </div>
+        {errorMessage && (
+          <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+            {errorMessage}
+          </div>
+        )}
         <p>
             This range must belong to clients specified in the allowed traffic sources
             for this rule.
         </p>
         <div className="popup-buttons">
-            <button onClick={handleSave}>OK</button>
+            <button onClick={handleOk}>OK</button>
             <button onClick={handleCancel}>Cancel</button>
         </div>
         </div>
