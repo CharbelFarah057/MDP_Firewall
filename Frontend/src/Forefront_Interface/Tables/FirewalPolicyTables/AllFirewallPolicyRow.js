@@ -80,18 +80,17 @@ onMultiCellContextMenu,
                                 }
                               >
                                 <div style={{ position: 'relative' }}>
-                                  <FaNetworkWired className="icon-padding" />
-                                  {availableKey === 'allOutboundExcept' && (
-                                    <FaSlash
-                                      className="icon-padding"
-                                      style={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        transform: 'translate(-379%, -45%)',
-                                      }}
-                                    />
-                                  )}
+                                    <FaNetworkWired className="icon-padding" />
+                                    {availableKey === 'allOutboundExcept' && (
+                                        <FaSlash
+                                            className="icon-padding"
+                                            style={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                transform: 'translate(-100%, -50%)',
+                                            }}
+                                        />
+                                    )}
                                   {protocol}
                                 </div>
                               </li>

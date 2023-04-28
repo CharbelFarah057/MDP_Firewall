@@ -266,9 +266,36 @@ const AllFirewallPolicyTable = () => {
   };
 
   const handleAccessRuleData = (data) => {
-    console.log('Access Rule Data:', data);
-    // Do something with the data here, e.g., store it, send it to the server, etc.
-  }
+    // Create a new object without the 'ports' key
+    const { ports, ...newRow } = data;
+  
+    // Increment the 'id' and 'order' values in the existing rowData
+    const updatedRows = rowData.map((row) => {
+      // If the order is 'Last', leave it as is
+      if (row.order === "Last") {
+        return {
+          ...row,
+          id: row.id + 1,
+        };
+      }
+      // Otherwise, increment the order value
+      return {
+        ...row,
+        id: row.id + 1,
+        order: (parseInt(row.order) + 1).toString(),
+      };
+    });
+  
+    // Add the new dictionary to the rowData array
+    const newRowData = [newRow, ...updatedRows];
+  
+    // Update the rowData state with the new array
+    setRowData(newRowData);
+  
+    // You can use the 'ports' value for other purposes here
+    console.log(ports);
+  };  
+  
 
   return (
     <div

@@ -70,13 +70,14 @@ const NewAccessRule = ({
           "order" : "1",
           "name" : ruleName,
           "act" : ruleAction,
-          "protoc" : {ruleAppliesTo : items},
+          "protoc" : { [ruleAppliesTo] : items},
           "FL" : sourceItems,
           "to" : destinationItems,
           "cond" : "All Users",
           "desc" : "",
           "pol" : "Array",
-          "disabled": false
+          "disabled": false,
+          "ports" : PortsPopupData
           });
       handleExitConfirmation(true);
     }
