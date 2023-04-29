@@ -182,10 +182,8 @@ const AllFirewallPolicyTable = () => {
       setItemsSelectedRows([
         "Properties",
         ...(isLastRow ? [] : ["Delete", 
-        ...(isFirstRow ? [] : ["Move Up", 
-        ...(isSecondToLastRow ? [] : ["Move Down", isRowDisabled ? "Enable" : "Disable"]),
-            ]),
-        ]),
+        ...(isFirstRow ? [] : ["Move Up"]),
+        ...(isSecondToLastRow ? [] : ["Move Down", isRowDisabled ? "Enable" : "Disable"]), ]),
         
       ]);
     } else {

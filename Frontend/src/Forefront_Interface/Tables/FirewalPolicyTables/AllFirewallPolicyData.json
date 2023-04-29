@@ -11,7 +11,7 @@
     "desc" : "",
     "pol" : "Array",
     "disabled": false,
-    "ports" : {"limitSourcePort" : [22, 23]}
+    "ports" : {"anySourcePort" : [1, 65535]}
     },
     {
     "id" : 1,
