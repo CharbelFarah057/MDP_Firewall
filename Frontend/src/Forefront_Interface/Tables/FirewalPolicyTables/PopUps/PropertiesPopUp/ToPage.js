@@ -1,27 +1,26 @@
 import React from "react";
-import "./NewAccessRule.css";
+import "../AccessRulePopUp/NewAccessRule.css";
 
-const Page4 = ({
-  sourceItems,
+const To = ({
+  destinationItems,
   handleAddItem,
   handleRemoveItems,
   handleSelectItem,
-  selectedRuleSources,
+  selectedItems,
   errorMessage,
 }) => {
 
   return (
     <>
-      <h3>Accesss Rules Sources</h3>
-      <p>This rule will apply to traffic originating from sources specified in this page</p>
-      <p>This rule applies to traffic from these sources:</p>
+      <p>This rule will apply to traffic sent from the rule sources to the destinations specified in this page</p>
+      <p>This rule applies to traffic sent to these destination</p>
       <div className="page3-container">
         <div className="page3-items">
-          {sourceItems.map((item, index) => (
+          {destinationItems.map((item, index) => (
             <div
               key={index}
               onClick={(event) => handleSelectItem(index, event)}
-              className={`item${selectedRuleSources.has(index) ? " selected" : ""}`}
+              className={`item${selectedItems.has(index) ? " selected" : ""}`}
             >
               {item}
             </div>
@@ -29,7 +28,7 @@ const Page4 = ({
         </div>
         <div className="page3-controls">
           <button onClick={handleAddItem}>Add</button>
-          <button onClick={handleRemoveItems} disabled={selectedRuleSources.size === 0}>
+          <button onClick={handleRemoveItems} disabled={selectedItems.size === 0}>
             Remove
           </button>
         </div>
@@ -43,4 +42,4 @@ const Page4 = ({
   );
 };
 
-export default Page4;
+export default To;

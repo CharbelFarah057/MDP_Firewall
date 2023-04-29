@@ -1,5 +1,5 @@
 import React from "react";
-import "./NewAccessRule.css";
+import "../NewAccessRule.css";
 
 const Page1 = ({ ruleName, handleRuleNameChange, errorMessage }) => {
     return (

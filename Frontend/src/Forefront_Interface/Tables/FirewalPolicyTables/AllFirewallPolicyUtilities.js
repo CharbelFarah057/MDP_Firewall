@@ -197,9 +197,9 @@ export const filterRows = (rows, searchValue) => {
   );
 };
 
-export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled) => {
+export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp) => {
   return {
-    Properties: () => console.log("Properties clicked"),
+    Properties: () => setShowPropertiesPopUp(true),
     Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
     "Create Group": () => console.log("Create Group clicked"),
     "Move Up": () => moveRowUp(rowData, setRowData, setSelectedRows, rowId),

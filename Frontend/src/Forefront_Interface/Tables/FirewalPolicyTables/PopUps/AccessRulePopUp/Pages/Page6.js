@@ -1,5 +1,5 @@
 import React from "react";
-import "./NewAccessRule.css";
+import "../NewAccessRule.css";
 import { FiUsers } from 'react-icons/fi';
 
 const Page6 = () => {
