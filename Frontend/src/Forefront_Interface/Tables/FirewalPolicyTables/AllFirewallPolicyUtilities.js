@@ -26,10 +26,8 @@ const moveRowUp = (rowData, setRowData, setSelectedRows, rowId) => {
     updatedData[rowId] = temp;
   
     // Swap the order and id values
-    updatedData[rowId - 1].order = String(rowId);
-    updatedData[rowId].order = String(rowId + 1);
-    updatedData[rowId - 1].id = rowId - 1;
-    updatedData[rowId].id = rowId;
+    updatedData[rowId - 1].order = rowId;
+    updatedData[rowId].order = rowId + 1;
   
     setRowData(updatedData);
     setSelectedRows([rowId - 1])
@@ -42,10 +40,8 @@ const moveRowDown = (rowData, setRowData, setSelectedRows, rowId) => {
     updatedData[rowId] = temp;
   
     // Swap the order and id values
-    updatedData[rowId + 1].order = String(rowId + 2);
-    updatedData[rowId].order = String(rowId + 1);
-    updatedData[rowId + 1].id = rowId + 1;
-    updatedData[rowId].id = rowId;
+    updatedData[rowId + 1].order = rowId + 2;
+    updatedData[rowId].order = rowId + 1;
   
     setRowData(updatedData);
     setSelectedRows([rowId + 1])
@@ -62,10 +58,8 @@ const moveSelectedRowsUp = (rowData, selectedRows, setRowData, setSelectedRows) 
         updatedData[rowId] = temp;
   
         // Swap the order and id values
-        updatedData[rowId - 1].order = String(rowId);
-        updatedData[rowId].order = String(rowId + 1);
-        updatedData[rowId - 1].id = rowId - 1;
-        updatedData[rowId].id = rowId;
+        updatedData[rowId - 1].order = rowId;
+        updatedData[rowId].order = rowId + 1;
   
         // Update selected rows array
         sortedSelectedRows[index] = rowId - 1;
@@ -87,10 +81,8 @@ const moveSelectedRowsDown = (rowData, selectedRows, setRowData, setSelectedRows
         updatedData[rowId] = temp;
   
         // Swap the order and id values
-        updatedData[rowId + 1].order = String(rowId + 2);
-        updatedData[rowId].order = String(rowId + 1);
-        updatedData[rowId + 1].id = rowId + 1;
-        updatedData[rowId].id = rowId;
+        updatedData[rowId + 1].order = rowId + 2;
+        updatedData[rowId].order = rowId + 1;
   
         // Update selected rows array
         sortedSelectedRows[index] = rowId + 1;
@@ -106,8 +98,7 @@ const deleteSelectedRows = (rowData, selectedRows, setRowData, setSelectedRows) 
   
     // Update the order values
     updatedData.forEach((row, index) => {
-      row.order = String(index + 1);
-      row.id = index;
+      row.order = index + 1;
     });
   
     setRowData(updatedData);
@@ -197,9 +188,9 @@ export const filterRows = (rows, searchValue) => {
   );
 };
 
-export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled) => {
+export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp) => {
   return {
-    Properties: () => console.log("Properties clicked"),
+    Properties: () => setShowPropertiesPopUp(true),
     Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
     "Create Group": () => console.log("Create Group clicked"),
     "Move Up": () => moveRowUp(rowData, setRowData, setSelectedRows, rowId),

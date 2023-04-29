@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import PortsPopup from "./PortsPopUp.js";
-import "./NewAccessRule.css";
+import "../AccessRulePopUp/NewAccessRule.css";
 
-const Page3 = ({
+const Protocols = ({
   ruleAppliesTo,
   handleRuleAppliesToChange,
   items,
@@ -21,14 +21,13 @@ const Page3 = ({
   };
 
   const handlePortsClick = () => {
-      setIsPortsPopupOpen(true);
+    setIsPortsPopupOpen(true);
   };
 
   const disableLowerPart = ruleAppliesTo === "allOutbound";
 
   return (
     <>
-      <h3>Protocols</h3>
       <p>Select the protocols this rule applies to.</p>
       <p>This rule applies to:</p>
       <select
@@ -59,7 +58,7 @@ const Page3 = ({
           >
             Remove
           </button>
-          <button onClick={handlePortsClick} disabled={disableLowerPart}>Ports</button>
+          <button onClick={handlePortsClick} >Ports</button>
         </div> 
       </div>
       {errorMessage && (
@@ -71,12 +70,12 @@ const Page3 = ({
         isOpen={isPortsPopupOpen}
         onClose={handleClosePortsPopup}
         onSave={handleSavePortsPopup}
-        radionSaved={PortsPopupData[0]}
-        FromPortSave={PortsPopupData[1]}
-        ToPortSaved={PortsPopupData[2]}
+        radionSaved={Object.keys(PortsPopupData)[0]}
+        FromPortSave={Object.values(PortsPopupData)[0][0]}
+        ToPortSaved={Object.values(PortsPopupData)[0][1]}
       />
     </>
   );
 };
 
-export default Page3;
+export default Protocols;

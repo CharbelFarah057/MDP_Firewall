@@ -1,7 +1,6 @@
 [
     {
-    "id" : 0,
-    "order" : "1",
+    "order" : 1,
     "name" : "Rule 1",
     "act" : "Deny",
     "protoc" : {"selectedProtocols" : ["SSH", "Telnet Server", "Telnet"]},
@@ -9,12 +8,11 @@
     "to" : ["Internal"],
     "cond" : "All Users",
     "desc" : "",
-    "pol" : "Array",
-    "disabled": false
+    "disabled": false,
+    "ports" : {"anySourcePort" : [1, 65535]}
     },
     {
-    "id" : 1,
-    "order" : "2",
+    "order" : 2,
     "name" : "Rule 2",
     "act" : "Allow",
     "protoc" : {"allOutboundExcept" : ["HTTP", "HTTPS"]},
@@ -22,26 +20,23 @@
     "to" : ["Internal"],
     "cond" : "All Users",
     "desc" : "",
-    "pol" : "Array",
-    "disabled": false
+    "disabled": false,
+    "ports" : {"limitSourcePort" : [22, 23]}
     },
     {
-    "id" : 2,
-    "order" : "3",
+    "order" : 3,
     "name" : "Rule 3",
     "act" : "Allow",
-    "ruleappliedto" : "allOutbound",
     "protoc" : {"allOutbound" : ["All outbound traffic"]},
     "FL" : ["External"],
     "to" : ["Internal"],
     "cond" : "All Users",
     "desc" : "",
-    "pol" : "Array",
-    "disabled": false
+    "disabled": false,
+    "ports" : {"limitSourcePort" : [22, 23]}
     },
     {
-    "id" : 3,
-    "order" : "Last",
+    "order" : 4,
     "name" : "Default Rule",
     "act" : "Deny",
     "protoc" : {"selectedProtocols" : ["All Traffic"]},
@@ -49,7 +44,7 @@
     "to" : ["All Networks (and Local Host)"],
     "cond" : "All Users",
     "desc" : "",
-    "pol" : "Array",
-    "disabled": false
+    "disabled": false,
+    "ports" : {"AllPorts" : []}
     }
 ]

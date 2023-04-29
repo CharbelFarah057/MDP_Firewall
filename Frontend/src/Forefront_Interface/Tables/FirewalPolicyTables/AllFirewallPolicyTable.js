@@ -13,6 +13,7 @@ import {areSelectedRowsContiguous,
         MultiRowContextMenu} from "./AllFirewallPolicyUtilities.js";
 import ToolBarComponent from "./ToolBarComponent.js";
 import NewAccessRule from "./PopUps/AccessRulePopUp/NewAccessRule";
+import PropertiesPopUp from "./PopUps/PropertiesPopUp/PropertiesPopUp";
 import "./AllFirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
@@ -32,11 +33,9 @@ const AllFirewallPolicyTable = () => {
   const [items, setItems] = useState([]);
   const [sourceItems, setSourceItems] = useState([]);
   const [destinationItems, setDestinationItems] = useState([]);
-  const [PortsPopupData, setPortsPopupData] = useState([
-    "anySourcePort",
-    0,
-    0,
-  ]);
+  const [PortsPopupData, setPortsPopupData] = useState({"anySourcePort" : [0, 0]});
+  // Add Properties PopUp state
+  const [showPropertiesPopUp, setShowPropertiesPopUp] = useState(false);
 
   const handleRowContextMenu = (event, rowId) => {
     if (!selectedRows.includes(rowId)) {
@@ -53,7 +52,7 @@ const AllFirewallPolicyTable = () => {
     if (selectedRows.length === 1) {
       items = itemsselectedRows.map((label) => ({
         label : label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled)[label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp)[label],
       }));
     } else {
       items = itemsselectedRows.map((label) => ({
@@ -182,9 +181,10 @@ const AllFirewallPolicyTable = () => {
   
       setItemsSelectedRows([
         "Properties",
-        ...(isLastRow ? [] : ["Delete", "Create Group"]),
+        ...(isLastRow ? [] : ["Delete", 
         ...(isFirstRow ? [] : ["Move Up"]),
-        ...(isSecondToLastRow ? [] : ["Move Down", isRowDisabled ? "Enable" : "Disable"]),
+        ...(isSecondToLastRow ? [] : ["Move Down", isRowDisabled ? "Enable" : "Disable"]), ]),
+        
       ]);
     } else {
       const firstSelectedRow = Math.min(...selectedRows);
@@ -212,9 +212,11 @@ const AllFirewallPolicyTable = () => {
   }, [selectedRows, rowData]);
 
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
+    const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+      (key) => key in rowData[rowId].protoc);
     if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
       rowId === rowData.length - 1 ||
-      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All outbound traffic"]))
+      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc[availableKey]) === JSON.stringify(["All outbound traffic"]))
       ) { 
         return; }
     if ( selectedRows.includes(rowId) ) {
@@ -241,7 +243,9 @@ const AllFirewallPolicyTable = () => {
             setRowData((prevRowData) => {
               const newRowData = [...prevRowData];
               if (cellIndex === 3) {
-                newRowData[rowId].protoc.splice(MultiCellIndex, 1);
+                const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+                  (key) => key in newRowData[rowId].protoc);
+                newRowData[rowId].protoc[availableKey].splice(MultiCellIndex, 1);
               }
               if (cellIndex === 4) {
                 newRowData[rowId].FL.splice(MultiCellIndex, 1);
@@ -266,36 +270,27 @@ const AllFirewallPolicyTable = () => {
   };
 
   const handleAccessRuleData = (data) => {
-    // Create a new object without the 'ports' key
-    const { ports, ...newRow } = data;
-  
     // Increment the 'id' and 'order' values in the existing rowData
     const updatedRows = rowData.map((row) => {
-      // If the order is 'Last', leave it as is
-      if (row.order === "Last") {
-        return {
-          ...row,
-          id: row.id + 1,
-        };
-      }
       // Otherwise, increment the order value
       return {
         ...row,
-        id: row.id + 1,
-        order: (parseInt(row.order) + 1).toString(),
+        order: (row.order) + 1,
       };
     });
   
     // Add the new dictionary to the rowData array
-    const newRowData = [newRow, ...updatedRows];
+    const newRowData = [data, ...updatedRows];
   
     // Update the rowData state with the new array
     setRowData(newRowData);
-  
-    // You can use the 'ports' value for other purposes here
-    console.log(ports);
-  };  
-  
+  };
+
+  const handleUpdate = (rownumber, updateData) => {
+    const tempRowData = [...rowData];
+    tempRowData[rownumber] = updateData;
+    setRowData(tempRowData);
+  };
 
   return (
     <div
@@ -315,6 +310,7 @@ const AllFirewallPolicyTable = () => {
         rowId = {selectedRows[0]}
         isRowDisabled = {rowData[selectedRows[0]]?.disabled}
         openPopup = {openPopup}
+        setShowPropertiesPopUp = {setShowPropertiesPopUp}
       />
       <table className="firewall-policy-table">
         <thead>
@@ -350,17 +346,15 @@ const AllFirewallPolicyTable = () => {
             <th onClick={() => requestSort('desc', sortConfig, setSortConfig)}>
               Description {renderArrowIcon('desc', sortConfig)}
             </th>
-            <th onClick={() => requestSort('policy', sortConfig, setSortConfig)}>
-              Policy {renderArrowIcon('policy', sortConfig)}
-            </th>
           </tr>
         </thead>
         <tbody>
           {filterRows(sortRows(rowData, sortConfig, rowData), searchValue).map((row) => (
             <AllFirewallPolicyRow
-              key={row.id}
+              key={row.order}
               row={row}
-              rowId={row.id}
+              dataLength = {rowData.length}
+              rowId={row.order - 1}
               handleCellClick={handleCellClick}
               selectedCells={selectedCells}
               selectedRows={selectedRows}
@@ -401,6 +395,21 @@ const AllFirewallPolicyTable = () => {
         destinationItems={destinationItems}
         setDestinationItems={setDestinationItems}
       />
+      {showPropertiesPopUp && selectedRows.length === 1 &&
+        <PropertiesPopUp 
+          onClose={() => setShowPropertiesPopUp(false)} 
+          onUpdate={handleUpdate}
+          totalRows = {rowData.length}
+          order = {rowData[selectedRows[0]].order}
+          name = {rowData[selectedRows[0]].name}
+          act = {rowData[selectedRows[0]].act}
+          protoc = {rowData[selectedRows[0]].protoc}
+          FL = {rowData[selectedRows[0]].FL}
+          to = {rowData[selectedRows[0]].to}
+          desc = {rowData[selectedRows[0]].desc}
+          disabled = {rowData[selectedRows[0]].disabled}
+          ports = {rowData[selectedRows[0]].ports}
+        />}
     </div>
   );
 };

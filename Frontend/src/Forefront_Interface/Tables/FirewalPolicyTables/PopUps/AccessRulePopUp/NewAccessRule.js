@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import "./NewAccessRule.css";
-import Page1 from "./Page1";
-import { handleRuleNameChange } from "./Page1Utilities";
-import Page2 from "./Page2";
-import { handleRuleActionChange } from "./Page2Utilities";
-import Page3 from "./Page3";
-import Page4 from "./Page4";
-import Page5 from "./Page5";
+import Page1 from "./Pages/Page1";
+import { handleRuleNameChange } from "./Utilities/Page1Utilities";
+import Page2 from "./Pages/Page2";
+import { handleRuleActionChange } from "./Utilities/Page2Utilities";
+import Page3 from "./Pages/Page3";
+import Page4 from "./Pages/Page4";
+import Page5 from "./Pages/Page5";
 import {handleRuleAppliesToChange,
   handleAddItem, 
   handleRemoveItems, 
   handleSelectItem, 
-  handleSavePortsPopup } from "./Page3-4-5Utilities.js";
-import Page6 from "./Page6";
-import Page7 from "./Page7";
+  handleSavePortsPopup } from "./Utilities/Page3-4-5Utilities.js";
+import Page6 from "./Pages/Page6";
+import Page7 from "./Pages/Page7";
 
 const NewAccessRule = ({ 
   isOpen, 
@@ -67,7 +67,7 @@ const NewAccessRule = ({
       onFinish(
         {
           "id" : 0,
-          "order" : "1",
+          "order" : 1,
           "name" : ruleName,
           "act" : ruleAction,
           "protoc" : { [ruleAppliesTo] : items},
@@ -75,7 +75,6 @@ const NewAccessRule = ({
           "to" : destinationItems,
           "cond" : "All Users",
           "desc" : "",
-          "pol" : "Array",
           "disabled": false,
           "ports" : PortsPopupData
           });
@@ -107,7 +106,7 @@ const NewAccessRule = ({
       setDestinationItems([]);
       setSelectedRuleDestinations(new Set());
       setPage5ErrorMessage("");
-      setPortsPopupData(["anySourcePort", 0, 0]);
+      setPortsPopupData({"anySourcePort" : ["0", "0"]});
       setShowExitConfirmation(false);
       onClose();
     } else {

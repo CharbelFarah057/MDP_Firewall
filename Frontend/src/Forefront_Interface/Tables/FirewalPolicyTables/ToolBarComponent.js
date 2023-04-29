@@ -20,7 +20,8 @@ const ToolBarComponent = ({
   setSelectedRows, 
   rowId, 
   isRowDisabled,
-  openPopup }) => {
+  openPopup,
+  setShowPropertiesPopUp }) => {
   const [inputValue, setInputValue] = useState("");
   const [showTooltip, setShowTooltip] = useState({});
 
@@ -38,7 +39,7 @@ const ToolBarComponent = ({
     if (length === 1) {
       return {
         label : chosen_label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled)[chosen_label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp)[chosen_label],
       };
     } else {
       return {

@@ -9,6 +9,7 @@ import { FcGlobe } from 'react-icons/fc';
 
 const AllFirewallPolicyRow = ({
 row,
+dataLength,
 rowId,
 handleCellClick,
 selectedCells,
@@ -32,17 +33,19 @@ onMultiCellContextMenu,
     const renderCellContent = (key, value, cellIndex) => {
         switch (key) {
             case "order":
-                return (
-                    <>
-                        <AiOutlineNumber />
-                        {row.disabled && (
-                            <MdDisabledByDefault
-                            style={{ marginLeft: "5px", marginRight: "5px" }}
-                            />
-                        )}
-                        <span style={{ marginLeft: "5px" }}>{value}</span>
-                    </>
-                );
+              return (
+                <>
+                  <AiOutlineNumber />
+                  {row.disabled && (
+                    <MdDisabledByDefault
+                      style={{ marginLeft: "5px", marginRight: "5px" }}
+                    />
+                  )}
+                  <span style={{ marginLeft: "5px" }}>
+                    {row.order === dataLength ? "Last" : value}
+                  </span>
+                </>
+              );
             case "act":
                 return (
                     <>
@@ -137,9 +140,9 @@ onMultiCellContextMenu,
                             }}
                             onContextMenu={(event) => {
                                     onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value.length);
-                                }}
-                                className={
-                                isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
+                            }}
+                            className={
+                            isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
                             {To === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
@@ -172,7 +175,7 @@ onMultiCellContextMenu,
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id" && key !== "disabled" && key!=="ports" && key !== "ruleappliedto").map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "disabled" && key!=="ports").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
                         handleCellClick(rowId, cellIndex);

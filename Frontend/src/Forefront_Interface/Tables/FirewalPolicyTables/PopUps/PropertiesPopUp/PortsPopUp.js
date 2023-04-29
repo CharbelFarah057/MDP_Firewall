@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./PortsPopUp.css";
+import "../AccessRulePopUp/PortsPopUp.css";
 
 const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPortSaved }) => {
   const [radioValue, setRadioValue] = useState(radionSaved);
