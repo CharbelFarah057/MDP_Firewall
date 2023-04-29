@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate")
+const { exec } = require("child_process");
 
 
 let Rule = require("../models/Rule");
