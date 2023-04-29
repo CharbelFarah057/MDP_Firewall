@@ -51,6 +51,8 @@ router.post("/add", verifyUser, async (req, res) => {
         ports: req.body.ports
     });
 
+    // sudo iptables -i {}
+
     try {
         const savedRule = await rule.save();
         res.json(savedRule);
