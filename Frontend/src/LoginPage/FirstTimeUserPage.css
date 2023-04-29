@@ -1,0 +1,65 @@
+.first-time-user-page {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-label {
+  margin-bottom: 0.5rem;
+}
+
+.input-field {
+  width: 100%;
+}
+
+.ip-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group.ip-range{
+  flex-direction:  row;
+}
+
+.input-field.ip {
+  width: auto;
+  max-width: 60px;
+  margin-right: 0.5rem;
+}
+
+.ip-ranges-display {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+.ip-ranges-display table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ip-ranges-display th,
+.ip-ranges-display td {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.dot {
+  margin: 0 3px;
+}
+
+.next-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
