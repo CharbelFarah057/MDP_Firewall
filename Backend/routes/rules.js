@@ -1,10 +1,13 @@
 var express = require("express");
 var router = express.Router();
 
+const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate")
+
+
 let Rule = require("../models/Rule");
 
 // GET all rules from the database 
-router.get("/", async (req, res) => {
+router.get("/", verifyUser, async (req, res) => {
     try {
         let rules = await Rule.find();
         // return rules in order based on the "order" field
@@ -16,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET a specific rule from the database check "order" field 
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyUser, async (req, res) => {
     try {
         const rule = await Rule.findOne({ id: req.params.id });
         res.json(rule);
@@ -25,7 +28,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.post("/add", async (req, res) => {
+router.post("/add", verifyUser, async (req, res) => {
     try {
         const rules = await Rule.find();
         for (let i = rules.length - 1; i >= 0; i--) {
@@ -56,7 +59,7 @@ router.post("/add", async (req, res) => {
 });
 
 // delete rule
-router.post("/delete/:id", async (req, res) => {
+router.post("/delete/:id", verifyUser, async (req, res) => {
     try {
         const removedRule = await Rule.deleteOne({ id: req.params.id });
         res.json(removedRule);
@@ -66,7 +69,7 @@ router.post("/delete/:id", async (req, res) => {
 });
 
 // update rule
-router.post("/edit/:id", async (req, res) => {
+router.post("/edit/:id", verifyUser, async (req, res) => {
     try {
         const updatedRule = await Rule.updateOne(
             { id: req.params.id },
@@ -91,7 +94,7 @@ router.post("/edit/:id", async (req, res) => {
 });
 
 // move up/down rule
-router.post("/move/:order", async (req, res) => {
+router.post("/move/:order", verifyUser, async (req, res) => {
     try {
         const rules = await Rule.find();
         let ruleToMove = await Rule.findOne({ order: req.params.order });
