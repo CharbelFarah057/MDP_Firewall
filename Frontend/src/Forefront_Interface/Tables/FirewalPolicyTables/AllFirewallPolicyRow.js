@@ -10,7 +10,6 @@ import { FcGlobe } from 'react-icons/fc';
 const AllFirewallPolicyRow = ({
 row,
 dataLength,
-rowiD_New,
 rowId,
 handleCellClick,
 selectedCells,
@@ -176,7 +175,7 @@ onMultiCellContextMenu,
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "id" && key !== "disabled" && key!=="ports" && key !== "ruleappliedto").map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "disabled" && key!=="ports").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
                         handleCellClick(rowId, cellIndex);

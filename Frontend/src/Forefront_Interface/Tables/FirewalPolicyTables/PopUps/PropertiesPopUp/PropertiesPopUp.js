@@ -20,7 +20,6 @@ const PropertiesPopUp = ({
   onClose,
   onUpdate,
   totalRows,
-  rowId,
   order,
   name,
   act,
@@ -80,7 +79,6 @@ const PropertiesPopUp = ({
       "to" : destinationItems,
       "cond" : "All Users",
       "desc" : descInput,
-      "pol" : "Array",
       "disabled" : disabledInput,
       "ports" : PortsPopupData
     });
@@ -110,11 +108,11 @@ const PropertiesPopUp = ({
         {/* Conditionally render tab content here */}
         {selectedTab === 0 && (
           <General
-          nameInput={nameInput}
+            nameInput={nameInput}
             setNameInput = {setNameInput}
             descInput={descInput}
             setDescInput = {setDescInput}
-            rowId={rowId}
+            rowId={orderInput}
             disabledInput={disabledInput}
             setdisabledInput = {setDisabledInput}
             totalRows={totalRows}

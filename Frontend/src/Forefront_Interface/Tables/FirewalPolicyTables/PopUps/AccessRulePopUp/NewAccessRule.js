@@ -75,7 +75,6 @@ const NewAccessRule = ({
           "to" : destinationItems,
           "cond" : "All Users",
           "desc" : "",
-          "pol" : "Array",
           "disabled": false,
           "ports" : PortsPopupData
           });

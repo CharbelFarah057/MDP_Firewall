@@ -48,7 +48,7 @@ const General = ({
       </Grid>
       <Grid item xs={8}>
         <span>
-          Rule {rowId + 1} of {totalRows}
+          Rule {rowId} of {totalRows}
         </span>
       </Grid>
       <Grid item xs={4}>

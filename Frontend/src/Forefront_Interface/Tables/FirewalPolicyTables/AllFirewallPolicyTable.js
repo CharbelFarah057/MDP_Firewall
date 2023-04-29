@@ -212,9 +212,11 @@ const AllFirewallPolicyTable = () => {
   }, [selectedRows, rowData]);
 
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
+    const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+      (key) => key in rowData[rowId].protoc);
     if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
       rowId === rowData.length - 1 ||
-      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc) === JSON.stringify(["All outbound traffic"]))
+      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc[availableKey]) === JSON.stringify(["All outbound traffic"]))
       ) { 
         return; }
     if ( selectedRows.includes(rowId) ) {
@@ -273,7 +275,6 @@ const AllFirewallPolicyTable = () => {
       // Otherwise, increment the order value
       return {
         ...row,
-        id: row.id + 1,
         order: (row.order) + 1,
       };
     });
@@ -345,19 +346,15 @@ const AllFirewallPolicyTable = () => {
             <th onClick={() => requestSort('desc', sortConfig, setSortConfig)}>
               Description {renderArrowIcon('desc', sortConfig)}
             </th>
-            <th onClick={() => requestSort('policy', sortConfig, setSortConfig)}>
-              Policy {renderArrowIcon('policy', sortConfig)}
-            </th>
           </tr>
         </thead>
         <tbody>
           {filterRows(sortRows(rowData, sortConfig, rowData), searchValue).map((row) => (
             <AllFirewallPolicyRow
-              key={row.id}
+              key={row.order}
               row={row}
               dataLength = {rowData.length}
-              rowiD_New = {row.order - 1}
-              rowId={row.id}
+              rowId={row.order - 1}
               handleCellClick={handleCellClick}
               selectedCells={selectedCells}
               selectedRows={selectedRows}
@@ -403,7 +400,6 @@ const AllFirewallPolicyTable = () => {
           onClose={() => setShowPropertiesPopUp(false)} 
           onUpdate={handleUpdate}
           totalRows = {rowData.length}
-          rowId = {rowData[selectedRows[0]].id}
           order = {rowData[selectedRows[0]].order}
           name = {rowData[selectedRows[0]].name}
           act = {rowData[selectedRows[0]].act}
