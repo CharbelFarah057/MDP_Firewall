@@ -147,6 +147,21 @@ router.get("/logout", verifyUser, async (req, res, next) => {
     }
   });
   
+router.post("/changePassword", verifyUser, async (req, res, next) => {
+    try {
+      if (!req.body.currentPassword || !req.body.newPassword) {
+        return res.status(400).send("Bad request");
+      }  
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return res.status(401).send("Unauthorized");
+      }
+      await user.changePassword(req.body.currentPassword, req.body.newPassword);
+      res.send({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  });
   
   
 
