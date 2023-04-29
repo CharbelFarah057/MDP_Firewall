@@ -47,9 +47,10 @@ router.post("/add", verifyUser, async (req, res) => {
         to: req.body.to,
         cond: req.body.cond,
         desc: req.body.desc,
-        pol: req.body.pol,
         disabled: req.body.disabled,
+        ports: req.body.ports
     });
+
     try {
         const savedRule = await rule.save();
         res.json(savedRule);
