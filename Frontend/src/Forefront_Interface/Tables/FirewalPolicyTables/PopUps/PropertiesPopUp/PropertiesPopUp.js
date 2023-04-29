@@ -69,8 +69,7 @@ const PropertiesPopUp = ({
   };
 
   const handleOkClick = () => {
-    onUpdate(rowId, {
-      "id" : rowId,
+    onUpdate(orderInput - 1, {
       "order" : orderInput,
       "name" : nameInput,
       "act" : actInput,

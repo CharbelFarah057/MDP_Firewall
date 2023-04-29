@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
 import ContextMenu from "../ContextMenu";
-import { AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import initialRowData from "./AllFirewallPolicyData.json";
 import {areSelectedRowsContiguous,
         requestSort,
@@ -10,7 +9,9 @@ import {areSelectedRowsContiguous,
         renderArrowIcon,
         filterRows,
         SingleRowContextMenu,
-        MultiRowContextMenu} from "./AllFirewallPolicyUtilities.js";
+        MultiRowContextMenu,
+        CellContextMenu,
+        MultiCellContextMenu} from "./AllFirewallPolicyUtilities.js";
 import ToolBarComponent from "./ToolBarComponent.js";
 import NewAccessRule from "./PopUps/AccessRulePopUp/NewAccessRule";
 import PropertiesPopUp from "./PopUps/PropertiesPopUp/PropertiesPopUp";
@@ -20,9 +21,12 @@ const AllFirewallPolicyTable = () => {
   const [selectedCells, setSelectedCells] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [itemsselectedRows, setItemsSelectedRows] = useState([]);
+  const [itemsselectedCells, setItemsSelectedCells] = useState([]);
+  const [itemsselectedMultiCells, setItemsSelectedMultiCells] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
   const [rowData, setRowData] = useState(initialRowData);
   const [selectedMultiCellClick, setselectedMultiCellClick] = useState([]);
+  const [MultiCellLength, setMultiCellLength] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
   const [searchValue, setSearchValue] = useState("");
   // Add Rule States
@@ -96,49 +100,17 @@ const AllFirewallPolicyTable = () => {
     event.preventDefault();
     const x = event.clientX;
     const y = event.clientY;
-    const items = [
-      {
-        label: "Allow",
-        checked: rowData[rowId].act === "Allow",
-        onClick: () => {
-          setRowData((prevRowData) => {
-            const newRowData = [...prevRowData];
-            newRowData[rowId].act = "Allow";
-            newRowData[rowId].actionicon = (props) => (
-              <AiFillCheckCircle
-                {...props}
-                style={{
-                  ...props.style,
-                  color: 'white',
-                  backgroundColor: 'green',
-                  borderRadius: '50%',
-                }}
-              />
-            );
-            return newRowData;
-          });
-          setSelectedCells([]);
-        },
-      },
-      {
-        label: "Deny",
-        checked: rowData[rowId].act === "Deny",
-        onClick: () => {
-          setRowData((prevRowData) => {
-            const newRowData = [...prevRowData];
-            newRowData[rowId].act = "Deny";
-            newRowData[rowId].actionicon = (props) => (
-              <AiOutlineStop {...props} style={{ ...props.style, color: 'red' }} />);
-            return newRowData;
-          });
-          setSelectedCells([]);
-        },
-      },
-    ];
+    const items = itemsselectedCells.map((label) => ({
+        label : label,
+        checked : rowData[rowId].act === label,
+        onClick : CellContextMenu(rowId, setSelectedCells, setRowData)[label],
+      }));
     setContextMenu({ x, y, items });
   };
 
   const handleRowCheckboxChange = (rowId) => {
+    console.log(MultiCellLength)
+    console.log(selectedMultiCellClick)
     if (rowId === rowData.length - 1) {
       setSelectedRows((prevRows) =>
       prevRows.includes(rowId)
@@ -211,6 +183,22 @@ const AllFirewallPolicyTable = () => {
     }
   }, [selectedRows, rowData]);
 
+  useEffect(() => {
+    if (selectedCells.length === 0) {
+      setItemsSelectedCells([]);
+    } else if (selectedCells.length === 1) {
+      setItemsSelectedCells(["Allow", "Deny"]);
+    }
+  }, [selectedCells]);
+
+  useEffect(() => {
+    if (MultiCellLength === 1) {
+      setItemsSelectedMultiCells(["Properties"]);
+    } else {
+      setItemsSelectedMultiCells(["Remove", "Properties"]);
+    }
+  }, [MultiCellLength]);
+
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
     const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
       (key) => key in rowData[rowId].protoc);
@@ -227,7 +215,7 @@ const AllFirewallPolicyTable = () => {
     }
   };
 
-  const handleMultiCellContextMenu = (event, rowId, cellIndex, MultiCellIndex, cellDataLength) => {
+  const handleMultiCellContextMenu = (event, rowId, cellIndex, MultiCellIndex) => {
     if (!selectedMultiCellClick.some((cell) => cell.rowId === rowId && cell.cellIndex === cellIndex && cell.MultiCellIndex === MultiCellIndex)) {
       return;
     }
@@ -235,33 +223,11 @@ const AllFirewallPolicyTable = () => {
     const x = event.clientX;
     const y = event.clientY;
 
-    const items = [
-      ...(cellDataLength === 1 ? [] : [
-        {
-          label: "Remove",
-          onClick: () => {
-            setRowData((prevRowData) => {
-              const newRowData = [...prevRowData];
-              if (cellIndex === 3) {
-                const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
-                  (key) => key in newRowData[rowId].protoc);
-                newRowData[rowId].protoc[availableKey].splice(MultiCellIndex, 1);
-              }
-              if (cellIndex === 4) {
-                newRowData[rowId].FL.splice(MultiCellIndex, 1);
-              }
-              if (cellIndex === 5) {
-                newRowData[rowId].to.splice(MultiCellIndex, 1);
-              }
-              return newRowData;
-            });
-            setselectedMultiCellClick([]);
-          },
-        }
-      ]),
-      { label: "Properties", onClick: () => console.log("Properties clicked") }
-    ];
-  
+    const items = itemsselectedMultiCells.map((label) => ({
+      label : label,
+      onClick : MultiCellContextMenu(rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick)[label],
+    }));
+
     setContextMenu({ x, y, items });
   };
 
@@ -303,14 +269,21 @@ const AllFirewallPolicyTable = () => {
       <ToolBarComponent 
         onSearch={(value) => setSearchValue(value)} 
         itemsSelectedRows={itemsselectedRows}
+        itemsselectedCells={itemsselectedCells}
         rowData = {rowData}
         selectedRows = {selectedRows}
+        selectedCells = {selectedCells}
         setRowData = {setRowData}
         setSelectedRows = {setSelectedRows}
+        setSelectedCells = {setSelectedCells}
         rowId = {selectedRows[0]}
         isRowDisabled = {rowData[selectedRows[0]]?.disabled}
         openPopup = {openPopup}
         setShowPropertiesPopUp = {setShowPropertiesPopUp}
+        selectedMultiCellClick = {selectedMultiCellClick}
+        setselectedMultiCellClick = {setselectedMultiCellClick}
+        itemsselectedMultiCells = {itemsselectedMultiCells}
+
       />
       <table className="firewall-policy-table">
         <thead>
@@ -364,6 +337,7 @@ const AllFirewallPolicyTable = () => {
               selectedMultiCellClick={selectedMultiCellClick}
               handleMultiCellClick={handleMultiCellClick}
               onMultiCellContextMenu={handleMultiCellContextMenu}
+              setMultiCellLength={setMultiCellLength}
           />
           ))}
         </tbody>

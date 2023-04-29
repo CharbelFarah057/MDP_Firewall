@@ -4,12 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import propertiesIcon from '../../../Images/properties-icon.svg';
 import deleteIcon from '../../../Images/delete-icon.svg';
+import multicelldeleteIcon from '../../../Images/delete-icon.svg';
 import createGroupIcon from '../../../Images/create-group-icon.svg';
 import deleteGroupIcon from '../../../Images/delete-group-icon.svg';
 import moveUpIcon from '../../../Images/move-up-icon.svg';
 import moveDownIcon from '../../../Images/move-down-icon.svg';
 import enableIcon from '../../../Images/enable-icon.svg';
 import disableIcon from '../../../Images/disable-icon.svg';
+import checkIcon from '../../../Images/check-circle.svg';
+import denyIcon from '../../../Images/deny-icon.svg';
+
 
 const toggleDisableEnable = (rowData, selectedRows, setRowData, action) => {
     const updatedData = [...rowData];
@@ -238,4 +242,75 @@ export const tooltip_text = {
   "Move Down": "Move Down",
   Enable: "Enable",
   Disable: "Disable",
+}
+
+const toggleAllow = (rowId, setSelectedCells, setRowData) => {
+  setRowData((prevRowData) => {
+    const newRowData = [...prevRowData];
+    newRowData[rowId].act = "Allow";
+    return newRowData;
+  });
+  setSelectedCells([]);
+};
+
+const toggleDeny = (rowId, setSelectedCells, setRowData) => {
+  setRowData((prevRowData) => {
+    const newRowData = [...prevRowData];
+    newRowData[rowId].act = "Deny";
+    return newRowData;
+  });
+  setSelectedCells([]);
+};
+
+export const CellContextMenu = (rowId, setSelectedCells, setRowData) => {
+  return{
+    Allow : () => toggleAllow(rowId, setSelectedCells, setRowData),
+    Deny : () => toggleDeny(rowId, setSelectedCells, setRowData),
+  }
+}
+
+export const CellToolbarIcons = {
+  Allow : checkIcon,
+  Deny : denyIcon
+}
+
+export const CellTooltipText = {
+  Allow : "Allow",
+  Deny : "Deny"
+}
+
+const handleRemoveItems = (rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick) => {
+  setRowData((prevRowData) => {
+    const newRowData = [...prevRowData];
+    if (cellIndex === 3) {
+      const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+        (key) => key in newRowData[rowId].protoc);
+      newRowData[rowId].protoc[availableKey].splice(MultiCellIndex, 1);
+    }
+    if (cellIndex === 4) {
+      newRowData[rowId].FL.splice(MultiCellIndex, 1);
+    }
+    if (cellIndex === 5) {
+      newRowData[rowId].to.splice(MultiCellIndex, 1);
+    }
+    return newRowData;
+  });
+  setselectedMultiCellClick([]);
+};
+
+export const MultiCellContextMenu = (rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick) => {
+  return {
+    Remove : () => handleRemoveItems(rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick),
+    Properties : () => console.log("Properties clicked")
+  };
+}
+
+export const MultiCellToolbarIcons = {
+  Remove : multicelldeleteIcon,
+  Properties : propertiesIcon
+}
+
+export const MultiCellTooltipText = {
+  Remove : "Remove",
+  Properties : "Properties"
 }

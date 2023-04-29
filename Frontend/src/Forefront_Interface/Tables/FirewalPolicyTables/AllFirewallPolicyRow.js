@@ -20,6 +20,7 @@ onCellContextMenu,
 selectedMultiCellClick,
 handleMultiCellClick,
 onMultiCellContextMenu,
+setMultiCellLength,
 }) => {
 
     const isCellSelected = (cellIndex) => selectedCells.some(
@@ -73,10 +74,11 @@ onMultiCellContextMenu,
                                 key={MultiCellIndex}
                                 onClick={() => {
                                   handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                                  setMultiCellLength(value[availableKey].length);
                                 }}
                                 onContextMenu={(event) => {
                                   event.preventDefault();
-                                  onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value[availableKey].length);
+                                  onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex);
                                 }}
                                 className={
                                   isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
@@ -113,9 +115,10 @@ onMultiCellContextMenu,
                             key={MultiCellIndex}
                             onClick={() => {
                                 handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                                setMultiCellLength(value.length);
                                 }}
                                 onContextMenu={(event) => {
-                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value.length);
+                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex);
                                 }}
                                 className={
                                 isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
@@ -137,9 +140,10 @@ onMultiCellContextMenu,
                             key={MultiCellIndex}
                             onClick={() => {
                                 handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                                setMultiCellLength(value.length);
                             }}
                             onContextMenu={(event) => {
-                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex, value.length);
+                                    onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex);
                             }}
                             className={
                             isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""

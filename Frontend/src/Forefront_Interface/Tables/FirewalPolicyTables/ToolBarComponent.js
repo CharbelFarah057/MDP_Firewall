@@ -9,21 +9,37 @@ import {MultiRowContextMenu,
         SingleRowContextMenu, 
         SingleRowToolbarIcons, 
         MultiRowToolbarIcons,
-        tooltip_text} from "./AllFirewallPolicyUtilities.js";
+        tooltip_text,
+        CellContextMenu,
+        CellTooltipText,
+        CellToolbarIcons,
+        MultiCellContextMenu,
+        MultiCellToolbarIcons,
+        MultiCellTooltipText
+      } from "./AllFirewallPolicyUtilities.js";
 
 const ToolBarComponent = ({ 
   onSearch,
   itemsSelectedRows, 
+  itemsselectedCells,
   rowData, 
   selectedRows, 
+  selectedCells,
   setRowData, 
   setSelectedRows, 
+  setSelectedCells,
   rowId, 
   isRowDisabled,
   openPopup,
-  setShowPropertiesPopUp }) => {
+  setShowPropertiesPopUp,
+  selectedMultiCellClick,
+  setselectedMultiCellClick,
+  itemsselectedMultiCells
+}) => {
   const [inputValue, setInputValue] = useState("");
   const [showTooltip, setShowTooltip] = useState({});
+  const [showCellTooltip, setShowCellTooltip] = useState({});
+  const [showMultiCellTooltip, setShowMultiCellTooltip] = useState({});
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
@@ -73,6 +89,61 @@ const ToolBarComponent = ({
     </div>
   ));
 
+  // const labelToFunctionMapCell = (chosen_label) => {
+  //   return {
+  //     label : chosen_label,
+  //     checked : chosen_label,
+  //     onClick: CellContextMenu(0, setSelectedCells, setRowData)[chosen_label],
+  //   };
+  // };
+
+  // const labelToIconMapCell = (chosen_label) => {
+  //   return CellToolbarIcons[chosen_label];
+  // };
+
+  // const selectedCellButtons = itemsselectedCells.map((label) => (
+  //   <div className="icon-container" key={label}>
+  //     <img
+  //       src={labelToIconMapCell(label)}
+  //       alt={label}
+  //       className="icon"
+  //       onClick={labelToFunctionMapCell(label).onClick}
+  //       onMouseEnter={() => setShowCellTooltip({ ...showCellTooltip, [label]: true })}
+  //       onMouseLeave={() => setShowCellTooltip({ ...showCellTooltip, [label]: false })}
+  //     />
+  //     {showCellTooltip[label] && (<div className="tooltip">
+  //       <span>{CellTooltipText[label]}</span>
+  //     </div>)}
+  //   </div>
+  // ));
+
+  // const labelToFunctionMapMultiCell = (chosen_label) => {
+  //   return {
+  //     label : chosen_label,
+  //     onClick: MultiCellContextMenu(0, 3, 0, setRowData, setselectedMultiCellClick)[chosen_label],
+  //   };
+  // };
+
+  // const labelToIconMapMultiCell = (chosen_label) => {
+  //   return MultiCellToolbarIcons[chosen_label];
+  // };
+
+  // const selectedMultiCellButtons = itemsselectedMultiCells.map((label) => (
+  //   <div className="icon-container" key={label}>
+  //     <img
+  //       src={labelToIconMapMultiCell(label)}
+  //       alt={label}
+  //       className="icon"
+  //       onClick={labelToFunctionMapMultiCell(label).onClick}
+  //       onMouseEnter={() => setShowMultiCellTooltip({ ...showMultiCellTooltip, [label]: true })}
+  //       onMouseLeave={() => setShowMultiCellTooltip({ ...showMultiCellTooltip, [label]: false })}
+  //     />
+  //     {showMultiCellTooltip[label] && (<div className="tooltip">
+  //       <span>{MultiCellTooltipText[label]}</span>
+  //     </div>)}
+  //   </div>
+  // ));
+
   return (
     <div className="tool-bar-container">
       {inputValue ? (
@@ -109,6 +180,8 @@ const ToolBarComponent = ({
           )}
         </div>
         {selectedRowButtons}
+        {/* {selectedCellButtons} */}
+        {/* {selectedMultiCellButtons} */}
       </div>
     </div>
   );
