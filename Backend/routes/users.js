@@ -102,7 +102,7 @@ router.post("/refreshToken", async (req, res, next) => {
             await user.save()
   
             res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS)
-            res.send({ success: true, token })
+            res.send({ user, success: true, token })
           }
   
         } else {
