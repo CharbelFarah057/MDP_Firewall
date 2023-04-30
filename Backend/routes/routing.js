@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const RoutingData = require("./RoutingData");
+const RoutingData = require("../models/RoutingData");
 const { exec } = require("child_process");
 
 router.post("/routing-data", (req, res) => {
