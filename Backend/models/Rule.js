@@ -30,7 +30,7 @@ const RuleSchema = new mongoose.Schema(
         enum: ["Drop", "Accept"],
     },
     protoc: {
-        type: Array,
+        type: Object,
     },
     FL: {
         type: Array,
