@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate")
+const { exec } = require("child_process");
 
 
 let Rule = require("../models/Rule");
@@ -47,9 +48,12 @@ router.post("/add", verifyUser, async (req, res) => {
         to: req.body.to,
         cond: req.body.cond,
         desc: req.body.desc,
-        pol: req.body.pol,
         disabled: req.body.disabled,
+        ports: req.body.ports
     });
+
+    // sudo iptables -i {}
+
     try {
         const savedRule = await rule.save();
         res.json(savedRule);

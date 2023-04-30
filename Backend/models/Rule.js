@@ -27,7 +27,7 @@ const RuleSchema = new mongoose.Schema(
     },
     act: {
         type: String,
-        enum: ["Deny", "Allow"],
+        enum: ["Drop", "Accept"],
     },
     protoc: {
         type: Array,
@@ -44,12 +44,12 @@ const RuleSchema = new mongoose.Schema(
     desc: {
         type: String
     },
-    pol: {
-        type: String,
-    },
     disabled: {
         type: Boolean,
         default: false,
+    },
+    ports: {
+        type: Array,
     }
   },
   { collection: "Rules" }
