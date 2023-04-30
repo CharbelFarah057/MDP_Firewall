@@ -179,7 +179,7 @@ setMultiCellLength,
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => !key.endsWith("icon") && key !== "disabled" && key!=="ports").map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => key !== "_id" && !key.endsWith("icon") && key !== "disabled" && key!=="ports").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
                         handleCellClick(rowId, cellIndex);

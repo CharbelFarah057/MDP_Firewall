@@ -1,8 +1,8 @@
 //AllFirewallPolicyTable.js
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
+import { UserContext } from "../../../UserContext"
 import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
 import ContextMenu from "../ContextMenu";
-import initialRowData from "./AllFirewallPolicyData.json";
 import {areSelectedRowsContiguous,
         requestSort,
         sortRows,
@@ -18,13 +18,14 @@ import PropertiesPopUp from "./PopUps/PropertiesPopUp/PropertiesPopUp";
 import "./AllFirewallPolicyTable.css";
 
 const AllFirewallPolicyTable = () => {
+  const [userContext, setUserContext] = useContext(UserContext)
   const [selectedCells, setSelectedCells] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [itemsselectedRows, setItemsSelectedRows] = useState([]);
   const [itemsselectedCells, setItemsSelectedCells] = useState([]);
   const [itemsselectedMultiCells, setItemsSelectedMultiCells] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
-  const [rowData, setRowData] = useState(initialRowData);
+  const [rowData, setRowData] = useState([]);
   const [selectedMultiCellClick, setselectedMultiCellClick] = useState([]);
   const [MultiCellLength, setMultiCellLength] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
@@ -40,6 +41,36 @@ const AllFirewallPolicyTable = () => {
   const [PortsPopupData, setPortsPopupData] = useState({"anySourcePort" : [0, 0]});
   // Add Properties PopUp state
   const [showPropertiesPopUp, setShowPropertiesPopUp] = useState(false);
+
+  const fetchRowDetails = useCallback(() => {
+    fetch("http://localhost:3001/api/rules/", {
+      method: "GET",
+      credentials: "include",
+      // Pass authentication token as bearer token in header
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    }).then(async response => {
+      if (response.ok) {
+        const data = await response.json()
+        setRowData(data)
+      } else {
+        if (response.status === 401) {
+          window.location.reload()
+        } else {
+          setRowData([])
+        }
+      }
+    })
+  }, [setUserContext, userContext.token])
+
+  useEffect(() => {
+    // fetch only when user rowData are not present
+    if (!userContext.rowData) {
+      fetchRowDetails()
+    }
+  }, [userContext.rowData, fetchRowDetails])
 
   const handleRowContextMenu = (event, rowId) => {
     if (!selectedRows.includes(rowId)) {
@@ -109,8 +140,6 @@ const AllFirewallPolicyTable = () => {
   };
 
   const handleRowCheckboxChange = (rowId) => {
-    console.log(MultiCellLength)
-    console.log(selectedMultiCellClick)
     if (rowId === rowData.length - 1) {
       setSelectedRows((prevRows) =>
       prevRows.includes(rowId)
