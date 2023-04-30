@@ -91,7 +91,7 @@ router.post("/refreshToken", async (req, res, next) => {
   
           if (tokenIndex === -1) {
             res.statusCode = 401
-            res.send("Unauthorized")
+            res.send({err: "Unauthorized"})
           } else {
   
             const token = getToken({ _id: userId })
@@ -107,17 +107,17 @@ router.post("/refreshToken", async (req, res, next) => {
   
         } else {
           res.statusCode = 401
-          res.send("Unauthorized")
+          res.send({err: "Unauthorized"})
         }
   
       } catch (err) {
         res.statusCode = 401
-        res.send("Unauthorized")
+        res.send({err: "Unauthorized"})
       }
   
     } else {
       res.statusCode = 401
-      res.send("Unauthorized")
+      res.send({err: "Unauthorized"})
     }
   
   })
@@ -141,7 +141,7 @@ router.get("/logout", verifyUser, async (req, res, next) => {
   
       const user = await User.findById(req.user._id);
       if (!user) {
-        return res.status(401).send("Unauthorized");
+        return res.status(401).send({err: "Unauthorized"});
       }
   
       const tokenIndex = user.refreshToken.findIndex(
