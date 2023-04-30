@@ -50,7 +50,7 @@ setMultiCellLength,
             case "act":
                 return (
                     <>
-                        {value === 'Deny' ? 
+                        {value === 'Drop' ? 
                         <AiOutlineStop style={{ color: 'red' }} /> : 
                         <AiFillCheckCircle style={{
                             color: 'white',

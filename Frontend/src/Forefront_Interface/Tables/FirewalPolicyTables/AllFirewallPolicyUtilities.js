@@ -247,7 +247,7 @@ export const tooltip_text = {
 const toggleAllow = (rowId, setSelectedCells, setRowData) => {
   setRowData((prevRowData) => {
     const newRowData = [...prevRowData];
-    newRowData[rowId].act = "Allow";
+    newRowData[rowId].act = "Accept";
     return newRowData;
   });
   setSelectedCells([]);
@@ -256,7 +256,7 @@ const toggleAllow = (rowId, setSelectedCells, setRowData) => {
 const toggleDeny = (rowId, setSelectedCells, setRowData) => {
   setRowData((prevRowData) => {
     const newRowData = [...prevRowData];
-    newRowData[rowId].act = "Deny";
+    newRowData[rowId].act = "Drop";
     return newRowData;
   });
   setSelectedCells([]);
@@ -264,19 +264,19 @@ const toggleDeny = (rowId, setSelectedCells, setRowData) => {
 
 export const CellContextMenu = (rowId, setSelectedCells, setRowData) => {
   return{
-    Allow : () => toggleAllow(rowId, setSelectedCells, setRowData),
-    Deny : () => toggleDeny(rowId, setSelectedCells, setRowData),
+    Accept : () => toggleAllow(rowId, setSelectedCells, setRowData),
+    Drop : () => toggleDeny(rowId, setSelectedCells, setRowData),
   }
 }
 
 export const CellToolbarIcons = {
-  Allow : checkIcon,
-  Deny : denyIcon
+  Accept : checkIcon,
+  Drop : denyIcon
 }
 
 export const CellTooltipText = {
-  Allow : "Allow",
-  Deny : "Deny"
+  Accept : "Accept",
+  Drop : "Drop"
 }
 
 const handleRemoveItems = (rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick) => {

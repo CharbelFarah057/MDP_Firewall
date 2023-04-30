@@ -33,7 +33,7 @@ const AllFirewallPolicyTable = () => {
   // Add Rule States
   const [showPopup, setShowPopup] = useState(false);
   const [ruleName, setRuleName] = useState('');
-  const [ruleAction, setRuleAction] = useState('Deny');
+  const [ruleAction, setRuleAction] = useState('Drop');
   const [ruleAppliesTo, setRuleAppliesTo] = useState("selectedProtocols");
   const [items, setItems] = useState([]);
   const [sourceItems, setSourceItems] = useState([]);
@@ -54,7 +54,12 @@ const AllFirewallPolicyTable = () => {
     }).then(async response => {
       if (response.ok) {
         const data = await response.json()
-        setRowData(data)
+        setRowData(
+          data.map((item) => {
+            const { __v, ...rest } = item;
+            return rest;
+          })
+        );
       } else {
         if (response.status === 401) {
           window.location.reload()
@@ -216,7 +221,7 @@ const AllFirewallPolicyTable = () => {
     if (selectedCells.length === 0) {
       setItemsSelectedCells([]);
     } else if (selectedCells.length === 1) {
-      setItemsSelectedCells(["Allow", "Deny"]);
+      setItemsSelectedCells(["Accept", "Drop"]);
     }
   }, [selectedCells]);
 
@@ -262,23 +267,6 @@ const AllFirewallPolicyTable = () => {
 
   const openPopup = () => {
     setShowPopup(true);
-  };
-
-  const handleAccessRuleData = (data) => {
-    // Increment the 'id' and 'order' values in the existing rowData
-    const updatedRows = rowData.map((row) => {
-      // Otherwise, increment the order value
-      return {
-        ...row,
-        order: (row.order) + 1,
-      };
-    });
-  
-    // Add the new dictionary to the rowData array
-    const newRowData = [data, ...updatedRows];
-  
-    // Update the rowData state with the new array
-    setRowData(newRowData);
   };
 
   const handleUpdate = (rownumber, updateData) => {
@@ -382,7 +370,7 @@ const AllFirewallPolicyTable = () => {
       <NewAccessRule
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}
-        onFinish={handleAccessRuleData}
+        onFinish={fetchRowDetails}
         ruleName={ruleName}
         setRuleName={setRuleName}
         ruleAction={ruleAction}
@@ -397,6 +385,7 @@ const AllFirewallPolicyTable = () => {
         setSourceItems={setSourceItems}
         destinationItems={destinationItems}
         setDestinationItems={setDestinationItems}
+        userContext = {userContext}
       />
       {showPropertiesPopUp && selectedRows.length === 1 &&
         <PropertiesPopUp 

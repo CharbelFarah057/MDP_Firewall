@@ -13,24 +13,24 @@ const Page2 = ({ ruleAction, handleRuleActionChange }) => {
         <div className="radio-container">
           <input
             type="radio"
-            id="Allow"
+            id="Accept"
             name="ruleAction"
-            value="Allow"
-            checked={ruleAction === "Allow"}
+            value="Accept"
+            checked={ruleAction === "Accept"}
             onChange={handleRuleActionChange}
           />
-          <label htmlFor="Allow" className="radio-label">Allow</label>
+          <label htmlFor="Accept" className="radio-label">Accept</label>
         </div>
         <div className="radio-container">
           <input
             type="radio"
-            id="Deny"
+            id="Drop"
             name="ruleAction"
-            value="Deny"
-            checked={ruleAction === "Deny"}
+            value="Drop"
+            checked={ruleAction === "Drop"}
             onChange={handleRuleActionChange}
           />
-          <label htmlFor="Deny" className="radio-label">Deny</label>
+          <label htmlFor="Drop" className="radio-label">Drop</label>
         </div>
       </div>
     </>
