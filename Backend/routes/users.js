@@ -51,7 +51,7 @@ router.post("/login", passport.authenticate("local"), async (req, res, next) => 
         user.refreshToken.push({ refreshToken });
         await user.save();
         res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-        res.send({ success: true, token });
+        res.send({ user, success: true, token });
     } catch (err) {
         next(err);
     }
@@ -150,19 +150,75 @@ router.get("/logout", verifyUser, async (req, res, next) => {
 router.post("/changePassword", verifyUser, async (req, res, next) => {
     try {
       if (!req.body.currentPassword || !req.body.newPassword) {
-        return res.status(400).send("Bad request");
-      }  
-      const user = await User.findById(req.user._id);
-      if (!user) {
-        return res.status(401).send("Unauthorized");
+        return res.status(400).send({err: "Bad request - no password provided"});
       }
+      
+      if (req.body.currentPassword == req.body.newPassword) {
+        return res.status(400).send({err: "Bad request - new password is the same as the old one"});
+      }
+
+      let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+      if (!passwordRegex.test(newPassword)) {
+        return res.status(400).send({err: "Bad request - password not complex enough (at least 8 characters, 1 number, 1 lowercase, 1 uppercase, 1 special character)"});
+      }      
+
+      const user = await User.findById(req.user._id);
       await user.changePassword(req.body.currentPassword, req.body.newPassword);
       res.send({ success: true });
     } catch (err) {
       next(err);
     }
   });
-  
+
+// Setup wizard on first login
+router.post("/setup", verifyUser, async (req, res, next) => {
+    /*
+    Parameters:
+    - currentPassword: current password
+    - newPassword: new password
+
+    */
+
+    try {
+      let user = await User.findById(req.user._id);
+      if (!user.firstLogin) {
+        return res.status(401).send({err: "User has been setup already"});
+      }
+      
+      // setting up networks 
+
+
+      // setting up new password make sure it's complex and not the same as the old one
+      let newPassword = req.body.newPassword;
+      if (!newPassword) {
+        return res.status(400).send({err: "Bad request - no new password"});
+      }
+      // check complexity of password based on the following rules:
+      // 1. At least 8 characters
+      // 2. At least 1 number
+      // 3. At least 1 lowercase letter
+      // 4. At least 1 uppercase letter
+      // 5. At least 1 special character
+      // 6. Not same as old password
+
+      if (req.body.currentPassword == req.body.newPassword) {
+        return res.status(400).send({err: "Bad request - new password is the same as the old one"});
+      }
+
+      let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+      if (!passwordRegex.test(newPassword)) {
+        return res.status(400).send({err: "Bad request - password not complex enough (at least 8 characters, 1 number, 1 lowercase, 1 uppercase, 1 special character)"});
+      }
+      
+      await user.changePassword(req.body.currentPassword, req.body.newPassword);
+      user.firstLogin = false;
+      await user.save();
+      res.send({ success: true });
+    } catch (err) {
+      next(err);
+    }
+});
+
   
 
 

@@ -34,6 +34,11 @@ const User = new Schema({
 
   },
 
+  firstLogin: {
+    type: Boolean,
+    default: true
+  },
+
   refreshToken: {
 
     type: [Session],
