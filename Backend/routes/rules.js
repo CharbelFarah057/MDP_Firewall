@@ -30,6 +30,14 @@ router.get("/:id", verifyUser, async (req, res) => {
 });
 
 router.post("/add", verifyUser, async (req, res) => {
+    // make sure unique name is provided check if name already exist if so return error
+
+    let check_rule = await Rule.find({ name: req.body.name });
+    if (check_rule.length > 0) {
+        res.status(400).json({ err: "Rule name already exists" });
+        return;
+    }
+
     try {
         const rules = await Rule.find();
         for (let i = rules.length - 1; i >= 0; i--) {

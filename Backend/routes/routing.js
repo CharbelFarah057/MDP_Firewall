@@ -19,7 +19,7 @@ router.post("/routing-data", (req, res) => {
 
     RoutingData.insertMany(routingDataList)
       .then(savedRoutingData => {
-        res.status(201).json(savedRoutingData);
+        res.status(201).json({message: savedRoutingData});
       })
       .catch(err => {
         res.status(500).json({ message: err.message });

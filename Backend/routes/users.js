@@ -30,7 +30,7 @@ router.post("/signup", async (req, res, next) => {
         const user = await User.findOne({ username: req.body.username });
         if (user) {
             res.statusCode = 403;
-            res.send("Username already exists");
+            res.send({message: "Username already exists"});
             return;
         }
 
@@ -48,9 +48,8 @@ router.post("/signup", async (req, res, next) => {
         res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
         res.send({ success: true, token });
     } catch (err) {
-        console.log(err)
         res.statusCode = 500;
-        res.send(err);
+        res.send({message: err});
     }
 });
 
@@ -91,7 +90,7 @@ router.post("/refreshToken", async (req, res, next) => {
   
           if (tokenIndex === -1) {
             res.statusCode = 401
-            res.send({err: "Unauthorized"})
+            res.send({message: "Unauthorized"})
           } else {
   
             const token = getToken({ _id: userId })
@@ -107,17 +106,17 @@ router.post("/refreshToken", async (req, res, next) => {
   
         } else {
           res.statusCode = 401
-          res.send({err: "Unauthorized"})
+          res.send({message: "Unauthorized"})
         }
   
       } catch (err) {
         res.statusCode = 401
-        res.send({err: "Unauthorized"})
+        res.send({message: "Unauthorized"})
       }
   
     } else {
       res.statusCode = 401
-      res.send({err: "Unauthorized"})
+      res.send({message: "Unauthorized"})
     }
   
   })
@@ -141,7 +140,7 @@ router.get("/logout", verifyUser, async (req, res, next) => {
   
       const user = await User.findById(req.user._id);
       if (!user) {
-        return res.status(401).send({err: "Unauthorized"});
+        return res.status(401).send({message: "Unauthorized"});
       }
   
       const tokenIndex = user.refreshToken.findIndex(
@@ -162,16 +161,16 @@ router.get("/logout", verifyUser, async (req, res, next) => {
 router.post("/changePassword", verifyUser, async (req, res, next) => {
     try {
       if (!req.body.currentPassword || !req.body.newPassword) {
-        return res.status(400).send({err: "Bad request - no password provided"});
+        return res.status(400).send({message: "Bad request - no password provided"});
       }
       
       if (req.body.currentPassword == req.body.newPassword) {
-        return res.status(400).send({err: "Bad request - new password is the same as the old one"});
+        return res.status(400).send({message: "Bad request - new password is the same as the old one"});
       }
 
       let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
       if (!passwordRegex.test(newPassword)) {
-        return res.status(400).send({err: "Bad request - password not complex enough (at least 8 characters, 1 number, 1 lowercase, 1 uppercase, 1 special character)"});
+        return res.status(400).send({message: "Bad request - password not complex enough (at least 8 characters, 1 number, 1 lowercase, 1 uppercase, 1 special character)"});
       }      
 
       const user = await User.findById(req.user._id);
@@ -194,18 +193,18 @@ router.post("/setup", verifyUser, async (req, res, next) => {
     try {
       let user = await User.findById(req.user._id);
       if (!user.firstLogin) {
-        return res.status(401).send({ err: "User has been setup already" });
+        return res.status(401).send({ message: "User has been setup already" });
       }
   
       // Validate and save network settings
       const { internalNetworks, externalNetworks } = req.body;
       if (!Array.isArray(internalNetworks) || !Array.isArray(externalNetworks)) {
-        return res.status(400).send({ err: "Bad request - invalid network settings" });
+        return res.status(400).send({ message: "Bad request - invalid network settings" });
       }
   
       for (const network of [...internalNetworks, ...externalNetworks]) {
         if (!isValidIpAddress(network.ip) || !isValidSubnetMask(network.subnetMask) || !isValidIpAddress(network.gateway)) {
-          return res.status(400).send({ err: "Bad request - invalid IP address or subnet mask" });
+          return res.status(400).send({ message: "Bad request - invalid IP address or subnet mask" });
         }
       }
   
@@ -216,7 +215,7 @@ router.post("/setup", verifyUser, async (req, res, next) => {
       // setting up new password make sure it's complex and not the same as the old one
       let newPassword = req.body.newPassword;
       if (!newPassword) {
-        return res.status(400).send({err: "Bad request - no new password"});
+        return res.status(400).send({message: "Bad request - no new password"});
       }
       // check complexity of password based on the following rules:
       // 1. At least 8 characters
@@ -228,7 +227,7 @@ router.post("/setup", verifyUser, async (req, res, next) => {
 
       let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
       if (!passwordRegex.test(newPassword)) {
-        return res.status(400).send({err: "Bad request - password not complex enough (at least 8 characters, 1 number, 1 lowercase, 1 uppercase, 1 special character)"});
+        return res.status(400).send({message: "Bad request - password not complex enough (at least 8 characters, 1 number, 1 lowercase, 1 uppercase, 1 special character)"});
       }
       
       await user.changePassword(req.body.currentPassword, req.body.newPassword);
