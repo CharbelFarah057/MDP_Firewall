@@ -34,7 +34,7 @@ router.post("/add", verifyUser, async (req, res) => {
 
     let check_rule = await Rule.find({ name: req.body.name });
     if (check_rule.length > 0) {
-        res.status(400).json({ err: "Rule name already exists" });
+        res.status(400).json({ message: "Rule name already exists" });
         return;
     }
 
