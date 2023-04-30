@@ -14,15 +14,14 @@ function ProtectedRoute({ component: Component, ...rest }) {
       if (response.ok) {
         const data = await response.json();
         setUserContext((oldValues) => {
-          return { ...oldValues, token: data.token };
+          return { ...oldValues, token: data.token, user: data.user };
         });
       } else {
         setUserContext((oldValues) => {
-          return { ...oldValues, token: null };
+          return { ...oldValues, token: null, user: null };
         });
       }
 
-      // Call refreshToken every 5 minutes to renew the authentication token.
       setTimeout(verifyUser, 5 * 60 * 1000);
     });
   }, [setUserContext]);
@@ -34,15 +33,17 @@ function ProtectedRoute({ component: Component, ...rest }) {
   return (
     <Route
       {...rest}
-      render={(props) =>
-        userContext.token === null ? (
-          <Redirect to="/login" />
-        ) : userContext.token ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to="/login" />
-        )
-      }
+      render={(props) => {
+        if (userContext.token === null) {
+          return <Redirect to="/login" />;
+        } else if (userContext.token && userContext.user.firstLogin) {
+          return <Component {...props} />
+        } else if (userContext.token && !userContext.user.firstLogin) {
+          return <Component {...props} />;
+        } else {
+          return <Redirect to="/login" />;
+        }
+      }}
     />
   );
 }

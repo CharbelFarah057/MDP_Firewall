@@ -17,6 +17,10 @@ const FirstTimeUserPage = () => {
     const [dnsServer, setDnsServer] = useState(['', '', '', '']);
     const [externalIpRanges, setExternalIpRanges] = useState([]);
 
+    function generateUniqueId() {
+      return Math.random().toString(36).substr(2, 9);
+    }  
+
     const handleNext = () => {
         // Save data here
         console.log('Saving data...'); // Replace with your saving logic
@@ -25,7 +29,6 @@ const FirstTimeUserPage = () => {
         history.push('/tmg');
       };
     
-
     const handleAddIpRange = () => {
         setIpRanges([
           ...ipRanges,
@@ -137,7 +140,7 @@ const FirstTimeUserPage = () => {
         {ipRangeFrom.map((ip, index) => (
             <>
                 <input
-                key={index}
+                key={generateUniqueId}
                 type="number"
                 className="input-field ip"
                 value={ip}
@@ -154,7 +157,7 @@ const FirstTimeUserPage = () => {
         {subnetMask.map((ip, index) => (
             <>
                 <input
-                key={index}
+                key={generateUniqueId}
                 type="number"
                 className="input-field ip"
                 value={ip}
@@ -171,7 +174,7 @@ const FirstTimeUserPage = () => {
         {defaultGateWay.map((ip, index) => (
             <>
                 <input
-                key={index}
+                key={generateUniqueId}
                 type="number"
                 className="input-field ip"
                 value={ip}

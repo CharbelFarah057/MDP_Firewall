@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react"
+import { useEffect } from "react";
 import { UserContext } from "../UserContext"
+import { useHistory } from 'react-router-dom';
 import './Login.css';
 
 
@@ -10,6 +12,18 @@ function Login() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [userContext, setUserContext] = useContext(UserContext)
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (userContext.token) {
+      if (userContext.user.firstLogin) {
+        history.push('/first-time-user');
+      } else {
+        history.push('/tmg');
+      }
+    }
+  }, [userContext, history]);
 
   const formSubmitHandler = e => {
     e.preventDefault()
@@ -22,7 +36,6 @@ function Login() {
       setIsSubmitting(false)
       return
     }
-    console.log(process.env.REACT_APP_API_ENDPOINT)
     fetch("http://localhost:3001/api/users/login", {
       method: "POST",
       credentials: "include",
@@ -42,7 +55,7 @@ function Login() {
         } else {
           const data = await response.json()
           setUserContext(oldValues => {
-            return { ...oldValues, token: data.token }
+            return { ...oldValues, token: data.token, user:data.user }
           })
         }
       })
