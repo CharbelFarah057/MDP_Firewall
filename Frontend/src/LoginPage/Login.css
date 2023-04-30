@@ -7,6 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.auth-form {
+  margin-top: 10px;
+}
+
 .App {
   background-color: #000;
   display: flex;
@@ -76,7 +80,7 @@ input:focus {
   justify-content: center;
   align-items: center;
   min-height: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 .error-message {

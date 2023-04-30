@@ -1,48 +1,92 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from "react"
+import { UserContext } from "../UserContext"
 import './Login.css';
 
+
 function Login() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [userContext, setUserContext] = useContext(UserContext)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const formSubmitHandler = e => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError("")
 
-    if (!username || !password) {
-      setErrorMessage('Please enter your username and password.');
-      return;
+    // error message if password or username is empty
+    if (username === "" || password === "") {
+      setErrorMessage("Please fill all the fields correctly!")
+      setIsSubmitting(false)
+      return
     }
-
-    // Implement actual authentication logic here
-    setErrorMessage('');
-  };
+    console.log(process.env.REACT_APP_API_ENDPOINT)
+    fetch(process.env.REACT_APP_API_ENDPOINT + "/api/users/login", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: username, password : password }),
+    })
+      .then(async response => {
+        setIsSubmitting(false)
+        if (!response.ok) {
+          if (response.status === 400) {
+            setError("Please fill all the fields correctly!")
+          } else if (response.status === 401) {
+            setError("Invalid email and password combination.")
+          } else {
+            setErrorMessage("Something went wrong! Please try again later.")
+          }
+        } else {
+          const data = await response.json()
+          setUserContext(oldValues => {
+            return { ...oldValues, token: data.token }
+          })
+        }
+      })
+      .catch(error => {
+        setIsSubmitting(false)
+        setError(errorMessage)
+      })
+  }
 
   return (
-    <div className="App">
-      <div className="container">
-        <h1>Linux Firewall</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {/* Insert error-message-container here */}
-          <div className="error-message-container">
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-          </div>
-          <button type="submit">Log In</button>
-        </form>
+    <>
+      <form onSubmit={formSubmitHandler} className="auth-form"></form>
+      <div className="App">
+        <div className="container">
+          <h1>Linux Firewall</h1>
+          <form onSubmit={formSubmitHandler}>
+            <input
+              id = "username"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              id = "password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {/* Insert error-message-container here */}
+            <div className="error-message-container">
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
+            </div>
+            {error && ( <div className="error-message-container">
+              {error}
+              </div>)}
+            <button type="submit" className="submit-button" disabled={isSubmitting}>
+              {isSubmitting ? "Signing In" : "Sign in"}
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
