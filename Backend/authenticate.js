@@ -8,7 +8,7 @@ exports.COOKIE_OPTIONS = {
   // secure cookies do not work correctly (in postman)
   secure: !dev,
   signed: true,
-  maxAge: eval(process.env.REFRESH_TOKEN_EXPIRY) * 1000,
+  maxAge: eval(process.env.REFRESH_TOKEN_EXPIRY),
   sameSite: "none",
 }
 

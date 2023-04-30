@@ -23,7 +23,7 @@ function Login() {
       return
     }
     console.log(process.env.REACT_APP_API_ENDPOINT)
-    fetch(process.env.REACT_APP_API_ENDPOINT + "/api/users/login", {
+    fetch("http://localhost:3001/api/users/login", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

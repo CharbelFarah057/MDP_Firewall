@@ -6,7 +6,7 @@ function ProtectedRoute({ component: Component, ...rest }) {
   const [userContext, setUserContext] = useContext(UserContext);
 
   const verifyUser = useCallback(() => {
-    fetch(process.env.REACT_APP_API_ENDPOINT + '/api/users/refreshToken', {
+    fetch('http://localhost:3001/api/users/refreshToken', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
