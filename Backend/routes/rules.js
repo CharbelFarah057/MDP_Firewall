@@ -36,29 +36,32 @@ router.post("/add", verifyUser, async (req, res) => {
             rules[i].order++;
             await rules[i].save();
         }
-    } catch (err) {
-        res.json({ message: err });
-    }
-    const rule = new Rule({
-        order: 1,
-        name: req.body.name,
-        act: req.body.act,
-        protoc: req.body.protoc,
-        FL: req.body.FL,
-        to: req.body.to,
-        cond: req.body.cond,
-        desc: req.body.desc,
-        disabled: req.body.disabled,
-        ports: req.body.ports
-    });
 
-    // sudo iptables -i {}
+        const rule = new Rule({
+            order: 1,
+            name: req.body.name,
+            act: req.body.act,
+            protoc: req.body.protoc,
+            FL: req.body.FL,
+            to: req.body.to,
+            cond: req.body.cond,
+            desc: req.body.desc,
+            disabled: req.body.disabled,
+            ports: req.body.ports
+        });
 
-    try {
         const savedRule = await rule.save();
+
+        // // Add iptables rule for the saved rule
+        // const iptablesCommands = createIptablesCommand(savedRule);
+        // for (const command of iptablesCommands) {
+        //     await executeIptablesCommand(command);
+        // }
+
         res.json(savedRule);
     } catch (err) {
-        res.json({ message: err });
+        console.error(err);
+        res.status(500).json({ message: err.message });
     }
 });
 
