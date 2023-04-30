@@ -9,7 +9,10 @@ const NetworkSchema = new mongoose.Schema(
     },
     description: {
         type: String
-    }
+    },
+    addressRanges: {
+        type: [String],
+    },
   },
   { collection: "Networks" }
 );
