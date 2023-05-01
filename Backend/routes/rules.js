@@ -96,12 +96,6 @@ router.post("/add", verifyUser, async (req, res) => {
 
         const savedRule = await rule.save();
 
-        // // Add iptables rule for the saved rule
-        // const iptablesCommands = createIptablesCommand(savedRule);
-        // for (const command of iptablesCommands) {
-        //     await executeIptablesCommand(command);
-        // }
-
         res.json(savedRule);
     } catch (err) {
         console.error(err);
@@ -127,6 +121,21 @@ router.post("/delete/:id", verifyUser, async (req, res) => {
         }
 
         const removedRule = await Rule.deleteOne({ id: req.params.id });
+        
+        if (!removedRule) {
+            res.status(404).json({ message: "Rule not found" });
+            return;
+        }
+
+        // update the order of the remaining rules
+        const remainingRules = await Rule.find();
+        for (let i = 0; i < remainingRules.length; i++) {
+            if (remainingRules[i].order > removedRule.order) {
+                remainingRules[i].order--;
+                await remainingRules[i].save();
+            }
+        }        
+
         res.json(removedRule);
     } catch (err) {
         res.json({ message: err });
