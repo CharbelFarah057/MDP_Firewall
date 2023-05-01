@@ -132,7 +132,8 @@ router.post("/delete", verifyUser, async (req, res) => {
         }
 
         // execute iptables command to delete rule
-        const command = `sudo iptables -D ${req.body.rule_type} ${removedRule.order}`;
+        let rule_type = req.body.rule_type.toUpperCase();
+        const command = `sudo iptables -D ${rule_type} ${removedRule.order}`;
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
