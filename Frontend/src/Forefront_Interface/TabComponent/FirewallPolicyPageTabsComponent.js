@@ -1,15 +1,32 @@
 import React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import styles from './NetworkingPageTabsComponent.module.css';
 
-const FirewallPolicyTabsComponent = () => {
+const FirewallPolicyTabsComponent = ({activeTab, setActiveTab}) => {
   const theme = useTheme();
-  const tabPath = '/tmg/firewall-policy/all-firewall-policy';
+  const location = useLocation();
+
+  const TABS = [
+    { label: 'Input Table', path: '/tmg/firewall-policy/input-table' },
+    { label: 'Forward Table', path: '/tmg/firewall-policy/forward-table' },
+    { label: 'Output Table', path: '/tmg/firewall-policy/output-table' },
+  ];
+
+  React.useEffect(() => {
+    const matchingTab = TABS.find(tab => location.pathname.startsWith(tab.path));
+    if (matchingTab) {
+      setActiveTab(matchingTab.path);
+    }
+  }, [location.pathname, setActiveTab]);
+
+  const handleChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <Box className={styles.container}>
@@ -18,7 +35,8 @@ const FirewallPolicyTabsComponent = () => {
       </Typography>
       <Tabs
         className={styles.tabs}
-        value={tabPath}
+        value={activeTab}
+        onChange={handleChange}
         textColor="inherit"
         indicatorColor="primary"
         aria-label="TMG tabs"
@@ -35,12 +53,15 @@ const FirewallPolicyTabsComponent = () => {
           },
         }}
       >
-        <Tab
-          label="All Firewall Policy"
-          component={Link}
-          to={tabPath}
-          value={tabPath}
-        />
+      {TABS.map(tab => (
+          <Tab
+            key={tab.path}
+            label={tab.label}
+            component={Link}
+            to={tab.path}
+            value={tab.path}
+          />
+        ))}
       </Tabs>
     </Box>
   );

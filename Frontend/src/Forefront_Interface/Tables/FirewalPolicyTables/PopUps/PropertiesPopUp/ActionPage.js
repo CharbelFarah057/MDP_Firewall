@@ -32,14 +32,14 @@ const Action = ({actInput, setActInput}) => {
           row={false}
         >
           <FormControlLabel
-            value="Allow"
+            value="Accept"
             control={<Radio />}
-            label="Allow"
+            label="Accept"
           />
           <FormControlLabel
-            value="Deny"
+            value="Drop"
             control={<Radio />}
-            label="Deny"
+            label="Drop"
           />
         </RadioGroup>
       </FormControl>

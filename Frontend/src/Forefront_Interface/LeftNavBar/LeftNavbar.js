@@ -13,8 +13,8 @@ const menuItems = [
     title: 'Firewall Policy',
     icon: <MdPolicy />,
     description: 'Manage firewall policies for your network.',
-    path: '/tmg/firewall-policy/all-firewall-policy',
-    validpath : ['/tmg/firewall-policy/all-firewall-policy']
+    path: '/tmg/firewall-policy/input-table',
+    validpath : ['/tmg/firewall-policy/input-table', '/tmg/firewall-policy/forward-table', '/tmg/firewall-policy/output-table']
   },
   {
     id: 2,
@@ -64,7 +64,7 @@ const LeftNavbar = () => {
       <div className={styles['header-container']}>
         <div className={`${styles.logo} ${!isContentVisible ? styles.collapsed : ''}`}>
           <FaRedhat className={styles['logo-icon']} style={{ color: 'red' }} />
-          Linux Forefront Threat Management Gateway
+          Linux Firewall Management ©
         </div>
         <div
           className={`${styles['burger-menu']} ${!isContentVisible ? styles.collapsed : ''}`}

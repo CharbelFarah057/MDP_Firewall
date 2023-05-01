@@ -32,7 +32,8 @@ const NewAccessRule = ({
   sourceItems,
   setSourceItems,
   destinationItems,
-  setDestinationItems}) => {
+  setDestinationItems,
+  userContext}) => {
   // Next State
   const [step, setStep] = useState(1);
   // Page 1 State
@@ -49,6 +50,7 @@ const NewAccessRule = ({
   // Page 5 State
   const [selectedRuleDestinations, setSelectedRuleDestinations] = useState(new Set());
   const [page5ErrorMessage, setPage5ErrorMessage] = useState("");
+  const [accessRuleErrorMessage, setAccessRuleErrorMessage] = useState("");
 
   const handleBack = () => {
     setStep(step - 1);
@@ -64,9 +66,7 @@ const NewAccessRule = ({
     } else if (step === 5 && destinationItems.length === 0) {
       setPage5ErrorMessage("At least one destination must be added to the list of selected destinations.");
     } else if (step === 7) {
-      onFinish(
-        {
-          "id" : 0,
+        const data =  {
           "order" : 1,
           "name" : ruleName,
           "act" : ruleAction,
@@ -77,9 +77,28 @@ const NewAccessRule = ({
           "desc" : "",
           "disabled": false,
           "ports" : PortsPopupData
-          });
-      handleExitConfirmation(true);
-    }
+        }
+        // Send data to the server to check for duplicate names
+        fetch("http://localhost:3001/api/rules/add", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userContext.token}`,
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            if (response.ok) {
+              handleExitConfirmation(true);
+              onFinish();
+            } else {
+              return response.json().then((errorData) => {
+                  setAccessRuleErrorMessage(errorData.message)
+              });
+            }
+          })
+      }
     else {
       setErrorMessage("");
       setPage3ErrorMessage("");
@@ -95,7 +114,7 @@ const NewAccessRule = ({
       setStep(1);
       setRuleName("");
       setErrorMessage("");
-      setRuleAction("Deny");
+      setRuleAction("Drop");
       setRuleAppliesTo("selectedProtocols");
       setItems([]);
       setSelectedItems(new Set());
@@ -186,6 +205,9 @@ const NewAccessRule = ({
           </button>
           <button onClick={() => setShowExitConfirmation(true)}>Cancel</button>
         </div>
+        {accessRuleErrorMessage && ( <div className="error-message-container">
+          {accessRuleErrorMessage}
+        </div>)}
       </div>
       {showExitConfirmation && (
         <div className="exit-confirmation">
