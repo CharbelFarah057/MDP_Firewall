@@ -5,12 +5,24 @@ const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../au
 const { exec } = require("child_process");
 
 
-let Rule = require("../models/Rule");
+let InputRule = require("../models/InputRule");
+let OutputRule = require("../models/OutputRule");
+let ForwardRule = require("../models/ForwardRule");
 
-// GET all rules from the database 
-router.get("/", verifyUser, async (req, res) => {
+// GET all rules from the database based on the rule type
+router.get("/:rule_type", verifyUser, async (req, res) => {
     try {
-        let rules = await Rule.find();
+        let rules = [];
+        if (req.params.rule_type == "input") {
+            rules = await InputRule.find({});
+        } else if (req.params.rule_type == "output") {
+            rules = await OutputRule.find({});
+        } else if (req.params.rule_type == "forward") {
+            rules = await ForwardRule.find({});
+        } else {
+            res.status(400).json({ message: "Invalid rule type" });
+            return; 
+        }
         // return rules in order based on the "order" field
         rules.sort((a, b) => (a.order > b.order) ? 1 : -1);
         res.json(rules);
@@ -20,9 +32,20 @@ router.get("/", verifyUser, async (req, res) => {
 });
 
 // GET a specific rule from the database check "order" field 
-router.get("/:id", verifyUser, async (req, res) => {
+router.get("/:rule_type/:id", verifyUser, async (req, res) => {
     try {
-        const rule = await Rule.findOne({ id: req.params.id });
+        let rule = {};
+        if (req.params.rule_type == "input") {
+            rule = await InputRule.findOne({ order: req.params.id });
+        } else if (req.params.rule_type == "output") {
+            rule = await OutputRule.findOne({ order: req.params.id });
+        } else if (req.params.rule_type == "forward") {
+            rule = await ForwardRule.findOne({ order: req.params.id });
+        } else {
+            res.status(400).json({ message: "Invalid rule type" });
+            return;
+        }
+        
         res.json(rule);
     } catch (err) {
         res.json({ message: err });
@@ -30,15 +53,27 @@ router.get("/:id", verifyUser, async (req, res) => {
 });
 
 router.post("/add", verifyUser, async (req, res) => {
-    // make sure unique name is provided check if name already exist if so return error
-
-    let check_rule = await Rule.find({ name: req.body.name });
-    if (check_rule.length > 0) {
-        res.status(400).json({ message: "Rule name already exists" });
-        return;
-    }
-
     try {
+        // Rule is the database model for the rule type
+        let Rule = null;
+
+        if (req.body.rule_type == "input") {
+            Rule = InputRule;
+        } else if (req.body.rule_type == "output") {
+            Rule = OutputRule;
+        } else if (req.body.rule_type == "forward") {
+            Rule = ForwardRule;
+        } else {
+            res.status(400).json({ message: "Invalid rule type" });
+            return;
+        }
+        // make sure unique name is provided check if name already exist if so return error
+        let check_rule = await Rule.find({ name: req.body.name });
+        if (check_rule.length > 0) {
+            res.status(400).json({ message: "Rule name already exists" });
+            return;
+        }
+
         const rules = await Rule.find();
         for (let i = rules.length - 1; i >= 0; i--) {
             rules[i].order++;
@@ -58,6 +93,7 @@ router.post("/add", verifyUser, async (req, res) => {
             ports: req.body.ports
         });
 
+
         const savedRule = await rule.save();
 
         // // Add iptables rule for the saved rule
@@ -76,6 +112,20 @@ router.post("/add", verifyUser, async (req, res) => {
 // delete rule
 router.post("/delete/:id", verifyUser, async (req, res) => {
     try {
+        // Rule is the database model for the rule type
+        let Rule = null;
+
+        if (req.body.rule_type == "input") {
+            Rule = InputRule;
+        } else if (req.body.rule_type == "output") {
+            Rule = OutputRule;
+        } else if (req.body.rule_type == "forward") {
+            Rule = ForwardRule;
+        } else {
+            res.status(400).json({ message: "Invalid rule type" });
+            return;
+        }
+
         const removedRule = await Rule.deleteOne({ id: req.params.id });
         res.json(removedRule);
     } catch (err) {
@@ -86,6 +136,20 @@ router.post("/delete/:id", verifyUser, async (req, res) => {
 // update rule
 router.post("/edit/:id", verifyUser, async (req, res) => {
     try {
+        // Rule is the database model for the rule type
+        let Rule = null;
+
+        if (req.body.rule_type == "input") {
+            Rule = InputRule;
+        } else if (req.body.rule_type == "output") {
+            Rule = OutputRule;
+        } else if (req.body.rule_type == "forward") {
+            Rule = ForwardRule;
+        } else {
+            res.status(400).json({ message: "Invalid rule type" });
+            return;
+        }
+
         const updatedRule = await Rule.updateOne(
             { id: req.params.id },
             {
@@ -111,6 +175,21 @@ router.post("/edit/:id", verifyUser, async (req, res) => {
 // move up/down rule
 router.post("/move/:order", verifyUser, async (req, res) => {
     try {
+
+        // Rule is the database model for the rule type
+        let Rule = null;
+
+        if (req.body.rule_type == "input") {
+            Rule = InputRule;
+        } else if (req.body.rule_type == "output") {
+            Rule = OutputRule;
+        } else if (req.body.rule_type == "forward") {
+            Rule = ForwardRule;
+        } else {
+            res.status(400).json({ message: "Invalid rule type" });
+            return;
+        }
+
         const rules = await Rule.find();
         let ruleToMove = await Rule.findOne({ order: req.params.order });
         if (!ruleToMove) {

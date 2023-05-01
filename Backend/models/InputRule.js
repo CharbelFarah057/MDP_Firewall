@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-// Rule Schema : id, order, name, act, protoc, FL, to, cond, desc, pol, disabled]
+// InputRule Schema : id, order, name, act, protoc, FL, to, cond, desc, pol, disabled]
 /*
     id : 0,
     order : '1',
@@ -15,7 +15,7 @@ const mongoose = require("mongoose");
     disabled: false,
 */
 
-const RuleSchema = new mongoose.Schema(
+const InputRuleSchema = new mongoose.Schema(
   {
     order: {
         type: Number,
@@ -53,7 +53,7 @@ const RuleSchema = new mongoose.Schema(
         type: Array,
     }
   },
-  { collection: "Rules" }
+  { collection: "InputRules" }
 );
 
-module.exports = mongoose.model("Rule", RuleSchema);
+module.exports = mongoose.model("InputRule", InputRuleSchema);
