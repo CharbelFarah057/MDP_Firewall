@@ -97,15 +97,31 @@ const moveSelectedRowsDown = (rowData, selectedRows, setRowData, setSelectedRows
     setSelectedRows(sortedSelectedRows);
 };
   
-const deleteSelectedRows = (rowData, selectedRows, setRowData, setSelectedRows) => {
-    const updatedData = rowData.filter((_, index) => !selectedRows.includes(index));
-  
-    // Update the order values
-    updatedData.forEach((row, index) => {
-      row.order = index + 1;
-    });
-  
-    setRowData(updatedData);
+const deleteSelectedRows = (rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails, ruleType) => {
+  console.log(rowData)
+  const data = {
+    "id" : rowData[selectedRows[0]]._id,
+    "rule_type" : ruleType
+  }
+  fetch("http://localhost:3001/api/rules/delete/", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userContext.token}`,
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        fetchRowDetails();
+      } else {
+        return response.json().then((errorData) => {
+            console.log("Error");
+        });
+      }
+    })
+
     setSelectedRows([]);
 };
 
@@ -192,10 +208,10 @@ export const filterRows = (rows, searchValue) => {
   );
 };
 
-export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp) => {
+export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType) => {
   return {
     Properties: () => setShowPropertiesPopUp(true),
-    Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
+    Delete: () => deleteSelectedRows(rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails, ruleType),
     "Create Group": () => console.log("Create Group clicked"),
     "Move Up": () => moveRowUp(rowData, setRowData, setSelectedRows, rowId),
     "Move Down": () => moveRowDown(rowData, setRowData, setSelectedRows, rowId),

@@ -1,7 +1,7 @@
-//AllFirewallPolicyTable.js
+//ForwardTable.js
 import React, { useCallback, useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../UserContext"
-import AllFirewallPolicyRow from "./AllFirewallPolicyRow";
+import RowRendering from "./RowRendering";
 import ContextMenu from "../ContextMenu";
 import {areSelectedRowsContiguous,
         requestSort,
@@ -15,10 +15,11 @@ import {areSelectedRowsContiguous,
 import ToolBarComponent from "./ToolBarComponent.js";
 import NewAccessRule from "./PopUps/AccessRulePopUp/NewAccessRule";
 import PropertiesPopUp from "./PopUps/PropertiesPopUp/PropertiesPopUp";
-import "./AllFirewallPolicyTable.css";
+import "./MainTable.css";
 
-const AllFirewallPolicyTable = () => {
-  const [userContext, setUserContext] = useContext(UserContext)
+const ForwardTable = () => {
+  const tableID = "forward"
+  const [userContext] = useContext(UserContext)
   const [selectedCells, setSelectedCells] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [itemsselectedRows, setItemsSelectedRows] = useState([]);
@@ -43,7 +44,7 @@ const AllFirewallPolicyTable = () => {
   const [showPropertiesPopUp, setShowPropertiesPopUp] = useState(false);
 
   const fetchRowDetails = useCallback(() => {
-    fetch("http://localhost:3001/api/rules/", {
+    fetch("http://localhost:3001/api/rules/"+tableID, {
       method: "GET",
       credentials: "include",
       // Pass authentication token as bearer token in header
@@ -68,7 +69,7 @@ const AllFirewallPolicyTable = () => {
         }
       }
     })
-  }, [setUserContext, userContext.token])
+  }, [userContext.token])
 
   useEffect(() => {
     // fetch only when user rowData are not present
@@ -92,7 +93,7 @@ const AllFirewallPolicyTable = () => {
     if (selectedRows.length === 1) {
       items = itemsselectedRows.map((label) => ({
         label : label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp)[label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, tableID)[label],
       }));
     } else {
       items = itemsselectedRows.map((label) => ({
@@ -340,7 +341,7 @@ const AllFirewallPolicyTable = () => {
         </thead>
         <tbody>
           {filterRows(sortRows(rowData, sortConfig, rowData), searchValue).map((row) => (
-            <AllFirewallPolicyRow
+            <RowRendering
               key={row.order}
               row={row}
               dataLength = {rowData.length}
@@ -386,6 +387,7 @@ const AllFirewallPolicyTable = () => {
         destinationItems={destinationItems}
         setDestinationItems={setDestinationItems}
         userContext = {userContext}
+        tableID = {tableID}
       />
       {showPropertiesPopUp && selectedRows.length === 1 &&
         <PropertiesPopUp 
@@ -406,4 +408,4 @@ const AllFirewallPolicyTable = () => {
   );
 };
 
-export default AllFirewallPolicyTable;
+export default ForwardTable;

@@ -1,13 +1,13 @@
 //FirewallPolicyRow.js
 import React from "react";
-import './AllFirewallPolicyRow.css';
+import './RowRendering.css';
 import { AiOutlineNumber, AiFillCheckCircle, AiOutlineStop } from 'react-icons/ai';
 import { FiUsers } from 'react-icons/fi';
 import { FaNetworkWired, FaSlash } from 'react-icons/fa';
 import { MdDisabledByDefault } from 'react-icons/md';
 import { FcGlobe } from 'react-icons/fc';
 
-const AllFirewallPolicyRow = ({
+const RowRendering = ({
 row,
 dataLength,
 rowId,
@@ -179,7 +179,7 @@ setMultiCellLength,
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => key !== "_id" && !key.endsWith("icon") && key !== "disabled" && key!=="ports").map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => key !== "_id" && key !== "disabled" && key!=="ports" && key !== "rule_type").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
                         handleCellClick(rowId, cellIndex);
@@ -195,4 +195,4 @@ setMultiCellLength,
     );
 };
 
-export default AllFirewallPolicyRow;
+export default RowRendering;
