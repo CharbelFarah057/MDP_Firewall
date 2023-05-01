@@ -122,7 +122,7 @@ router.post("/delete", verifyUser, async (req, res) => {
             return;
         }
 
-        const removedRule = await Rule.deleteOne({ _id: ObjectID(req.body.id) });
+        const removedRule = await Rule.findOneAndDelete({ _id: req.body.id });
         
         if (!removedRule) {
             res.status(404).json({ message: "Rule not found" });
@@ -131,6 +131,7 @@ router.post("/delete", verifyUser, async (req, res) => {
 
         // update the order of the remaining rules
         const remainingRules = await Rule.find();
+
         for (let i = 0; i < remainingRules.length; i++) {
             if (remainingRules[i].order > removedRule.order) {
                 remainingRules[i].order--;
