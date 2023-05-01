@@ -5,9 +5,11 @@ const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../au
 const { exec } = require("child_process");
 
 
+
 let InputRule = require("../models/InputRule");
 let OutputRule = require("../models/OutputRule");
 let ForwardRule = require("../models/ForwardRule");
+const { ObjectID } = require("bson");
 
 // GET all rules from the database based on the rule type
 router.get("/:rule_type", verifyUser, async (req, res) => {
@@ -104,7 +106,7 @@ router.post("/add", verifyUser, async (req, res) => {
 });
 
 // delete rule
-router.post("/delete/:id", verifyUser, async (req, res) => {
+router.post("/delete", verifyUser, async (req, res) => {
     try {
         // Rule is the database model for the rule type
         let Rule = null;
@@ -120,7 +122,7 @@ router.post("/delete/:id", verifyUser, async (req, res) => {
             return;
         }
 
-        const removedRule = await Rule.deleteOne({ id: req.params.id });
+        const removedRule = await Rule.deleteOne({ _id: ObjectID(req.body.id) });
         
         if (!removedRule) {
             res.status(404).json({ message: "Rule not found" });
@@ -143,7 +145,7 @@ router.post("/delete/:id", verifyUser, async (req, res) => {
 });
 
 // update rule
-router.post("/edit/:id", verifyUser, async (req, res) => {
+router.post("/edit", verifyUser, async (req, res) => {
     try {
         // Rule is the database model for the rule type
         let Rule = null;
@@ -160,7 +162,7 @@ router.post("/edit/:id", verifyUser, async (req, res) => {
         }
 
         const updatedRule = await Rule.updateOne(
-            { id: req.params.id },
+            { _id: ObjectID(req.body.id) },
             {
                 $set: {
                     name: req.body.name,
