@@ -122,12 +122,25 @@ router.post("/delete", verifyUser, async (req, res) => {
             return;
         }
 
+
+        
         const removedRule = await Rule.findOneAndDelete({ _id: req.body.id });
         
         if (!removedRule) {
             res.status(404).json({ message: "Rule not found" });
             return;
         }
+
+        // execute iptables command to delete rule
+        const command = `iptables -D ${req.body.rule_type} ${removedRule.order}`;
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error}`);
+                return;
+            }
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
+        });        
 
         // update the order of the remaining rules
         const remainingRules = await Rule.find();
@@ -163,7 +176,7 @@ router.post("/edit", verifyUser, async (req, res) => {
         }
 
         const updatedRule = await Rule.updateOne(
-            { _id: ObjectID(req.body.id) },
+            { _id: req.body.id },
             {
                 $set: {
                     name: req.body.name,
