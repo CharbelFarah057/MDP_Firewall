@@ -4,8 +4,6 @@ var router = express.Router();
 const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate")
 const { exec } = require("child_process");
 
-
-
 let InputRule = require("../models/InputRule");
 let OutputRule = require("../models/OutputRule");
 let ForwardRule = require("../models/ForwardRule");
@@ -69,6 +67,7 @@ router.post("/add", verifyUser, async (req, res) => {
             res.status(400).json({ message: "Invalid rule type" });
             return;
         }
+
         // make sure unique name is provided check if name already exist if so return error
         let check_rule = await Rule.find({ name: req.body.name });
         if (check_rule.length > 0) {
@@ -121,8 +120,6 @@ router.post("/delete", verifyUser, async (req, res) => {
             res.status(400).json({ message: "Invalid rule type" });
             return;
         }
-
-
         
         const removedRule = await Rule.findOneAndDelete({ _id: req.body.id });
         
@@ -175,6 +172,14 @@ router.post("/edit", verifyUser, async (req, res) => {
             res.status(400).json({ message: "Invalid rule type" });
             return;
         }
+
+        // make sure unique name is provided check if name already exist if so return error
+        let check_rule = await Rule.find({ name: req.body.name });
+        if (check_rule.length > 0) {
+            res.status(400).json({ message: "Rule name already exists" });
+            return;
+        }
+        
 
         const updatedRule = await Rule.updateOne(
             { _id: req.body.id },
