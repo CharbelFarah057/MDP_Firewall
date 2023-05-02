@@ -34,7 +34,7 @@ const NewAccessRule = ({
   destinationItems,
   setDestinationItems,
   userContext,
-  tableID}) => {
+  ruleType}) => {
   // Next State
   const [step, setStep] = useState(1);
   // Page 1 State
@@ -78,7 +78,7 @@ const NewAccessRule = ({
           "desc" : "",
           "disabled": false,
           "ports" : PortsPopupData,
-          "rule_type" : tableID
+          "rule_type" : ruleType
         }
         // Send data to the server to check for duplicate names
         fetch("http://localhost:3001/api/rules/add/", {

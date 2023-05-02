@@ -260,28 +260,37 @@ export const tooltip_text = {
   Disable: "Disable",
 }
 
-const toggleAllow = (rowId, setSelectedCells, setRowData) => {
-  setRowData((prevRowData) => {
-    const newRowData = [...prevRowData];
-    newRowData[rowId].act = "Accept";
-    return newRowData;
-  });
+const toggleAllowDeny = (rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, action) => {
+  const data = {...rowData[rowId], 
+    "id" : rowData[rowId]._id,
+    "act" : action,
+    "rule_type" : ruleType
+  };
+  fetch("http://localhost:3001/api/rules/edit", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userContext.token}`,
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => {
+          if (response.ok) {
+            fetchRowDetails();
+          } else {
+            return response.json().then((errorData) => {
+              console.log(errorData);
+            });
+          }
+        })
   setSelectedCells([]);
 };
 
-const toggleDeny = (rowId, setSelectedCells, setRowData) => {
-  setRowData((prevRowData) => {
-    const newRowData = [...prevRowData];
-    newRowData[rowId].act = "Drop";
-    return newRowData;
-  });
-  setSelectedCells([]);
-};
-
-export const CellContextMenu = (rowId, setSelectedCells, setRowData) => {
+export const CellContextMenu = (rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType) => {
   return{
-    Accept : () => toggleAllow(rowId, setSelectedCells, setRowData),
-    Drop : () => toggleDeny(rowId, setSelectedCells, setRowData),
+    Accept : () => toggleAllowDeny(rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, "Accept"),
+    Drop : () => toggleAllowDeny(rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, "Drop"),
   }
 }
 
@@ -295,28 +304,54 @@ export const CellTooltipText = {
   Drop : "Drop"
 }
 
-const handleRemoveItems = (rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick) => {
-  setRowData((prevRowData) => {
-    const newRowData = [...prevRowData];
-    if (cellIndex === 3) {
-      const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
-        (key) => key in newRowData[rowId].protoc);
-      newRowData[rowId].protoc[availableKey].splice(MultiCellIndex, 1);
-    }
-    if (cellIndex === 4) {
-      newRowData[rowId].FL.splice(MultiCellIndex, 1);
-    }
-    if (cellIndex === 5) {
-      newRowData[rowId].to.splice(MultiCellIndex, 1);
-    }
-    return newRowData;
-  });
-  setselectedMultiCellClick([]);
-};
+const handleRemoveItems = (rowId, rowData, cellIndex, MultiCellIndex, setselectedMultiCellClick, userContext, ruleType, fetchRowDetails) => {
+  const newRowData = { ...rowData[rowId] };
+  
+  if (cellIndex === 3) {
+    const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+      (key) => key in newRowData.protoc
+    );
+    newRowData.protoc[availableKey].splice(MultiCellIndex, 1);
+  }
+  else if (cellIndex === 4) {
+    newRowData.FL.splice(MultiCellIndex, 1);
+  }
+  else if (cellIndex === 5) {
+    newRowData.to.splice(MultiCellIndex, 1);
+  }
+  
+  const data = {...newRowData, 
+    "id" : rowData[rowId]._id,
+    "rule_type" : ruleType,
+    "protoc" : newRowData.protoc,
+    "FL" : newRowData.FL,
+    "to" : newRowData.to
+  };
+  
+  fetch("http://localhost:3001/api/rules/edit", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userContext.token}`,
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        fetchRowDetails();
+      } else {
+        return response.json().then((errorData) => {
+          console.log(errorData);
+        });
+      }
+    })
+    setselectedMultiCellClick([]);
+}
 
-export const MultiCellContextMenu = (rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick) => {
+export const MultiCellContextMenu = (rowId, rowData, cellIndex, MultiCellIndex, setselectedMultiCellClick, userContext, ruleType, fetchRowDetails) => {
   return {
-    Remove : () => handleRemoveItems(rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick),
+    Remove : () => handleRemoveItems(rowId, rowData, cellIndex, MultiCellIndex, setselectedMultiCellClick, userContext, ruleType, fetchRowDetails),
     Properties : () => console.log("Properties clicked")
   };
 }

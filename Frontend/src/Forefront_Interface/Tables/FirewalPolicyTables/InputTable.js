@@ -18,7 +18,7 @@ import PropertiesPopUp from "./PopUps/PropertiesPopUp/PropertiesPopUp";
 import "./MainTable.css";
 
 const InputTable = () => {
-  const tableID = "input";
+  const ruleType = "input";
   const [userContext] = useContext(UserContext)
   const [selectedCells, setSelectedCells] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -44,7 +44,7 @@ const InputTable = () => {
   const [showPropertiesPopUp, setShowPropertiesPopUp] = useState(false);
 
   const fetchRowDetails = useCallback(() => {
-    fetch("http://localhost:3001/api/rules/"+tableID, {
+    fetch("http://localhost:3001/api/rules/"+ruleType, {
       method: "GET",
       credentials: "include",
       // Pass authentication token as bearer token in header
@@ -93,7 +93,7 @@ const InputTable = () => {
     if (selectedRows.length === 1) {
       items = itemsselectedRows.map((label) => ({
         label : label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, tableID)[label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[label],
       }));
     } else {
       items = itemsselectedRows.map((label) => ({
@@ -140,7 +140,7 @@ const InputTable = () => {
     const items = itemsselectedCells.map((label) => ({
         label : label,
         checked : rowData[rowId].act === label,
-        onClick : CellContextMenu(rowId, setSelectedCells, setRowData)[label],
+        onClick : CellContextMenu(rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType)[label],
       }));
     setContextMenu({ x, y, items });
   };
@@ -260,7 +260,7 @@ const InputTable = () => {
 
     const items = itemsselectedMultiCells.map((label) => ({
       label : label,
-      onClick : MultiCellContextMenu(rowId, cellIndex, MultiCellIndex, setRowData, setselectedMultiCellClick)[label],
+      onClick : MultiCellContextMenu(rowId, rowData, cellIndex, MultiCellIndex, setselectedMultiCellClick, userContext, ruleType, fetchRowDetails)[label],
     }));
 
     setContextMenu({ x, y, items });
@@ -268,12 +268,6 @@ const InputTable = () => {
 
   const openPopup = () => {
     setShowPopup(true);
-  };
-
-  const handleUpdate = (rownumber, updateData) => {
-    const tempRowData = [...rowData];
-    tempRowData[rownumber] = updateData;
-    setRowData(tempRowData);
   };
 
   return (
@@ -387,13 +381,14 @@ const InputTable = () => {
         destinationItems={destinationItems}
         setDestinationItems={setDestinationItems}
         userContext = {userContext}
-        tableID = {tableID}
+        ruleType = {ruleType}
       />
       {showPropertiesPopUp && selectedRows.length === 1 &&
         <PropertiesPopUp 
           onClose={() => setShowPropertiesPopUp(false)} 
-          onUpdate={handleUpdate}
+          onUpdate={fetchRowDetails}
           totalRows = {rowData.length}
+          id = {rowData[selectedRows[0]]._id}
           order = {rowData[selectedRows[0]].order}
           name = {rowData[selectedRows[0]].name}
           act = {rowData[selectedRows[0]].act}
@@ -403,6 +398,8 @@ const InputTable = () => {
           desc = {rowData[selectedRows[0]].desc}
           disabled = {rowData[selectedRows[0]].disabled}
           ports = {rowData[selectedRows[0]].ports}
+          userContext = {userContext}
+          ruleType = {ruleType}
         />}
     </div>
   );

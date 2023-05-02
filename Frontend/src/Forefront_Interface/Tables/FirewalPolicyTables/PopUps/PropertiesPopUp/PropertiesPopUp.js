@@ -16,10 +16,12 @@ import {handleRuleAppliesToChange,
   handleRemoveItems, 
   handleSelectItem, 
   handleSavePortsPopup } from '../AccessRulePopUp/Utilities/Page3-4-5Utilities.js';
+import './PropertiesPopUp.css'
 const PropertiesPopUp = ({ 
   onClose,
   onUpdate,
   totalRows,
+  id,
   order,
   name,
   act,
@@ -28,9 +30,12 @@ const PropertiesPopUp = ({
   to,
   desc,
   disabled,
-  ports}) => {
+  ports,
+  userContext,
+  ruleType}) => {
   const [selectedTab, setSelectedTab] = useState(0);
   // General Page States
+  const [rowId] = useState(id);
   const [orderInput] = useState(order);
   const [nameInput, setNameInput] = useState(name);
   const [descInput, setDescInput] = useState(desc);
@@ -53,6 +58,8 @@ const PropertiesPopUp = ({
   const [selectedRuleDestinations, setSelectedRuleDestinations] = useState(new Set());
   const [ToPageErrorMessage, setToPageErrorMessage] = useState("");
 
+  const [propertiesErrorMessage, setPropertiesErrorMessage] = useState("");
+
   // const [modificationMade, setModificationMade] = useState(false);
 
   const handleChange = (event, newValue) => {
@@ -69,7 +76,8 @@ const PropertiesPopUp = ({
   };
 
   const handleOkClick = () => {
-    onUpdate(orderInput - 1, {
+    const data = {
+      "id" : rowId,
       "order" : orderInput,
       "name" : nameInput,
       "act" : actInput,
@@ -79,9 +87,28 @@ const PropertiesPopUp = ({
       "cond" : "All Users",
       "desc" : descInput,
       "disabled" : disabledInput,
-      "ports" : PortsPopupData
-    });
-    onClose();
+      "ports" : PortsPopupData,
+      "rule_type" : ruleType, 
+    };
+    fetch("http://localhost:3001/api/rules/edit", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userContext.token}`,
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            if (response.ok) {
+              onClose();
+              onUpdate();
+            } else {
+              return response.json().then((errorData) => {
+                setPropertiesErrorMessage(errorData.message)
+              });
+            }
+          })
   };
 
   return (
@@ -167,6 +194,9 @@ const PropertiesPopUp = ({
           <Button onClick={onClose} variant="outlined" sx={{ marginRight: 1 }}>
             Cancel
           </Button>
+          {propertiesErrorMessage && ( <div className="error-message-container">
+          {propertiesErrorMessage}
+          </div>)}
         </Box>
       </Box>
     </Modal>
