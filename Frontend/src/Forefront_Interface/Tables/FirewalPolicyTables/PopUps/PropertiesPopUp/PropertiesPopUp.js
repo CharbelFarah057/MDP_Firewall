@@ -101,8 +101,8 @@ const PropertiesPopUp = ({
         })
           .then((response) => {
             if (response.ok) {
-              onClose();
               onUpdate();
+              onClose();
             } else {
               return response.json().then((errorData) => {
                 setPropertiesErrorMessage(errorData.message)
@@ -194,10 +194,10 @@ const PropertiesPopUp = ({
           <Button onClick={onClose} variant="outlined" sx={{ marginRight: 1 }}>
             Cancel
           </Button>
+        </Box>
           {propertiesErrorMessage && ( <div className="error-message-container">
           {propertiesErrorMessage}
           </div>)}
-        </Box>
       </Box>
     </Modal>
   );

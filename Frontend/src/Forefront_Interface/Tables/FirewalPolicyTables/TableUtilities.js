@@ -23,34 +23,6 @@ const toggleDisableEnable = (rowData, selectedRows, setRowData, action) => {
     setRowData(updatedData);
 };
 
-const moveRowUp = (rowData, setRowData, setSelectedRows, rowId) => {
-    const updatedData = [...rowData];
-    const temp = updatedData[rowId - 1];
-    updatedData[rowId - 1] = updatedData[rowId];
-    updatedData[rowId] = temp;
-  
-    // Swap the order and id values
-    updatedData[rowId - 1].order = rowId;
-    updatedData[rowId].order = rowId + 1;
-  
-    setRowData(updatedData);
-    setSelectedRows([rowId - 1])
-};
-  
-const moveRowDown = (rowData, setRowData, setSelectedRows, rowId) => {
-    const updatedData = [...rowData];
-    const temp = updatedData[rowId + 1];
-    updatedData[rowId + 1] = updatedData[rowId];
-    updatedData[rowId] = temp;
-  
-    // Swap the order and id values
-    updatedData[rowId + 1].order = rowId + 2;
-    updatedData[rowId].order = rowId + 1;
-  
-    setRowData(updatedData);
-    setSelectedRows([rowId + 1])
-};
-
 const moveSelectedRowsUp = (rowData, selectedRows, setRowData, setSelectedRows) => {
     const updatedData = [...rowData];
     const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
@@ -115,14 +87,56 @@ const deleteSelectedRows = (rowData, selectedRows, userContext, setSelectedRows,
     .then((response) => {
       if (response.ok) {
         fetchRowDetails();
+        setSelectedRows([]);
       } else {
         return response.json().then((errorData) => {
-            console.log("Error");
+            console.log(errorData);
         });
       }
     })
+};
 
-    setSelectedRows([]);
+const moveRow = (rowData, setSelectedRows, rowId, userContext, fetchRowDetails, ruleType, direction) => {
+  const data = {
+    "rule_type" : ruleType,
+    "direction" : direction
+  }
+
+  fetch("http://localhost:3001/api/rules/move/" + rowData[rowId].order, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userContext.token}`,
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        fetchRowDetails();
+        if (direction === "up") {
+          setSelectedRows([rowId - 1])
+        } else if (direction === "down") {
+          setSelectedRows([rowId + 1])
+        }
+      } else {
+        return response.json().then((errorData) => {
+            console.log(errorData);
+        });
+      }
+    })
+};
+
+export const SingleRowContextMenu = (rowData, selectedRows, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType) => {
+  return {
+    Properties: () => setShowPropertiesPopUp(true),
+    Delete: () => deleteSelectedRows(rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails, ruleType),
+    "Create Group": () => console.log("Create Group clicked"),
+    "Move Up": () => moveRow(rowData, setSelectedRows, rowId, userContext,  fetchRowDetails, ruleType, "up"),
+    "Move Down": () => moveRow(rowData, setSelectedRows, rowId, userContext,  fetchRowDetails, ruleType, "down"),
+    Enable: () => toggleDisableEnable(rowData, selectedRows, isRowDisabled),
+    Disable: () => toggleDisableEnable(rowData, selectedRows, isRowDisabled),
+  };
 };
 
 export const areSelectedRowsContiguous = (selectedRows) => {
@@ -206,18 +220,6 @@ export const filterRows = (rows, searchValue) => {
         .includes(searchValue.trim().toLowerCase())
     )
   );
-};
-
-export const SingleRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType) => {
-  return {
-    Properties: () => setShowPropertiesPopUp(true),
-    Delete: () => deleteSelectedRows(rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails, ruleType),
-    "Create Group": () => console.log("Create Group clicked"),
-    "Move Up": () => moveRowUp(rowData, setRowData, setSelectedRows, rowId),
-    "Move Down": () => moveRowDown(rowData, setRowData, setSelectedRows, rowId),
-    Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
-    Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, isRowDisabled),
-  };
 };
 
 export const MultiRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows) => {

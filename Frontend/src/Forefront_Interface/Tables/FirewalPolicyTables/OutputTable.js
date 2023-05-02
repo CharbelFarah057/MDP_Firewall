@@ -11,7 +11,7 @@ import {areSelectedRowsContiguous,
         SingleRowContextMenu,
         MultiRowContextMenu,
         CellContextMenu,
-        MultiCellContextMenu} from "./AllFirewallPolicyUtilities.js";
+        MultiCellContextMenu} from "./TableUtilities.js";
 import ToolBarComponent from "./ToolBarComponent.js";
 import NewAccessRule from "./PopUps/AccessRulePopUp/NewAccessRule";
 import PropertiesPopUp from "./PopUps/PropertiesPopUp/PropertiesPopUp";
@@ -93,7 +93,7 @@ const OutputTable = () => {
     if (selectedRows.length === 1) {
       items = itemsselectedRows.map((label) => ({
         label : label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[label],
       }));
     } else {
       items = itemsselectedRows.map((label) => ({

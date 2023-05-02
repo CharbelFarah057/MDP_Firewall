@@ -16,7 +16,7 @@ import {MultiRowContextMenu,
         MultiCellContextMenu,
         MultiCellToolbarIcons,
         MultiCellTooltipText
-      } from "./AllFirewallPolicyUtilities.js";
+      } from "./TableUtilities.js";
 
 const ToolBarComponent = ({ 
   onSearch,
