@@ -69,6 +69,20 @@ async function executeIptablesCommand(req, rule_name, chain, source, destination
         const command_udp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p udp -m multiport --dport ${dports_udp.join(",")} -j ${action}`
         commands_to_run.push(command_udp)
     }
+    if (sports_lsp.length > 0){
+        let lower_range = sports_lsp[0]
+        let upper_range = sports_lsp[1]
+        let sports_range = `${lower_range}:${upper_range}`
+
+        if (lower_range === upper_range){
+            sports_range = `${lower_range}`
+        }
+
+        let sports_protocol = sports_lsp[2]
+        const command_lsp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p ${sports_protocol} --sport ${sports_range} -j ${action}`
+        commands_to_run.push(command_lsp)
+    }
+           
     const createdRules = [];
     for (let i = 0; i < commands_to_run.length; i++) {
         try {
@@ -106,7 +120,7 @@ async function executeIptablesCommand(req, rule_name, chain, source, destination
 async function createRule(req, ruleType, modelName) {
     let Rule = null;
     ruleType = ruleType.toLowerCase()
-    console.log("rule is " + ruleType)
+
     if (ruleType === "input") {
         Rule = InputRule;
     } else if (ruleType === "output") {
