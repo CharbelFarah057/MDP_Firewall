@@ -32,6 +32,7 @@ const ToolBarComponent = ({
   cellrowId,
   isRowDisabled,
   openPopup,
+  openToolBoxPopUp,
   setShowPropertiesPopUp,
   setselectedMultiCellClick,
   itemsselectedMultiCells,
@@ -192,7 +193,7 @@ const ToolBarComponent = ({
             className="icon"
             onMouseEnter={() => setShowToolbartip({ ...showTooltip, OpenToolBar: true })}
             onMouseLeave={() => setShowToolbartip({ ...showTooltip, OpenToolBar: false })}
-            onClick={openPopup}
+            onClick={openToolBoxPopUp}
           />
           {showToolbartip.OpenToolBar && (
             <div className="tooltip">

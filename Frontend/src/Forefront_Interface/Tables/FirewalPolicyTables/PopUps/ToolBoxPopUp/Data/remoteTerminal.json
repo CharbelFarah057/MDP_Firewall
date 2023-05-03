@@ -1,0 +1,6 @@
+[{"Name": "aci", "Port": "187", "Protocol": "tcp"},
+{"Name": "aci", "Port": "187", "Protocol": "udp"},
+{"Name": "mumps", "Port": "188", "Protocol": "tcp"},
+{"Name": "mumps", "Port": "188", "Protocol": "udp"},
+{"Name": "qft", "Port": "189", "Protocol": "tcp"},
+{"Name": "qft", "Port": "189", "Protocol": "udp"}]

@@ -1,0 +1,8 @@
+[{"Name": "vslmp", "Port": "312", "Protocol": "tcp"},
+{"Name": "vslmp", "Port": "312", "Protocol": "udp"},
+{"Name": "magenta-logic", "Port": "313", "Protocol": "tcp"},
+{"Name": "magenta-logic", "Port": "313", "Protocol": "udp"},
+{"Name": "opalis-robot", "Port": "314", "Protocol": "tcp"},
+{"Name": "opalis-robot", "Port": "314", "Protocol": "udp"},
+{"Name": "dpsi", "Port": "315", "Protocol": "tcp"},
+{"Name": "dpsi", "Port": "315", "Protocol": "udp"}]

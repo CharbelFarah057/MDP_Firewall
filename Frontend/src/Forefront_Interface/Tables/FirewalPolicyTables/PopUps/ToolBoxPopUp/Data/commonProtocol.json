@@ -1,0 +1,12 @@
+[{"Name": "tcpmux", "Port": "1", "Protocol": "tcp"},
+{"Name": "tcpmux", "Port": "1", "Protocol": "udp"},
+{"Name": "compressnet", "Port": "2", "Protocol": "tcp"},
+{"Name": "compressnet", "Port": "2", "Protocol": "udp"},
+{"Name": "compressnet", "Port": "3", "Protocol": "tcp"},
+{"Name": "compressnet", "Port": "3", "Protocol": "udp"},
+{"Name": "rje", "Port": "5", "Protocol": "tcp"},
+{"Name": "rje", "Port": "5", "Protocol": "udp"},
+{"Name": "echo", "Port": "7", "Protocol": "tcp"},
+{"Name": "echo", "Port": "7", "Protocol": "udp"},
+{"Name": "discard", "Port": "9", "Protocol": "tcp"},
+{"Name": "discard", "Port": "9", "Protocol": "udp"}]

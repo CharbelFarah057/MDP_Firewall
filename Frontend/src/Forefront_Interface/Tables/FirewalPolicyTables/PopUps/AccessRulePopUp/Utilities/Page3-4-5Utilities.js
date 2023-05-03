@@ -18,9 +18,9 @@ export const handleRemoveItems = (setItems, items, selectedItems, setSelectedIte
     setSelectedItems(new Set());
 };
 
-export const handleSelectItem = (selectedItems, setSelectedItems) => (index, event) => {
+export const handleSelectItem = (selectedItems, setSelectedItems, multiselection = true) => (index, event) => {
     const newSelectedItems = new Set(selectedItems);
-    if (event.ctrlKey) {
+    if (event.ctrlKey && multiselection) {
       if (newSelectedItems.has(index)) {
         newSelectedItems.delete(index);
       } else {

@@ -6,7 +6,6 @@ import propertiesIcon from '../../../Images/properties-icon.svg';
 import deleteIcon from '../../../Images/delete-icon.svg';
 import multicelldeleteIcon from '../../../Images/delete-icon.svg';
 import createGroupIcon from '../../../Images/create-group-icon.svg';
-import deleteGroupIcon from '../../../Images/delete-group-icon.svg';
 import moveUpIcon from '../../../Images/move-up-icon.svg';
 import moveDownIcon from '../../../Images/move-down-icon.svg';
 import enableIcon from '../../../Images/enable-icon.svg';

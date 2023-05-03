@@ -1,0 +1,9 @@
+[{"Name": "at-echo", "Port": "204", "Protocol": "tcp"},
+{"Name": "at-echo", "Port": "204", "Protocol": "udp"},
+{"Name": "at-5", "Port": "205", "Protocol": "tcp"},
+{"Name": "at-5", "Port": "205", "Protocol": "udp"},
+{"Name": "at-zis", "Port": "206", "Protocol": "tcp"},
+{"Name": "at-zis", "Port": "206", "Protocol": "udp"},
+{"Name": "at-7", "Port": "207", "Protocol": "tcp"},
+{"Name": "at-7", "Port": "207", "Protocol": "udp"},
+{"Name": "at-8", "Port": "208", "Protocol": "tcp"}]

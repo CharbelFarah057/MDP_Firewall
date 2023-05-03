@@ -1,0 +1,7 @@
+[{"Name": "ptp-general", "Port": "320", "Protocol": "tcp"},
+{"Name": "ptp-general", "Port": "320", "Protocol": "udp"},
+{"Name": "pip", "Port": "321", "Protocol": "tcp"},
+{"Name": "pip", "Port": "321", "Protocol": "udp"},
+{"Name": "rtsps", "Port": "322", "Protocol": "tcp"},
+{"Name": "rtsps", "Port": "322", "Protocol": "udp"},
+{"Name": "rpki-rtr", "Port": "323", "Protocol": "tcp"}]
