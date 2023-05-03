@@ -262,7 +262,7 @@ export const tooltip_text = {
   Disable: "Disable",
 }
 
-const toggleAllowDeny = (rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, action) => {
+const toggleAcceptDrop = (rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, action) => {
   const data = {...rowData[rowId], 
     "id" : rowData[rowId]._id,
     "act" : action,
@@ -291,8 +291,8 @@ const toggleAllowDeny = (rowData, rowId, setSelectedCells, userContext, fetchRow
 
 export const CellContextMenu = (rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType) => {
   return{
-    Accept : () => toggleAllowDeny(rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, "Accept"),
-    Drop : () => toggleAllowDeny(rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, "Drop"),
+    Accept : () => toggleAcceptDrop(rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, "Accept"),
+    Drop : () => toggleAcceptDrop(rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, "Drop"),
   }
 }
 
@@ -366,4 +366,4 @@ export const MultiCellToolbarIcons = {
 export const MultiCellTooltipText = {
   Remove : "Remove",
   Properties : "Properties"
-}
+};

@@ -4,6 +4,7 @@ import "./ToolBarComponent.css";
 import searchIcon from "../../../Images/search-magnifying-glass.svg";
 import closeIcon from "../../../Images/cross-close.svg";
 import placeholderIcon from "../../../Images/plus-circle.svg";
+import communismIcon from "../../../Images/sickle-and-hammer.svg";
 
 import {MultiRowContextMenu,
         SingleRowContextMenu, 
@@ -15,7 +16,7 @@ import {MultiRowContextMenu,
         CellToolbarIcons,
         MultiCellContextMenu,
         MultiCellToolbarIcons,
-        MultiCellTooltipText
+        MultiCellTooltipText,
       } from "./TableUtilities.js";
 
 const ToolBarComponent = ({ 
@@ -24,20 +25,26 @@ const ToolBarComponent = ({
   itemsselectedCells,
   rowData, 
   selectedRows, 
-  selectedCells,
   setRowData, 
   setSelectedRows, 
   setSelectedCells,
-  rowId, 
+  rowId,
+  cellrowId,
   isRowDisabled,
   openPopup,
   setShowPropertiesPopUp,
-  selectedMultiCellClick,
   setselectedMultiCellClick,
-  itemsselectedMultiCells
+  itemsselectedMultiCells,
+  userContext,
+  fetchRowDetails,
+  ruleType,
+  multicellrowid,
+  multicellindex,
+  multicellcellindex,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [showTooltip, setShowTooltip] = useState({});
+  const [showToolbartip, setShowToolbartip] = useState({});
   const [showCellTooltip, setShowCellTooltip] = useState({});
   const [showMultiCellTooltip, setShowMultiCellTooltip] = useState({});
 
@@ -55,7 +62,7 @@ const ToolBarComponent = ({
     if (length === 1) {
       return {
         label : chosen_label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp)[chosen_label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[chosen_label],
       };
     } else {
       return {
@@ -89,60 +96,59 @@ const ToolBarComponent = ({
     </div>
   ));
 
-  // const labelToFunctionMapCell = (chosen_label) => {
-  //   return {
-  //     label : chosen_label,
-  //     checked : chosen_label,
-  //     onClick: CellContextMenu(0, setSelectedCells, setRowData)[chosen_label],
-  //   };
-  // };
+  const labelToFunctionMapCell = (chosen_label) => {
+    return {
+      label : chosen_label,
+      onClick: CellContextMenu(rowData, cellrowId, setSelectedCells, userContext, fetchRowDetails, ruleType)[chosen_label],
+    };
+  };
 
-  // const labelToIconMapCell = (chosen_label) => {
-  //   return CellToolbarIcons[chosen_label];
-  // };
+  const labelToIconMapCell = (chosen_label) => {
+    return CellToolbarIcons[chosen_label];
+  };
 
-  // const selectedCellButtons = itemsselectedCells.map((label) => (
-  //   <div className="icon-container" key={label}>
-  //     <img
-  //       src={labelToIconMapCell(label)}
-  //       alt={label}
-  //       className="icon"
-  //       onClick={labelToFunctionMapCell(label).onClick}
-  //       onMouseEnter={() => setShowCellTooltip({ ...showCellTooltip, [label]: true })}
-  //       onMouseLeave={() => setShowCellTooltip({ ...showCellTooltip, [label]: false })}
-  //     />
-  //     {showCellTooltip[label] && (<div className="tooltip">
-  //       <span>{CellTooltipText[label]}</span>
-  //     </div>)}
-  //   </div>
-  // ));
+  const selectedCellButtons = itemsselectedCells.map((label) => (
+    <div className="icon-container" key={label}>
+      <img
+        src={labelToIconMapCell(label)}
+        alt={label}
+        className="icon"
+        onClick={labelToFunctionMapCell(label).onClick}
+        onMouseEnter={() => setShowCellTooltip({ ...showCellTooltip, [label]: true })}
+        onMouseLeave={() => setShowCellTooltip({ ...showCellTooltip, [label]: false })}
+      />
+      {showCellTooltip[label] && (<div className="tooltip">
+        <span>{CellTooltipText[label]}</span>
+      </div>)}
+    </div>
+  ));
 
-  // const labelToFunctionMapMultiCell = (chosen_label) => {
-  //   return {
-  //     label : chosen_label,
-  //     onClick: MultiCellContextMenu(0, 3, 0, setRowData, setselectedMultiCellClick)[chosen_label],
-  //   };
-  // };
+  const labelToFunctionMapMultiCell = (chosen_label) => {
+    return {
+      label : chosen_label,
+      onClick: MultiCellContextMenu(multicellrowid, rowData, multicellindex, multicellcellindex, setselectedMultiCellClick, userContext, ruleType, fetchRowDetails)[chosen_label],
+    };
+  };
 
-  // const labelToIconMapMultiCell = (chosen_label) => {
-  //   return MultiCellToolbarIcons[chosen_label];
-  // };
+  const labelToIconMapMultiCell = (chosen_label) => {
+    return MultiCellToolbarIcons[chosen_label];
+  };
 
-  // const selectedMultiCellButtons = itemsselectedMultiCells.map((label) => (
-  //   <div className="icon-container" key={label}>
-  //     <img
-  //       src={labelToIconMapMultiCell(label)}
-  //       alt={label}
-  //       className="icon"
-  //       onClick={labelToFunctionMapMultiCell(label).onClick}
-  //       onMouseEnter={() => setShowMultiCellTooltip({ ...showMultiCellTooltip, [label]: true })}
-  //       onMouseLeave={() => setShowMultiCellTooltip({ ...showMultiCellTooltip, [label]: false })}
-  //     />
-  //     {showMultiCellTooltip[label] && (<div className="tooltip">
-  //       <span>{MultiCellTooltipText[label]}</span>
-  //     </div>)}
-  //   </div>
-  // ));
+  const selectedMultiCellButtons = itemsselectedMultiCells.map((label) => (
+    <div className="icon-container" key={label}>
+      <img
+        src={labelToIconMapMultiCell(label)}
+        alt={label}
+        className="icon"
+        onClick={labelToFunctionMapMultiCell(label).onClick}
+        onMouseEnter={() => setShowMultiCellTooltip({ ...showMultiCellTooltip, [label]: true })}
+        onMouseLeave={() => setShowMultiCellTooltip({ ...showMultiCellTooltip, [label]: false })}
+      />
+      {showMultiCellTooltip[label] && (<div className="tooltip">
+        <span>{MultiCellTooltipText[label]}</span>
+      </div>)}
+    </div>
+  ));
 
   return (
     <div className="tool-bar-container">
@@ -179,9 +185,24 @@ const ToolBarComponent = ({
             </div>
           )}
         </div>
+        <div className="icon-container">
+          <img
+            src={communismIcon}
+            alt="Toolbar Popup"
+            className="icon"
+            onMouseEnter={() => setShowToolbartip({ ...showTooltip, OpenToolBar: true })}
+            onMouseLeave={() => setShowToolbartip({ ...showTooltip, OpenToolBar: false })}
+            onClick={openPopup}
+          />
+          {showToolbartip.OpenToolBar && (
+            <div className="tooltip">
+              <span>Check Toolbar</span>
+            </div>
+          )}
+        </div>       
         {selectedRowButtons}
-        {/* {selectedCellButtons} */}
-        {/* {selectedMultiCellButtons} */}
+        {selectedCellButtons}
+        {selectedMultiCellButtons}
       </div>
     </div>
   );

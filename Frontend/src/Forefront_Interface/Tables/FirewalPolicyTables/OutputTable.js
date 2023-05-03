@@ -127,6 +127,7 @@ const OutputTable = () => {
       const cell = { rowId, cellIndex };
       setSelectedCells([cell]);
       setSelectedRows([]);
+      setselectedMultiCellClick([]);
     }
   };
 
@@ -216,7 +217,7 @@ const OutputTable = () => {
   
       setItemsSelectedRows(multiSelectedItems);
     }
-  }, [selectedRows, rowData]);
+  }, [selectedRows, rowData, setItemsSelectedRows]);
 
   useEffect(() => {
     if (selectedCells.length === 0) {
@@ -224,15 +225,19 @@ const OutputTable = () => {
     } else if (selectedCells.length === 1) {
       setItemsSelectedCells(["Accept", "Drop"]);
     }
-  }, [selectedCells]);
+  }, [selectedCells, setItemsSelectedCells]);
 
   useEffect(() => {
-    if (MultiCellLength === 1) {
-      setItemsSelectedMultiCells(["Properties"]);
+    if (selectedMultiCellClick.length === 0) {
+      setItemsSelectedMultiCells([]);
     } else {
-      setItemsSelectedMultiCells(["Remove", "Properties"]);
+      if (MultiCellLength === 1) {
+        setItemsSelectedMultiCells(["Properties"]);
+      } else {
+        setItemsSelectedMultiCells(["Remove", "Properties"]);
+      }
     }
-  }, [MultiCellLength]);
+  }, [selectedMultiCellClick, MultiCellLength, setItemsSelectedMultiCells]);
 
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
     const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
@@ -266,10 +271,6 @@ const OutputTable = () => {
     setContextMenu({ x, y, items });
   };
 
-  const openPopup = () => {
-    setShowPopup(true);
-  };
-
   return (
     <div
       style={{
@@ -284,18 +285,22 @@ const OutputTable = () => {
         itemsselectedCells={itemsselectedCells}
         rowData = {rowData}
         selectedRows = {selectedRows}
-        selectedCells = {selectedCells}
         setRowData = {setRowData}
         setSelectedRows = {setSelectedRows}
         setSelectedCells = {setSelectedCells}
         rowId = {selectedRows[0]}
+        cellrowId = {selectedCells[0]?.rowId}
         isRowDisabled = {rowData[selectedRows[0]]?.disabled}
-        openPopup = {openPopup}
+        openPopup = {() => setShowPopup(true)}
         setShowPropertiesPopUp = {setShowPropertiesPopUp}
-        selectedMultiCellClick = {selectedMultiCellClick}
         setselectedMultiCellClick = {setselectedMultiCellClick}
         itemsselectedMultiCells = {itemsselectedMultiCells}
-
+        userContext={userContext}
+        fetchRowDetails={fetchRowDetails}
+        ruleType={ruleType}
+        multicellrowid = {selectedMultiCellClick[0]?.rowId}
+        multicellindex = {selectedMultiCellClick[0]?.cellIndex}
+        multicellcellindex = {selectedMultiCellClick[0]?.MultiCellIndex}
       />
       <table className="firewall-policy-table">
         <thead>
