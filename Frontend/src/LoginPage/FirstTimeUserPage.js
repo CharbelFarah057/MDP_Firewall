@@ -5,6 +5,7 @@ import './FirstTimeUserPage.css';
 const FirstTimeUserPage = () => {
     const history = useHistory();
     const [username, setUsername] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [password, setPassword] = useState('');
     const [ipRangeFrom, setIpRangeFrom] = useState(['', '', '', '']);
     const [subnetMask, setSubnetMask] = useState(['', '', '', '']);
@@ -120,6 +121,16 @@ const FirstTimeUserPage = () => {
           className="input-field"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+        />
+        <label htmlFor="current-password" className="input-label">
+          Current password
+        </label>
+        <input
+          type="password"
+          id="current-password"
+          className="input-field"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
         />
         <label htmlFor="new-password" className="input-label">
           New password
