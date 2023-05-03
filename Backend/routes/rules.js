@@ -174,13 +174,19 @@ router.post("/edit", verifyUser, async (req, res) => {
         }
 
         // make sure unique name is provided check if name already exist if so return error
-        let check_rule = await Rule.find({ name: req.body.name });
-        if (check_rule.length > 0) {
+        let check_rule = await Rule.find({ _id: req.body.id });
+        if (check_rule.length === 0) {
+            res.status(400).json({ message: "Invalid Id parameter" });
+            return;
+        }
+
+        // make sure unique name is provided check if name already exist if so return error
+        let check_name = await Rule.find({ name: req.body.name });
+        if (check_name.length > 0 && check_name[0]._id != req.body.id) {
             res.status(400).json({ message: "Rule name already exists" });
             return;
         }
         
-
         const updatedRule = await Rule.updateOne(
             { _id: req.body.id },
             {
