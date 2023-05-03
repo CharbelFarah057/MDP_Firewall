@@ -26,31 +26,29 @@ const OutputRuleSchema = new mongoose.Schema(
         unique : true,
         required: true,
     },
-    act: {
+    action: {
         type: String,
         enum: ["Drop", "Accept"],
     },
-    protoc: {
+    protocol: {
         type: Object,
     },
-    FL: {
+    source_network: {
         type: Array,
     },
-    to: {
+    destination_network: {
         type: Array,
     },
-    cond: {
+    condition: {
         type: String,
+        default: "All Users"
     },
-    desc: {
-        type: String
-    },
-    disabled: {
-        type: Boolean,
-        default: false,
+    description: {
+        type: String,
+        default: ""
     },
     ports: {
-        type: Array,
+        type: Object,
     }
   },
   { collection: "OutputRules" }
