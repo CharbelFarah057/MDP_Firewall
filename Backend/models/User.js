@@ -45,6 +45,21 @@ const User = new Schema({
 
   },
 
+  internalNetworks: [
+    {
+      ip: String,
+      subnetMask: String,
+    },
+  ],
+  externalNetworks: [
+    {
+      ip: String,
+      subnetMask: String,
+      gateway: String,
+      dns_server: String,
+    },
+  ],
+
 })
 
 

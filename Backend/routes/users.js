@@ -186,32 +186,43 @@ router.post("/setup", verifyUser, async (req, res, next) => {
     /*
     Parameters:
     - username: username
+    - currentPassword: current password
     - newPassword: new password
-    - ipRanges: array of ip ranges
-    */
+    - internal_ipRanges: array of internal ip ranges [{
+        ip: ip address
+        subnetMask: subnet mask
+    }]
+    - external_ipRanges: array of external ip ranges [{
+        ip: ip address
+        subnetMask: subnet mask
+        gateway: gateway
+        dns_server : dns server
+    }]
 
+    */
     try {
       let user = await User.findById(req.user._id);
       if (!user.firstLogin) {
         return res.status(401).send({ message: "User has been setup already" });
       }
   
+  
       // Validate and save network settings
-      const { internalNetworks, externalNetworks } = req.body;
-      if (!Array.isArray(internalNetworks) || !Array.isArray(externalNetworks)) {
+      const { internal_ipRanges, external_ipRanges } = req.body;
+      if (!Array.isArray(internal_ipRanges) || !Array.isArray(external_ipRanges)) {
         return res.status(400).send({ message: "Bad request - invalid network settings" });
       }
   
-      for (const network of [...internalNetworks, ...externalNetworks]) {
-        if (!isValidIpAddress(network.ip) || !isValidSubnetMask(network.subnetMask) || !isValidIpAddress(network.gateway)) {
+      for (const network of [...internal_ipRanges, ...external_ipRanges]) {
+        if (!isValidIpAddress(network.ip) || !isValidSubnetMask(network.subnetMask)) {
           return res.status(400).send({ message: "Bad request - invalid IP address or subnet mask" });
         }
       }
   
-      // Save the network settings to the user object or another database model
-      // user.internalNetworks = internalNetworks;
-      // user.externalNetworks = externalNetworks;
-
+      // Save the network settings to the user object
+      user.internalNetworks = internal_ipRanges;
+      user.externalNetworks = external_ipRanges;
+ 
       // setting up new password make sure it's complex and not the same as the old one
       let newPassword = req.body.newPassword;
       if (!newPassword) {
@@ -229,8 +240,38 @@ router.post("/setup", verifyUser, async (req, res, next) => {
       if (!passwordRegex.test(newPassword)) {
         return res.status(400).send({message: "Bad request - password not complex enough (at least 8 characters, 1 number, 1 lowercase, 1 uppercase, 1 special character)"});
       }
-      
-      await user.changePassword(req.body.currentPassword, req.body.newPassword);
+
+
+      // change username 
+      let username = req.body.username;
+      if (!username) {
+        return res.status(400).send({message: "Bad request - no username"});
+      }
+
+      // check if username is already taken
+
+      let usernameRegex = /^[a-zA-Z0-9]+$/;
+      if (!usernameRegex.test(username)) {
+        return res.status(400).send({message: "Bad request - username can only contain alphanumeric characters"});
+      }
+
+      // check if username is already taken
+      let check_username = await User.find({username: username});
+      if (check_username.length > 0) {
+        return res.status(400).send({message: "Bad request - username already taken"});
+      }
+
+
+
+      // check if valid password
+      const isPasswordValid =  await user.changePassword(req.body.currentPassword, req.body.newPassword);
+      if (!isPasswordValid) {
+        return res.status(400).send({message: "Bad request - current password is incorrect"});
+      }
+
+
+
+      user.username = req.body.username;
       user.firstLogin = false;
       await user.save();
       res.send({ success: true });
