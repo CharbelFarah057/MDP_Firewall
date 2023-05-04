@@ -354,6 +354,23 @@ router.post('/add', verifyUser, async (req, res) => {
         const user = await User.findById(req.user._id);
         const rule = req.body;
         const rule_type = rule.rule_type;
+        let Rule = null;
+        // check which rule type is being added
+        if (rule_type === "input") {
+            Rule = InputRule;
+        } else if (rule_type === "output") {
+            Rule = OutputRule;
+        } else if (rule_type === "forward") {
+            Rule = ForwardRule;
+        } else {
+            return { status: 400, json: { message: "Invalid rule type" } };
+        }
+
+        // make sure unique name is provided check if name already exist if so return error
+        let check_rule = await Rule.find({ name: rule.name });
+        if (check_rule.length > 0) {
+            return { status: 400, json: { message: "Rule name already exists" } };
+        }
         const modelName = rule.name;
 
         const chain = rule_type.toUpperCase();
