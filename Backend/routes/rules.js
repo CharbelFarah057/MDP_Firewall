@@ -651,7 +651,7 @@ router.post("/squid_add", async (req, res) => {
 
         // if last line is not "http_access deny all" add it
         if (squidConfigArray[index] != "http_access deny all") {
-            squidConfigArray.splice(index, 0, "http_access deny all");
+            squidConfigArray.splice(index, 0, "http_access deny all\n");
         }
 
         // write the new config file
