@@ -57,17 +57,58 @@ function getDestinationNetworks(user, destinationNames) {
 }
 
 
+// modelName, chain, source, destination, tcp_protocol, udp_protocol, ports, action, description,count
 
-async function executeIptablesCommand(req, rule_name, chain, source, destination, dports_tcp, dports_udp, sports_lsp, sports_asp, action, count) {
+async function executeIptablesCommand(rule_name, chain, source, destination, tcp_protocol, udp_protocol, ports, action, description, count) {
     let commands_to_run = [];
+    let rule_sets = [];
+
+    const dports_tcp = tcp_protocol.selectedProtocols;
+    const dports_udp = udp_protocol.selectedProtocols;
+    
+    const all_outbound_tcp = tcp_protocol.allOutbound;
+    const all_outbound_except_tcp = tcp_protocol.allOutboundExcept;
+
+    const all_outbound_udp = udp_protocol.allOutbound;
+    const all_outbound_except_udp = udp_protocol.allOutboundExcept;
+
+    const sports_lsp = ports.limitedSourcePort;
+    const sports_asp = ports.anySourcePort;
+
 
     if (dports_tcp.length > 0){
-        const command_tcp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p tcp -m multiport --dport ${dports_tcp.join(",")} -j ${action}`
+        const command_tcp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p tcp -m multiport --dport ${dports_tcp.join(",")} -j ${action.toUpperCase()}`
         commands_to_run.push(command_tcp)
+        let rule_set = {
+            order: 1,
+            action: action,
+            tcp_protocol: tcp_protocol,
+            udp_protocol: udp_protocol,
+            source_network: source,
+            destination_network: destination,
+            condition: "All Users",
+            description: description,
+            ports: ports
+        }
+        rule_sets.push(rule_set)
     }
     if (dports_udp.length > 0){
-        const command_udp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p udp -m multiport --dport ${dports_udp.join(",")} -j ${action}`
+        const command_udp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p udp -m multiport --dport ${dports_udp.join(",")} -j ${action.toUpperCase()}`
         commands_to_run.push(command_udp)
+
+        let rule_set = {
+            order: 1,
+            action: action,
+            tcp_protocol: tcp_protocol,
+            udp_protocol: udp_protocol,
+            source_network: source,
+            destination_network: destination,
+            condition: "All Users",
+            description: description,
+            ports: ports
+        }
+        rule_sets.push(rule_set)
+        
     }
     if (sports_lsp.length > 0){
         let lower_range = sports_lsp[0]
@@ -77,21 +118,87 @@ async function executeIptablesCommand(req, rule_name, chain, source, destination
         if (lower_range === upper_range){
             sports_range = `${lower_range}`
         }
-
         let sports_protocol = sports_lsp[2]
-        const command_lsp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p ${sports_protocol} --sport ${sports_range} -j ${action}`
+        const command_lsp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p ${sports_protocol} --sport ${sports_range} -j ACCEPT`
         commands_to_run.push(command_lsp)
+
+        let rule_set = {
+            order: 1,
+            action: action,
+            tcp_protocol: tcp_protocol,
+            udp_protocol: udp_protocol,
+            source_network: source,
+            destination_network: destination,
+            condition: "All Users",
+            description: description,
+            ports: ports
+        }
+        rule_sets.push(rule_set)        
     }
-           
+    if (all_outbound_tcp.length > 0){
+        const command_all_outbound_tcp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -j ${action.toUpperCase()}`
+        commands_to_run.push(command_all_outbound_tcp)
+        let rule_set = {
+            order: 1,
+            action: action,
+            tcp_protocol: tcp_protocol,
+            udp_protocol: udp_protocol,
+            source_network: source,
+            destination_network: destination,
+            condition: "All Users",
+            description: description,
+            ports: ports
+        }
+        rule_sets.push(rule_set)
+    }
+    if (all_outbound_except_tcp.length > 0){
+        // put the reverse of action if ACCEPT => DROP and vice versa
+        let reverse_action = action.toUpperCase() === "ACCEPT" ? "DROP" : "ACCEPT"
+        const command_tcp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p tcp -m multiport --dport ${dports_tcp.join(",")} -j ${reverse_action}`
+        commands_to_run.push(command_tcp)
+        let rule_set = {
+            order: 1,
+            action: reverse_action,
+            tcp_protocol: tcp_protocol,
+            udp_protocol: udp_protocol,
+            source_network: source,
+            destination_network: destination,
+            condition: "All Users",
+            description: description,
+            ports: ports
+        }
+        rule_sets.push(rule_set)
+    }
+    if (all_outbound_except_udp.length > 0){
+        let reverse_action = action.toUpperCase() === "ACCEPT" ? "DROP" : "ACCEPT"
+        const command_tcp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p udp -m multiport --dport ${dports_tcp.join(",")} -j ${reverse_action}`
+        commands_to_run.push(command_tcp)
+        let rule_set = {
+            order: 1,
+            action: reverse_action,
+            tcp_protocol: tcp_protocol,
+            udp_protocol: udp_protocol,
+            source_network: source,
+            destination_network: destination,
+            condition: "All Users",
+            description: description,
+            ports: ports
+        }
+        rule_sets.push(rule_set)
+    }       
+        
+         
     const createdRules = [];
     for (let i = 0; i < commands_to_run.length; i++) {
+        console.log("Command to run: ", commands_to_run[i])
         try {
           await exec(commands_to_run[i]);
           console.log(`Command executed successfully: ${commands_to_run[i]}\n`);
         } catch (error) {
           console.error(`Error executing command: ${commands_to_run[i]}`);
         }
-        let ruleType = chain.toUpperCase();
+        let rule_type = chain.toUpperCase();
+        let rule_set = rule_sets[i];
         let modelName1 = `${rule_name}_${count}`;
         if (i == 0) {
             modelName1 = `${modelName1}_tcp`
@@ -99,12 +206,14 @@ async function executeIptablesCommand(req, rule_name, chain, source, destination
         else if (i == 1) {
             modelName1 = `${modelName1}_udp`
         }
+
+        rule_set.name = modelName1;
         
-        let response1 = await createRule(req, ruleType, modelName1);
-        console.log(response1)
-        // if (response1.status) {
-        //     throw new Error(response1.message);
-        // }
+        let response1 = await createRule(rule_set, rule_type, modelName1);
+        //console.log(response1)
+        if (response1.status) {
+            throw new Error(response1.message);
+        }
         
         createdRules.push(response1.json);
       }
@@ -113,19 +222,15 @@ async function executeIptablesCommand(req, rule_name, chain, source, destination
     return createdRules;
 }
 
-
-  
-
-
-async function createRule(req, ruleType, modelName) {
+async function createRule(rule_set, rule_type, modelName) {
     let Rule = null;
-    ruleType = ruleType.toLowerCase()
+    rule_type = rule_type.toLowerCase()
 
-    if (ruleType === "input") {
+    if (rule_type === "input") {
         Rule = InputRule;
-    } else if (ruleType === "output") {
+    } else if (rule_type === "output") {
         Rule = OutputRule;
-    } else if (ruleType === "forward") {
+    } else if (rule_type === "forward") {
         Rule = ForwardRule;
     } else {
         return { status: 400, json: { message: "Invalid rule type" } };
@@ -142,16 +247,7 @@ async function createRule(req, ruleType, modelName) {
         await rules[i].save();
     }
 
-    const rule = new Rule({
-        order: 1,
-        name: modelName,
-        action: req.body.action,
-        protocol: req.body.protocol,
-        source_network: req.body.source_network,
-        destination_network: req.body.destination_network,
-        description: req.body.desc,
-        ports: req.body.ports
-    });
+    const rule = new Rule(rule_set);
 
     const savedRule = await rule.save();
 
@@ -257,27 +353,58 @@ router.get("/:rule_type/:id", verifyUser, async (req, res) => {
 
 router.post('/add', verifyUser, async (req, res) => {
     try {
+        /*
+        Req body :
+        {
+            "rule_type": "input",
+            "name": "test",
+            "action": "accept",
+            "source_network": ["Internal", "External"],
+            "destination_network": ["External", "Internal"],
+            "protocol": {
+                "selectedProtocols": {
+                    "tcp": [80, 443], // dports_tcp
+                    "udp": [53] // dports_udp
+                }
+            },
+            "source_ports": {
+                "limitedSourcePort": [1024, 65535, "tcp"], // sports_lsp
+                "anySourcePort": [1024, 65535, "tcp"] // sports_asp
+            }
+        }
+
+
+        */
         const user = await User.findById(req.user._id);
         const rule = req.body;
-        const ruleType = rule.rule_type;
+        const rule_type = rule.rule_type;
         const modelName = rule.name;
 
-        const chain = ruleType.toUpperCase();
+        const chain = rule_type.toUpperCase();
         const sourceNetworks = getSourceNetworks(user, rule.source_network);
         const destinationNetworks = getDestinationNetworks(user, rule.destination_network);
-        const protocol = rule.protocol;
-        const action = rule.action.toUpperCase();
-        const dports_tcp = protocol.selectedProtocols.tcp;
-        const dports_udp = protocol.selectedProtocols.udp;
-        const sports_lsp = rule.source_ports.limitedSourcePort; 
-        const sports_asp = rule.source_ports.anySourcePort;
-        console.log(destinationNetworks)
+        const tcp_protocol = rule.tcp_protocol;
+        const udp_protocol = rule.udp_protocol;
+        const action = rule.action;
+        const ports = rule.ports;
+
+        
+
+        // const dports_tcp = tcp_protocol.selectedProtocols;
+        // const dports_udp = udp_protocol.selectedProtocols;
+
+
+        // const sports_lsp = rule.ports.limitedSourcePort; 
+        // const sports_asp = rule.ports.anySourcePort;
+
+        const description = rule.description;
+
         const createdRules = [];
         let count = 0;
         for (const source of sourceNetworks) {
             for (const destination of destinationNetworks) {
                 try {
-                    const executedRules = await executeIptablesCommand(req, modelName, chain, source, destination, dports_tcp, dports_udp, sports_lsp, sports_asp, action, count);
+                    const executedRules = await executeIptablesCommand(modelName, chain, source, destination, tcp_protocol, udp_protocol, ports, action, description,count);
                     count = count + 1
                 } catch (err) {
                     console.error(err);

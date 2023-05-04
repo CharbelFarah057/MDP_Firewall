@@ -30,7 +30,10 @@ const OutputRuleSchema = new mongoose.Schema(
         type: String,
         enum: ["Drop", "Accept"],
     },
-    protocol: {
+    tcp_protocol: {
+        type: Object,
+    },
+    udp_protocol: {
         type: Object,
     },
     source_network: {
