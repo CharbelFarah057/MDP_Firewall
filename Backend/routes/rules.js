@@ -57,23 +57,21 @@ function getDestinationNetworks(user, destinationNames) {
 }
 
 
-// modelName, chain, source, destination, tcp_protocol, udp_protocol, ports, action, description,count
-
-async function executeIptablesCommand(rule_name, chain, source, destination, tcp_protocol, udp_protocol, ports, action, description, count) {
+ async function executeIptablesCommand(rule_name, chain, source, destination, tcp_protocol, udp_protocol, ports, action, description, count) {
     let commands_to_run = [];
     let rule_sets = [];
 
     const dports_tcp = tcp_protocol.selectedProtocols;
     const dports_udp = udp_protocol.selectedProtocols;
     
-    const all_outbound_tcp = tcp_protocol.allOutbound;
-    const all_outbound_except_tcp = tcp_protocol.allOutboundExcept;
+    const all_outbound_tcp = tcp_protocol.allOutbound || [];
+    const all_outbound_except_tcp = tcp_protocol.allOutboundExcept || [];
 
-    const all_outbound_udp = udp_protocol.allOutbound;
-    const all_outbound_except_udp = udp_protocol.allOutboundExcept;
+    const all_outbound_udp = udp_protocol.allOutbound || [];
+    const all_outbound_except_udp = udp_protocol.allOutboundExcept || [];
 
-    const sports_lsp = ports.limitedSourcePort;
-    const sports_asp = ports.anySourcePort;
+    const sports_lsp = ports.limitedSourcePort || [];
+    const sports_asp = ports.anySourcePort || [];
 
 
     if (dports_tcp.length > 0){
@@ -353,28 +351,6 @@ router.get("/:rule_type/:id", verifyUser, async (req, res) => {
 
 router.post('/add', verifyUser, async (req, res) => {
     try {
-        /*
-        Req body :
-        {
-            "rule_type": "input",
-            "name": "test",
-            "action": "accept",
-            "source_network": ["Internal", "External"],
-            "destination_network": ["External", "Internal"],
-            "protocol": {
-                "selectedProtocols": {
-                    "tcp": [80, 443], // dports_tcp
-                    "udp": [53] // dports_udp
-                }
-            },
-            "source_ports": {
-                "limitedSourcePort": [1024, 65535, "tcp"], // sports_lsp
-                "anySourcePort": [1024, 65535, "tcp"] // sports_asp
-            }
-        }
-
-
-        */
         const user = await User.findById(req.user._id);
         const rule = req.body;
         const rule_type = rule.rule_type;
