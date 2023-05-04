@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import "./PortsPopUp.css";
 
-const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPortSaved }) => {
+const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPortSaved, protocolSaved }) => {
   const [radioValue, setRadioValue] = useState(radionSaved);
   const [fromPort, setFromPort] = useState(FromPortSave);
   const [toPort, setToPort] = useState(ToPortSaved);
+  const [protocol, setProtocol] = useState(protocolSaved);
+  const [savedState, setSavedState] = useState([radionSaved, FromPortSave, ToPortSaved, protocolSaved]);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleRadioChange = (event) => {
@@ -13,6 +15,14 @@ const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPort
       setFromPort(1);
       setToPort(65535);
     }
+    if (event.target.value === "limitSourcePort") {
+      setFromPort(0);
+      setToPort(0);
+    }
+  };
+
+  const handleProtocolChange = (event) => {
+    setProtocol(event.target.value);
   };
 
   const handleFromPortChange = (e) => {
@@ -24,6 +34,12 @@ const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPort
   };
 
   const handleOk = () => {
+    const numberRegex = /^\d+$/;
+
+    if (!numberRegex.test(fromPort) || !numberRegex.test(toPort)) {
+      setErrorMessage("Port values must be numbers.");
+      return;
+    }
     const from = parseInt(fromPort, 10);
     const to = parseInt(toPort, 10);
   
@@ -31,12 +47,17 @@ const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPort
       setErrorMessage("Invalid port range.");
       return;
     }
-    onSave({[radioValue]: [fromPort, toPort]});
+    onSave({[radioValue]: [fromPort, toPort, protocol]});
     setErrorMessage("");
     onClose();
   };
 
   const handleCancel = () => {
+    setFromPort(savedState[1]);
+    setToPort(savedState[2]);
+    setProtocol(savedState[3]);
+    setRadioValue(savedState[0]);
+    setErrorMessage("");
     onClose();
   };
 
@@ -74,9 +95,9 @@ const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPort
         <div className={`ports-range${radioValue === "limitSourcePort" ? " enabled" : ""}`}>
             <label htmlFor="fromPort">From:</label>
             <input
-                type="text"
+                type="number"
                 id="fromPort"
-                min="0"
+                min="1"
                 max="65535"
                 step={1}
                 value={fromPort}
@@ -85,9 +106,9 @@ const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPort
             />
             <label htmlFor="toPort">To:</label>
             <input
-                type="text"
+                type="number"
                 id="toPort"
-                min="0"
+                min="1"
                 max="65535"
                 step={1}
                 value={toPort}
@@ -104,10 +125,31 @@ const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPort
             This range must belong to clients specified in the allowed traffic sources
             for this rule.
         </p>
-        <div className="popup-buttons">
-            <button onClick={handleOk}>OK</button>
-            <button onClick={handleCancel}>Cancel</button>
-        </div>
+          <div className="radio-container">
+            <input
+              type="radio"
+              id="tcp"
+              name="protocol"
+              value="tcp"
+              checked={protocol === "tcp"}
+              onChange={handleProtocolChange}
+            />
+            <label htmlFor="tcp">TCP</label>
+            
+            <input
+              type="radio"
+              id="udp"
+              name="protocol"
+              value="udp"
+              checked={protocol === "udp"}
+              onChange={handleProtocolChange}
+            />
+            <label htmlFor="udp">UDP</label>
+          </div>
+          <div className="popup-buttons">
+              <button onClick={handleOk}>OK</button>
+              <button onClick={handleCancel}>Cancel</button>
+          </div>
         </div>
     ) : null;
 };

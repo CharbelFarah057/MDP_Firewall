@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {AiOutlineFolder} from 'react-icons/ai';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import searchIcon from "../../../../../Images/search-magnifying-glass.svg";
 import closeIcon from "../../../../../Images/cross-close.svg";
 import Authentication from './Data/Authentication.json'
@@ -15,23 +14,19 @@ import Mail from './Data/mail.json'
 import RemoteTerminal from './Data/remoteTerminal.json'
 import ServerProtocols from './Data/serverProtocols.json'
 import StreamingMedia from './Data/streamingMedia.json'
-import UserDefined from './Data/user-defined.json'
 import VPNandIPsec from './Data/vpnAndIPsec.json'
 import Web from './Data/web.json'
-import AddProtocolPopup from './AddProtocolPopUp';
 import { filterRows } from '../../TableUtilities';
 import './ProtocolPage.css'
 
 const Protocols = ({
-  protocolItems,
+  items,
   handleSelectItem,
-  selectedProtocols
+  selectedItems
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [tableData, setTableData] = useState([]);
-  const [addProtocolPopupOpen, setAddProtocolPopupOpen] = useState(false);
-  const [userDefinedData, setUserDefinedData] = useState(UserDefined);
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
   const handleChange = (e) => {
@@ -42,22 +37,9 @@ const Protocols = ({
     setInputValue("");
   };
 
-  const handleSelectCategory = (event, index) => {
-    handleSelectItem(index, event, false);
+  const handleSelectCategory = (index, event) => {
+    handleSelectItem(index, event);
     setSelectedCategory(index);
-  };
-
-  const handleAddProtocol = (newProtocol) => {
-    setUserDefinedData([...userDefinedData, newProtocol]);
-    setAddProtocolPopupOpen(false);
-  };
-
-  const handleDelete = () => {
-    if (selectedRowIndex !== null) {
-      const newData = userDefinedData.filter((_, index) => index !== selectedRowIndex);
-      setUserDefinedData(newData);
-      setSelectedRowIndex(null);
-    }
   };
 
   const getTableData = useCallback(() => {
@@ -88,18 +70,15 @@ const Protocols = ({
         table_data = Web;
         break;
       case 8:
-        table_data = userDefinedData;
-        break;
-      case 9:
         table_data = Authentication;
         break;
-      case 10:
+      case 9:
         table_data = ServerProtocols;
         break;
-      case 11:
+      case 10:
         table_data = IPv6Infrastructure;
         break;
-      case 12:
+      case 11:
         table_data = data;
         break;
       default:
@@ -107,7 +86,7 @@ const Protocols = ({
         break
       }
     return filterRows(table_data, inputValue)
-  }, [selectedCategory, inputValue, userDefinedData]);
+  }, [selectedCategory, inputValue]);
 
   useEffect(() => {
     setTableData(getTableData());
@@ -116,12 +95,6 @@ const Protocols = ({
   return (
     <Box sx = {{minHeight : "500px"}}>
       <Box sx={{ marginBottom: 1 }}>
-      <Button variant="contained" onClick={() => setAddProtocolPopupOpen(true)}>New</Button>
-      {selectedCategory === 8 && (
-        <Button variant="outlined" sx={{ margin: 2 }} onClick={handleDelete}>
-          Delete
-        </Button>
-      )}
       </Box>
         <div className="tool-bar-container">
           {inputValue ? (
@@ -143,11 +116,11 @@ const Protocols = ({
         </div>
         <div className="main-container">
         <div className="main-items">
-          {protocolItems.map((item, index) => (
+          {items.map((item, index) => (
             <div
               key={index}
-              onClick={(event) => handleSelectCategory(event, index)}
-              className={`item-toolbar${selectedProtocols.has(index) ? " selected" : ""}`}
+              onClick={(event) => handleSelectCategory(index, event)}
+              className={`item-toolbar${selectedItems.has(index) ? " selected" : ""}`}
               >
               <AiOutlineFolder/>
               <span style={{ marginLeft: "5px" }}>{item}</span>
@@ -183,12 +156,6 @@ const Protocols = ({
           </table>
         </div>
       </div>
-
-      <AddProtocolPopup
-        open={addProtocolPopupOpen}
-        onSave={handleAddProtocol}
-        onCancel={() => setAddProtocolPopupOpen(false)}
-      />
     </Box>
   );
 };

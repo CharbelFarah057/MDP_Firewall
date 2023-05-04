@@ -24,12 +24,12 @@ const PropertiesPopUp = ({
   id,
   order,
   name,
-  act,
-  protoc,
-  FL,
-  to,
-  desc,
-  disabled,
+  action,
+  tcp_protocol,
+  udp_protocol,
+  source_network,
+  destination_network,
+  description,
   ports,
   userContext,
   ruleType}) => {
@@ -38,23 +38,22 @@ const PropertiesPopUp = ({
   const [rowId] = useState(id);
   const [orderInput] = useState(order);
   const [nameInput, setNameInput] = useState(name);
-  const [descInput, setDescInput] = useState(desc);
-  const [disabledInput, setDisabledInput] = useState(disabled);
+  const [descInput, setDescInput] = useState(description);
   // Action Page States
-  const [actInput, setActInput] = useState(act);
+  const [actInput, setActInput] = useState(action);
   // Protocols Page States
-  const [ruleAppliesTo, setRuleAppliesTo] = useState(Object.keys(protoc)[0]);
-  const [items, setItems] = useState(Object.values(protoc)[0]);
+  const [ruleAppliesTo, setRuleAppliesTo] = useState("selectedProtocols");
+  const [items, setItems] = useState(["Added"]);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [PortsPopupData, setPortsPopupData] = useState(ports);
   const [PageActionErrorMessage, setPageActionErrorMessage] = useState("");
 
   // From Page States
-  const [sourceItems, setSourceItems] = useState(FL);
+  const [sourceItems, setSourceItems] = useState(source_network);
   const [selectedRuleSources, setSelectedRuleSources] = useState(new Set());
   const [FromPageErrorMessage, setFromPageErrorMessage] = useState("");
   // To Page States
-  const [destinationItems, setDestinationItems] = useState(to);
+  const [destinationItems, setDestinationItems] = useState(destination_network);
   const [selectedRuleDestinations, setSelectedRuleDestinations] = useState(new Set());
   const [ToPageErrorMessage, setToPageErrorMessage] = useState("");
 
@@ -77,18 +76,6 @@ const PropertiesPopUp = ({
 
   const handleOkClick = () => {
     const data = {
-      "id" : rowId,
-      "order" : orderInput,
-      "name" : nameInput,
-      "act" : actInput,
-      "protoc" : {[ruleAppliesTo] : items},
-      "FL" : sourceItems,
-      "to" : destinationItems,
-      "cond" : "All Users",
-      "desc" : descInput,
-      "disabled" : disabledInput,
-      "ports" : PortsPopupData,
-      "rule_type" : ruleType, 
     };
     fetch("http://localhost:3001/api/rules/edit", {
           method: "POST",
@@ -139,8 +126,6 @@ const PropertiesPopUp = ({
             descInput={descInput}
             setDescInput = {setDescInput}
             rowId={orderInput}
-            disabledInput={disabledInput}
-            setdisabledInput = {setDisabledInput}
             totalRows={totalRows}
           />
         )}

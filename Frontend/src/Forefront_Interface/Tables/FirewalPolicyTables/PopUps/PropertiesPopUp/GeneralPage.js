@@ -7,8 +7,6 @@ const General = ({
   descInput,
   setDescInput,
   rowId,
-  disabledInput,
-  setdisabledInput,
   totalRows,
 }) => {
   const handleNameChange = (event) => {
@@ -17,10 +15,6 @@ const General = ({
 
   const handleDescChange = (event) => {
     setDescInput(event.target.value);
-  };
-
-  const handleEnabledChange = (event) => {
-    setdisabledInput(!event.target.checked);
   };
 
   return (
@@ -50,20 +44,6 @@ const General = ({
         <span>
           Rule {rowId} of {totalRows}
         </span>
-      </Grid>
-      <Grid item xs={4}>
-        <label>Enable:</label>
-      </Grid>
-      <Grid item xs={8}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!disabledInput}
-              onChange={handleEnabledChange}
-            />
-          }
-          label=""
-        />
       </Grid>
     </Grid>
   );

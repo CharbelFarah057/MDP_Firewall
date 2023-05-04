@@ -20,9 +20,7 @@ const Page4 = ({
           {sourceItems.map((item, index) => (
             <div
               key={index}
-              onClick={(event) => {
-                handleSelectItem(index, event)
-              }}
+              onClick={(event) => handleSelectItem(index, event)}
               className={`item${selectedRuleSources.has(index) ? " selected" : ""}`}
             >
               {item}

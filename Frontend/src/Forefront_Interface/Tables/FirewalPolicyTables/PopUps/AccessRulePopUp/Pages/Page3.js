@@ -74,6 +74,7 @@ const Page3 = ({
         radionSaved={Object.keys(PortsPopupData)[0]}
         FromPortSave={Object.values(PortsPopupData)[0][0]}
         ToPortSaved={Object.values(PortsPopupData)[0][1]}
+        protocolSaved={Object.values(PortsPopupData)[0][2]}
       />
     </>
   );

@@ -15,6 +15,7 @@ import {areSelectedRowsContiguous,
 import ToolBarComponent from "./ToolBarComponent.js";
 import NewAccessRule from "./PopUps/AccessRulePopUp/NewAccessRule";
 import PropertiesPopUp from "./PopUps/PropertiesPopUp/PropertiesPopUp";
+import ToolBoxPopUp from "./PopUps/ToolBoxPopUp/ToolBoxPopUp";
 import "./MainTable.css";
 
 const OutputTable = () => {
@@ -33,13 +34,14 @@ const OutputTable = () => {
   const [searchValue, setSearchValue] = useState("");
   // Add Rule States
   const [showPopup, setShowPopup] = useState(false);
+  const [showToolBoxPopUp, setShowToolBoxPopUp] = useState(false);
   const [ruleName, setRuleName] = useState('');
   const [ruleAction, setRuleAction] = useState('Drop');
   const [ruleAppliesTo, setRuleAppliesTo] = useState("selectedProtocols");
   const [items, setItems] = useState([]);
   const [sourceItems, setSourceItems] = useState([]);
   const [destinationItems, setDestinationItems] = useState([]);
-  const [PortsPopupData, setPortsPopupData] = useState({"anySourcePort" : [0, 0]});
+  const [PortsPopupData, setPortsPopupData] = useState({"anySourcePort" : [0, 65535]});
   // Add Properties PopUp state
   const [showPropertiesPopUp, setShowPropertiesPopUp] = useState(false);
 
@@ -292,6 +294,7 @@ const OutputTable = () => {
         cellrowId = {selectedCells[0]?.rowId}
         isRowDisabled = {rowData[selectedRows[0]]?.disabled}
         openPopup = {() => setShowPopup(true)}
+        openToolBoxPopUp = {() => setShowToolBoxPopUp(true)}
         setShowPropertiesPopUp = {setShowPropertiesPopUp}
         setselectedMultiCellClick = {setselectedMultiCellClick}
         itemsselectedMultiCells = {itemsselectedMultiCells}
@@ -406,6 +409,9 @@ const OutputTable = () => {
           userContext = {userContext}
           ruleType = {ruleType}
         />}
+      {showToolBoxPopUp && <ToolBoxPopUp
+        onClose = {() => setShowToolBoxPopUp(false)}
+       />}
     </div>
   );
 };

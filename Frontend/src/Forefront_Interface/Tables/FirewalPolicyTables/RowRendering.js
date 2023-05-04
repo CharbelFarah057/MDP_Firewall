@@ -6,6 +6,7 @@ import { FiUsers } from 'react-icons/fi';
 import { FaNetworkWired, FaSlash } from 'react-icons/fa';
 import { MdDisabledByDefault } from 'react-icons/md';
 import { FcGlobe } from 'react-icons/fc';
+import ports_protocol_dictionary from '../Data/Port_to_protocolData.json'
 
 const RowRendering = ({
 row,
@@ -47,7 +48,7 @@ setMultiCellLength,
                   </span>
                 </>
               );
-            case "act":
+            case "action":
                 return (
                     <>
                         {value === 'Drop' ? 
@@ -61,56 +62,109 @@ setMultiCellLength,
                         <span style={{ marginLeft: "5px" }}>{value}</span>
                     </>
                 );
-                case "protoc":
-                    const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
-                      (key) => key in value
-                    );
-                    if (availableKey) {
-                      return (
-                        <>
-                          <ul className="protocol-list">
-                            {value[availableKey].map((protocol, MultiCellIndex) => (
-                              <li
-                                key={MultiCellIndex}
-                                onClick={() => {
-                                  handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
-                                  setMultiCellLength(value[availableKey].length);
-                                }}
-                                onContextMenu={(event) => {
-                                  event.preventDefault();
-                                  onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex);
-                                }}
-                                className={
-                                  isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
-                                }
-                              >
-                                <div style={{ position: 'relative' }}>
-                                    <FaNetworkWired className="icon-padding" />
-                                    {availableKey === 'allOutboundExcept' && (
-                                        <FaSlash
-                                            className="icon-padding"
-                                            style={{
-                                                position: 'absolute',
-                                                top: '50%',
-                                                transform: 'translate(-100%, -50%)',
-                                            }}
-                                        />
-                                    )}
-                                  {protocol}
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      );
-                    } else {
-                      return () => null;
-                    }                  
-            case "FL":
+            case "tcp_protocol":
+              const tcp_available_keys = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+                (key) => key in value
+              );
+              if (tcp_available_keys) {
+                return (
+                  <>
+                    <ul className="protocol-list">
+                      {value[tcp_available_keys].map((protocol, MultiCellIndex) => {
+                        const tcp_protocolNames = ports_protocol_dictionary[protocol];
+                        const tcp_displayName = tcp_protocolNames.length > 1 ? tcp_protocolNames.join(', ') : tcp_protocolNames[0];
+                        return (
+                          <li
+                            key={MultiCellIndex}
+                            onClick={() => {
+                              handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                              setMultiCellLength(value[tcp_available_keys].length);
+                            }}
+                            onContextMenu={(event) => {
+                              event.preventDefault();
+                              onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex);
+                            }}
+                            className={
+                              isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
+                            }
+                          >
+                            <div style={{ position: 'relative' }}>
+                              <FaNetworkWired className="icon-padding" />
+                              {tcp_available_keys === 'allOutboundExcept' && (
+                                <FaSlash
+                                  className="icon-padding"
+                                  style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    transform: 'translate(-100%, -50%)',
+                                  }}
+                                />
+                              )}
+                              {tcp_displayName}
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </>
+                );
+              } else {
+                return () => null;
+              }                
+            case "udp_protocol":
+              const udp_available_keys = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+                (key) => key in value
+              );
+              if (udp_available_keys) {
+                return (
+                  <>
+                    <ul className="protocol-list">
+                      {value[udp_available_keys].map((protocol, MultiCellIndex) => {
+                        const udp_protocolNames = ports_protocol_dictionary[protocol];
+                        const udp_displayName = udp_protocolNames.length > 1 ? udp_protocolNames.join(', ') : udp_protocolNames[0];
+                        return  (
+                          <li
+                          key={MultiCellIndex}
+                          onClick={() => {
+                            handleMultiCellClick(rowId, cellIndex, MultiCellIndex);
+                            setMultiCellLength(value[udp_available_keys].length);
+                          }}
+                          onContextMenu={(event) => {
+                            event.preventDefault();
+                            onMultiCellContextMenu(event, rowId, cellIndex, MultiCellIndex);
+                          }}
+                          className={
+                            isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
+                          }
+                        >
+                          <div style={{ position: 'relative' }}>
+                              <FaNetworkWired className="icon-padding" />
+                              {udp_available_keys === 'allOutboundExcept' && (
+                                  <FaSlash
+                                      className="icon-padding"
+                                      style={{
+                                          position: 'absolute',
+                                          top: '50%',
+                                          transform: 'translate(-100%, -50%)',
+                                      }}
+                                  />
+                              )}
+                            {udp_displayName}
+                          </div>
+                        </li>
+                        );
+                      })}
+                    </ul>
+                  </>
+                );
+              } else {
+                return () => null;
+              }
+            case "source_network":
                 return (
                     <>
                     <ul className="protocol-list">
-                        {value.map((FL, MultiCellIndex) => (
+                        {value.map((source_network, MultiCellIndex) => (
                         <li
                             key={MultiCellIndex}
                             onClick={() => {
@@ -124,18 +178,18 @@ setMultiCellLength,
                                 isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
-                            {FL === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
-                            {FL}
+                            {source_network === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
+                            {source_network}
                         </li>
                         ))}
                     </ul>
                     </>
                 );
-            case "to":
+            case "destination_network":
                 return (
                     <>
                     <ul className="protocol-list">
-                        {value.map((To, MultiCellIndex) => (
+                        {value.map((destination_network, MultiCellIndex) => (
                         <li
                             key={MultiCellIndex}
                             onClick={() => {
@@ -149,14 +203,14 @@ setMultiCellLength,
                             isMultiCellSelected(MultiCellIndex, cellIndex) || selectedRows.includes(rowId) ? "selected-protocol" : ""
                             }
                         >
-                            {To === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
-                            {To}
+                            {destination_network === 'External' ? <FcGlobe className="icon-padding" /> : <FaNetworkWired className="icon-padding" />}
+                            {destination_network}
                         </li>
                         ))}
                     </ul>
                     </>
                 );
-            case "cond":
+            case "condition":
                 return (
                     <>
                         <FiUsers />
@@ -179,7 +233,7 @@ setMultiCellLength,
                 }}
                 />
             </td>
-            {Object.entries(row).filter(([key]) => key !== "_id" && key !== "disabled" && key!=="ports" && key !== "rule_type").map(([key, value], cellIndex) => (
+            {Object.entries(row).filter(([key]) => key !== "_id" && key!=="ports").map(([key, value], cellIndex) => (
                 <td key={key} 
                     onClick={() => {
                         handleCellClick(rowId, cellIndex);

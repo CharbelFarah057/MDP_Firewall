@@ -48,7 +48,7 @@
 }
 
 .main-items {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
   border: 1px solid #ccc;
   padding: 8px;
@@ -75,7 +75,7 @@
 .protocol-table-container {
   flex: 1;
   padding-left: 20px;
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -109,4 +109,10 @@
   background-color: #007bff;
   cursor: pointer;
   color : white;
+}
+
+.icon-text-container-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
