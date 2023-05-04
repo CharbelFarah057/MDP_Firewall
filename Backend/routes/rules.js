@@ -595,7 +595,7 @@ router.post("/move/:order", verifyUser, async (req, res) => {
 
 
 // add acl rule to squid config
-router.post("/squid_add", async (req, res) => {
+router.post("/squid_add", verifyUser, async (req, res) => {
     try {
 
         // make sure unique name is provided check if name already exist if so return error
@@ -670,7 +670,7 @@ router.post("/squid_add", async (req, res) => {
 });
 
 // delete acl rule from squid config
-router.post("/squid_delete", async (req, res) => {
+router.post("/squid_delete", verifyUser, async (req, res) => {
     try {
         // open squid config file
         let squidConfig = fs.readFileSync("/etc/squid/squid.conf", "utf8"); // /etc/squid/squid.conf
@@ -723,6 +723,18 @@ router.post("/squid_delete", async (req, res) => {
         res.json({ message: err });
     }
 });
+
+
+// get all squid rules
+router.get("/squid_rules", verifyUser, async (req, res) => {
+    try {
+        const rules = await SquidRule.find();
+        res.json(rules);
+    } catch (err) {
+        res.json({ message: err });
+    }
+});
+
 
 
 
