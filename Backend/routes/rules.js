@@ -89,6 +89,7 @@ function getDestinationNetworks(user, destinationNames) {
             ports: ports
         }
         rule_sets.push(rule_set)
+        
     }
     if (dports_udp.length > 0){
         const command_udp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p udp -m multiport --dport ${dports_udp.join(",")} -j ${action.toUpperCase()}`
@@ -197,6 +198,7 @@ function getDestinationNetworks(user, destinationNames) {
         }
         let rule_type = chain.toUpperCase();
         let rule_set = rule_sets[i];
+        count = count + 1;
         let modelName1 = `${rule_name}_${count}`;
         if (i == 0) {
             modelName1 = `${modelName1}_tcp`
