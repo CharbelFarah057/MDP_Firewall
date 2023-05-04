@@ -4,6 +4,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import { FiUsers } from 'react-icons/fi';
 import Protocols from './ProtocolPage';
 import './ToolBoxPopUp.css'
 import { handleSelectItem } from '../AccessRulePopUp/Utilities/Page3-4-5Utilities';
@@ -12,7 +13,7 @@ const ToolBoxPopUp = ({
   onClose,
   }) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [protocolItems] = useState(['Common Protocols',
+  const items = ['Common Protocols',
   'Infrastructure',
   'Mail',
   'Instant Messaging',
@@ -20,12 +21,11 @@ const ToolBoxPopUp = ({
   'Streaming Media',
   'VPN and IPsec',
   'Web',
-  'User-Defined',
   'Authentication',
   'Server Protocols',
   'IPv6 Infrastructure',
-  'All Protocols']);
-const [selectedProtocols, setSelectedProtocols] = useState(new Set());
+  'All Protocols'];
+  const [selectedItems, setSelectedItems] = useState(new Set());
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -49,10 +49,18 @@ const [selectedProtocols, setSelectedProtocols] = useState(new Set());
         </Tabs>
         {selectedTab === 0 && (
           <Protocols
-            protocolItems = {protocolItems}
-            handleSelectItem = {(index, event) => handleSelectItem(selectedProtocols, setSelectedProtocols, false)(index, event)}
-            selectedProtocols = {selectedProtocols}
+            items = {items}
+            handleSelectItem = {(index, event) => handleSelectItem(selectedItems, setSelectedItems, false)(index, event)}
+            selectedItems = {selectedItems}
           />
+        )}
+        {selectedTab === 1 && (
+          <>
+            <div className="icon-text-container-toolbar">
+                <FiUsers/> 
+                <p> All Users</p>
+            </div>
+          </>
         )}
       </Box>
     </Modal>
