@@ -12,8 +12,11 @@ const isValidIpAddress = (ip) => {
 };
 
 const isValidSubnetMask = (mask) => {
-  const maskRegex = /^(((255\.){3}(255|254|252|248|240|224|192|128|0+))|((255\.){2}(255|254|252|248|240|224|192|128|0+)\.0)|((255\.)(255|254|252|248|240|224|192|128|0+)(\.0+){2})|((255|254|252|248|240|224|192|128|0+)(\.0+){3}))$/;
-  return maskRegex.test(mask);
+  // check if its a number between 0 and 32
+  if (isNaN(mask) || mask < 0 || mask > 32) {
+    return false;
+  }
+  return true;
 };
 
 
