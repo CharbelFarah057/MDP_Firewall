@@ -1,10 +1,12 @@
 var express = require("express");
 var router = express.Router();
+var fs = require("fs");
 
 const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate")
 const { exec } = require("child_process");
 
 const User = require("../models/User.js");
+const SquidRule = require("../models/SquidRule.js");
 
 let InputRule = require("../models/InputRule");
 let OutputRule = require("../models/OutputRule");
@@ -73,7 +75,7 @@ function getDestinationNetworks(user, destinationNames) {
     const sports_lsp = ports.limitedSourcePort || [];
     const sports_asp = ports.anySourcePort || [];
 
-
+    
     if (dports_tcp.length > 0){
         const command_tcp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p tcp -m multiport --dport ${dports_tcp.join(",")} -j ${action.toUpperCase()}`
         commands_to_run.push(command_tcp)
@@ -117,7 +119,9 @@ function getDestinationNetworks(user, destinationNames) {
         if (lower_range === upper_range){
             sports_range = `${lower_range}`
         }
+
         let sports_protocol = sports_lsp[2]
+
         const command_lsp = `sudo iptables -I ${chain} -s ${source} -d ${destination} -p ${sports_protocol} --sport ${sports_range} -j ACCEPT`
         commands_to_run.push(command_lsp)
 
@@ -373,15 +377,17 @@ router.post('/add', verifyUser, async (req, res) => {
         if (check_rule.length > 0) {
             return { status: 400, json: { message: "Rule name already exists" } };
         }
-        const modelName = rule.name;
+        let modelName = rule.name;
 
-        const chain = rule_type.toUpperCase();
-        const sourceNetworks = getSourceNetworks(user, rule.source_network);
-        const destinationNetworks = getDestinationNetworks(user, rule.destination_network);
-        const tcp_protocol = rule.tcp_protocol;
-        const udp_protocol = rule.udp_protocol;
-        const action = rule.action;
-        const ports = rule.ports;
+        let chain = rule_type.toUpperCase();
+        let sourceNetworks = getSourceNetworks(user, rule.source_network);
+        let destinationNetworks = getDestinationNetworks(user, rule.destination_network);
+        let tcp_protocol = rule.tcp_protocol;
+        let udp_protocol = rule.udp_protocol;
+        let action = rule.action;
+        let ports = rule.ports;
+
+
 
         
 
@@ -588,5 +594,140 @@ router.post("/move/:order", verifyUser, async (req, res) => {
 
 
 
+// add acl rule to squid config
+router.post("/squid_add", async (req, res) => {
+    try {
+
+        // make sure unique name is provided check if name already exist if so return error
+        let check_name = await SquidRule.find({ name: req.body.name });
+        if (check_name.length > 0) {
+            res.status(400).json({ message: "Rule name already exists" });
+            return;
+        }
+        // open squid config file
+        let squidConfig = fs.readFileSync("/etc/squid/squid.conf", "utf8"); // /etc/squid/squid.conf
+        let squidConfigArray = squidConfig.split("\n");
+        // start appending right before http_access deny all and if not found append to the end of the file
+        let index = squidConfigArray.indexOf("http_access deny all");
+        if (index == -1) {
+            index = squidConfigArray.length;
+        }
+
+        let acl = req.body;
+        let aclString = `acl ${acl.name} dstdomain `;
+        for (let j = 0; j < acl.domains.length; j++) {
+            aclString += "."+acl.domains[j] + " ";
+        }
+        squidConfigArray.splice(index, 0, aclString);
+        // add to SquidRule database
+        const newRule = new SquidRule({
+            name: acl.name,
+            domains: acl.domains,
+        });
+        await newRule.save();
+
+        index++;
+
+        let net_names = []
+
+        for (let i = 0; i < index; i++) {
+            let line = squidConfigArray[i];
+            if (line.startsWith("acl SSL_ports ")) {
+                break;
+            }
+            if (line.startsWith("acl ")) {
+                let lineArray = line.split(" ");
+                net_names.push(lineArray[1]);
+            }
+        }
+
+        // loop it over net_names
+        for (let i = 0; i < net_names.length; i++) {
+            let httpString = `http_access allow ${net_names[i]} ${acl.name}`;
+            squidConfigArray.splice(index, 0, httpString);
+            index++;
+        }
+
+
+        // if last line is not "http_access deny all" add it
+        if (squidConfigArray[index] != "http_access deny all") {
+            squidConfigArray.splice(index, 0, "http_access deny all");
+        }
+
+        // write the new config file
+        squidConfig = squidConfigArray.join("\n");
+
+        
+        fs.writeFileSync("/etc/squid/squid.conf", squidConfig);
+        // restart squid service
+        await exec("sudo systemctl restart squid");
+
+        res.json({ message: "ACL rule added successfully" });
+    } catch (err) {
+        console.log(err);
+        res.json({ message: err });
+    }
+});
+
+// delete acl rule from squid config
+router.post("/squid_delete", async (req, res) => {
+    try {
+        // open squid config file
+        let squidConfig = fs.readFileSync("/etc/squid/squid.conf", "utf8"); // /etc/squid/squid.conf
+        let squidConfigArray = squidConfig.split("\n");
+        console.log(squidConfigArray)
+        // find index of acl rule that starts with acl name without checking rest of the line
+        let index = squidConfigArray.findIndex((line) => {
+            return line.startsWith(`acl ${req.body.name} `);
+        });
+
+        if (index == -1) {
+            res.status(400).json({ message: "Rule not found" });
+            return;
+        }
+
+        let net_names = []
+
+        for (let i = 0; i < index; i++) {
+            let line = squidConfigArray[i];
+            if (line.startsWith("acl SSL_ports ")) {
+                break;
+            }
+            if (line.startsWith("acl ")) {
+                let lineArray = line.split(" ");
+                net_names.push(lineArray[1]);
+            }
+        }
+        // loop over net_names and delete http_access line
+        for (let i = 0; i < net_names.length; i++) {
+            let httpString = `http_access allow ${net_names[i]} ${req.body.name}`;
+            let httpIndex = squidConfigArray.indexOf(httpString);
+            squidConfigArray.splice(httpIndex, 1);
+        }
+        
+        if (index == -1) {
+            res.status(400).json({ message: "Rule not found" });
+            return;
+        }
+        squidConfigArray.splice(index, 1);
+        // write the new config file
+        squidConfig = squidConfigArray.join("\n");
+        fs.writeFileSync("/etc/squid/squid.conf", squidConfig);
+        // restart squid service
+        await exec("sudo systemctl restart squid");
+
+        // delete from SquidRule database
+        await SquidRule.deleteOne({ name: req.body.name });
+        res.json({ message: "ACL rule deleted successfully" });
+    } catch (err) {
+        console.log(err);
+        res.json({ message: err });
+    }
+});
+
+
+
+
+        
 
 module.exports = router;
