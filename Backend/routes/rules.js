@@ -675,7 +675,6 @@ router.post("/squid_delete", async (req, res) => {
         // open squid config file
         let squidConfig = fs.readFileSync("/etc/squid/squid.conf", "utf8"); // /etc/squid/squid.conf
         let squidConfigArray = squidConfig.split("\n");
-        console.log(squidConfigArray)
         // find index of acl rule that starts with acl name without checking rest of the line
         let index = squidConfigArray.findIndex((line) => {
             return line.startsWith(`acl ${req.body.name} `);
