@@ -7,7 +7,7 @@ const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../au
 
 
 const isValidIpAddress = (ip) => {
-  const ipRegex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  const ipRegex = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/;
   return ipRegex.test(ip);
 };
 
@@ -193,11 +193,11 @@ router.post("/setup", verifyUser, async (req, res, next) => {
     - newPassword: new password
     - internal_ipRanges: array of internal ip ranges [{
         ip: ip address
-        subnetMask: subnet mask
+        netmask: subnet mask
     }]
     - external_ipRanges: array of external ip ranges [{
         ip: ip address
-        subnetMask: subnet mask
+        netmask: subnet mask
         gateway: gateway
         dns_server : dns server
     }]
@@ -217,7 +217,7 @@ router.post("/setup", verifyUser, async (req, res, next) => {
       }
   
       for (const network of [...internal_ipRanges, ...external_ipRanges]) {
-        if (!isValidIpAddress(network.ip) || !isValidSubnetMask(network.subnetMask)) {
+        if (!isValidIpAddress(network.networkDestination) || !isValidSubnetMask(network.netmask)) {
           return res.status(400).send({ message: "Bad request - invalid IP address or subnet mask" });
         }
       }
