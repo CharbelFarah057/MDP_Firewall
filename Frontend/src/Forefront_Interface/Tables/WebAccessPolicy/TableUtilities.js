@@ -7,7 +7,7 @@ import deleteIcon from '../../../Images/delete-icon.svg';
 const deleteSelectedRows = (rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails) => {
   console.log(rowData)
   const data = {
-    "id" : rowData[selectedRows[0]].name,
+    "name" : rowData[selectedRows[0]].name,
   }
   fetch("http://localhost:3001/api/rules/squid_delete/", {
     method: "POST",
