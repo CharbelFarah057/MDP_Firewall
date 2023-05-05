@@ -196,7 +196,7 @@ function getDestinationNetworks(user, destinationNames) {
     for (let i = 0; i < commands_to_run.length; i++) {
         console.log("Command to run: ", commands_to_run[i])
         try {
-          //await exec(commands_to_run[i]);
+          await exec(commands_to_run[i]);
           console.log(`Command executed successfully: ${commands_to_run[i]}\n`);
         } catch (error) {
           console.error(`Error executing command: ${commands_to_run[i]}`);
