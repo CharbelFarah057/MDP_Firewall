@@ -1,4 +1,5 @@
 var express = require("express");
+const { spawn } = require('child_process');
 var router = express.Router();
 var fs = require("fs");
 
@@ -605,10 +606,6 @@ router.post("/move/:order", verifyUser, async (req, res) => {
     }
 });
 
-
-const { promisify } = require('util');
-const exec = promisify(require('child_process').exec);
-
 // add acl rule to squid config
 router.post("/squid_add", verifyUser, async (req, res) => {
     try {
@@ -675,7 +672,18 @@ router.post("/squid_add", verifyUser, async (req, res) => {
         
         fs.writeFileSync("/etc/squid/squid.conf", squidConfig);
         // restart squid service
-        await exec("systemctl restart squid");
+        const restartProcess = spawn('systemctl', ['restart', 'squid']);
+        restartProcess.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
+        restartProcess.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+        restartProcess.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+
+        
 
         res.json({ message: "ACL rule added successfully" });
     } catch (err) {
