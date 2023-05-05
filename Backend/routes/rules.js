@@ -606,6 +606,8 @@ router.post("/move/:order", verifyUser, async (req, res) => {
 });
 
 
+const { promisify } = require('util');
+const exec = promisify(require('child_process').exec);
 
 // add acl rule to squid config
 router.post("/squid_add", verifyUser, async (req, res) => {
@@ -673,15 +675,7 @@ router.post("/squid_add", verifyUser, async (req, res) => {
         
         fs.writeFileSync("/etc/squid/squid.conf", squidConfig);
         // restart squid service
-        exec("systemctl restart squid", (err, stdout, stderr) => {
-            if (err) {
-                console.log(err);
-                res.json({ message: err });
-            }
-            console.log(stdout);
-            console.log(stderr);
-        });
-
+        await exec("systemctl restart squid");
 
         res.json({ message: "ACL rule added successfully" });
     } catch (err) {
@@ -734,15 +728,8 @@ router.post("/squid_delete", verifyUser, async (req, res) => {
         squidConfig = squidConfigArray.join("\n");
         fs.writeFileSync("/etc/squid/squid.conf", squidConfig);
         // restart squid service
-        exec("systemctl restart squid", (err, stdout, stderr) => {
-            if (err) {
-                console.log(err);
-                res.json({ message: err });
-            }
-            console.log(stdout);
-            console.log(stderr);
-        });
-        
+        await exec("systemctl restart squid");
+
 
         // delete from SquidRule database
         await SquidRule.deleteOne({ name: req.body.name });
