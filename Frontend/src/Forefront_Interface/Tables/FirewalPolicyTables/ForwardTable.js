@@ -38,10 +38,12 @@ const ForwardTable = () => {
   const [ruleName, setRuleName] = useState('');
   const [ruleAction, setRuleAction] = useState('Drop');
   const [ruleAppliesTo, setRuleAppliesTo] = useState("selectedProtocols");
+  const [tcp_protocol_items, setTcp_protocol_items] = useState([]);
+  const [udp_protocol_items, setUdp_protocol_items] = useState([]);
   const [items, setItems] = useState([]);
   const [sourceItems, setSourceItems] = useState([]);
   const [destinationItems, setDestinationItems] = useState([]);
-  const [PortsPopupData, setPortsPopupData] = useState({"anySourcePort" : [0, 65535]});
+  const [PortsPopupData, setPortsPopupData] = useState({"anySourcePort" : [1, 65535, "tcp"]});
   // Add Properties PopUp state
   const [showPropertiesPopUp, setShowPropertiesPopUp] = useState(false);
 
@@ -243,10 +245,10 @@ const ForwardTable = () => {
 
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
     const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
-      (key) => key in rowData[rowId].protoc);
-    if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
+      (key) => key in rowData[rowId].tcp_protocol);
+    if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5 && cellIndex !== 6) ||
       rowId === rowData.length - 1 ||
-      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc[availableKey]) === JSON.stringify(["All outbound traffic"]))
+      (cellIndex === 3 && JSON.stringify(rowData[rowId].tcp_protocol[availableKey]) === JSON.stringify(["All outbound traffic"]))
       ) { 
         return; }
     if ( selectedRows.includes(rowId) ) {
@@ -321,23 +323,26 @@ const ForwardTable = () => {
             <th onClick={() => requestSort('name', sortConfig, setSortConfig)}>
               Name {renderArrowIcon('name', sortConfig)}
             </th>
-            <th onClick={() => requestSort('act', sortConfig, setSortConfig)}>
-              Action {renderArrowIcon('act', sortConfig)}
+            <th onClick={() => requestSort('action', sortConfig, setSortConfig)}>
+              Action {renderArrowIcon('action', sortConfig)}
             </th>
-            <th onClick={() => requestSort('protoc', sortConfig, setSortConfig)}>
-              Protocols {renderArrowIcon('protoc', sortConfig)}
+            <th onClick={() => requestSort('tcp_protocol', sortConfig, setSortConfig)}>
+              TCP Protocols {renderArrowIcon('tcp_protocol', sortConfig)}
             </th>
-            <th onClick={() => requestSort('FL', sortConfig, setSortConfig)}>
-              From / Listener {renderArrowIcon('FL', sortConfig)}
+            <th onClick={() => requestSort('udp_protocol', sortConfig, setSortConfig)}>
+              UDP Protocols {renderArrowIcon('udp_protocol', sortConfig)}
             </th>
-            <th onClick={() => requestSort('to', sortConfig, setSortConfig)}>
-              To {renderArrowIcon('to', sortConfig)}
+            <th onClick={() => requestSort('source_networks', sortConfig, setSortConfig)}>
+              From / Listener {renderArrowIcon('source_networks', sortConfig)}
             </th>
-            <th onClick={() => requestSort('cond', sortConfig, setSortConfig)}>
-              Condition {renderArrowIcon('cond', sortConfig)}
+            <th onClick={() => requestSort('destination_networks', sortConfig, setSortConfig)}>
+              To {renderArrowIcon('destination_networks', sortConfig)}
             </th>
-            <th onClick={() => requestSort('desc', sortConfig, setSortConfig)}>
-              Description {renderArrowIcon('desc', sortConfig)}
+            <th onClick={() => requestSort('condition', sortConfig, setSortConfig)}>
+              Condition {renderArrowIcon('condition', sortConfig)}
+            </th>
+            <th onClick={() => requestSort('description', sortConfig, setSortConfig)}>
+              Description {renderArrowIcon('description', sortConfig)}
             </th>
           </tr>
         </thead>
@@ -380,6 +385,10 @@ const ForwardTable = () => {
         setRuleAction={setRuleAction}
         ruleAppliesTo={ruleAppliesTo}
         setRuleAppliesTo={setRuleAppliesTo}
+        tcp_protocol_items={tcp_protocol_items}
+        setTcp_protocol_items={setTcp_protocol_items}
+        udp_protocol_items={udp_protocol_items}
+        setUdp_protocol_items={setUdp_protocol_items}
         items={items}
         setItems={setItems}
         PortsPopupData={PortsPopupData}
@@ -399,12 +408,12 @@ const ForwardTable = () => {
           id = {rowData[selectedRows[0]]._id}
           order = {rowData[selectedRows[0]].order}
           name = {rowData[selectedRows[0]].name}
-          act = {rowData[selectedRows[0]].act}
-          protoc = {rowData[selectedRows[0]].protoc}
-          FL = {rowData[selectedRows[0]].FL}
-          to = {rowData[selectedRows[0]].to}
-          desc = {rowData[selectedRows[0]].desc}
-          disabled = {rowData[selectedRows[0]].disabled}
+          action = {rowData[selectedRows[0]].action}
+          tcp_protocol = {rowData[selectedRows[0]].tcp_protocol}
+          udp_protocol = {rowData[selectedRows[0]].udp_protocol}
+          source_network = {rowData[selectedRows[0]].source_network}
+          destination_network = {rowData[selectedRows[0]].destination_network}
+          description = {rowData[selectedRows[0]].description}
           ports = {rowData[selectedRows[0]].ports}
           userContext = {userContext}
           ruleType = {ruleType}
