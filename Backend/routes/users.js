@@ -210,7 +210,7 @@ router.post("/setup", verifyUser, async (req, res, next) => {
       }
   
   
-      // Validate and save network settings
+      // // Validate and save network settings
       const { internal_ipRanges, external_ipRanges } = req.body;
       if (!Array.isArray(internal_ipRanges) || !Array.isArray(external_ipRanges)) {
         return res.status(400).send({ message: "Bad request - invalid network settings" });
@@ -221,10 +221,17 @@ router.post("/setup", verifyUser, async (req, res, next) => {
           return res.status(400).send({ message: "Bad request - invalid IP address or subnet mask" });
         }
       }
-  
       // Save the network settings to the user object
-      user.internalNetworks = internal_ipRanges;
-      user.externalNetworks = external_ipRanges;
+      user.internalNetworks = {
+        ip: internal_ipRanges[0].networkDestination,
+        subnetMask: internal_ipRanges[0].netmask[0]
+      };
+      user.externalNetworks = {
+        ip: external_ipRanges[0].networkDestination,
+        subnetMask: external_ipRanges[0].netmask[0],
+        gateway: external_ipRanges[0].gateway,
+        dns_server: external_ipRanges[0].dnsServer
+      };
  
       // setting up new password make sure it's complex and not the same as the old one
       let newPassword = req.body.newPassword;
