@@ -42,8 +42,8 @@ const PropertiesPopUp = ({
   // Action Page States
   const [actInput, setActInput] = useState(action);
   // Protocols Page States
-  const [ruleAppliesTo, setRuleAppliesTo] = useState("selectedProtocols");
-  const [items, setItems] = useState(["Added"]);
+  const [ruleAppliesTo, setRuleAppliesTo] = useState(Object.keys(tcp_protocol)[0]);
+  const [items, setItems] = useState([...Object.values(tcp_protocol), ...Object.values(udp_protocol)]);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [PortsPopupData, setPortsPopupData] = useState(ports);
   const [PageActionErrorMessage, setPageActionErrorMessage] = useState("");
@@ -75,6 +75,7 @@ const PropertiesPopUp = ({
   };
 
   const handleOkClick = () => {
+    onClose()
     console.log("OK")
   };
 
