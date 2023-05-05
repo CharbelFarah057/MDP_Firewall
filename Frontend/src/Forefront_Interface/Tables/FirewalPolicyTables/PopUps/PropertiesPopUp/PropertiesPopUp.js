@@ -75,27 +75,7 @@ const PropertiesPopUp = ({
   };
 
   const handleOkClick = () => {
-    const data = {
-    };
-    fetch("http://localhost:3001/api/rules/edit", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userContext.token}`,
-          },
-          body: JSON.stringify(data),
-        })
-          .then((response) => {
-            if (response.ok) {
-              onUpdate();
-              onClose();
-            } else {
-              return response.json().then((errorData) => {
-                setPropertiesErrorMessage(errorData.message)
-              });
-            }
-          })
+    console.log("OK")
   };
 
   return (
