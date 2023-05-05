@@ -63,8 +63,8 @@ function getDestinationNetworks(user, destinationNames) {
     let commands_to_run = [];
     let rule_sets = [];
 
-    const dports_tcp = tcp_protocol.selectedProtocols;
-    const dports_udp = udp_protocol.selectedProtocols;
+    const dports_tcp = tcp_protocol.selectedProtocols || [];
+    const dports_udp = udp_protocol.selectedProtocols || [];
     
     const all_outbound_tcp = tcp_protocol.allOutbound || [];
     const all_outbound_except_tcp = tcp_protocol.allOutboundExcept || [];
@@ -195,7 +195,7 @@ function getDestinationNetworks(user, destinationNames) {
     for (let i = 0; i < commands_to_run.length; i++) {
         console.log("Command to run: ", commands_to_run[i])
         try {
-          await exec(commands_to_run[i]);
+          //await exec(commands_to_run[i]);
           console.log(`Command executed successfully: ${commands_to_run[i]}\n`);
         } catch (error) {
           console.error(`Error executing command: ${commands_to_run[i]}`);
