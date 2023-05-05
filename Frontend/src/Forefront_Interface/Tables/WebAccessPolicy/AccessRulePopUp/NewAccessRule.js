@@ -45,7 +45,7 @@ const NewAccessRule = ({
           "domains" : domain,
         }
         // Send data to the server to check for duplicate names
-        fetch("http://localhost:3001/api/rules/add/", {
+        fetch("http://localhost:3001/api/rules/squid_add/", {
           method: "POST",
           credentials: "include",
           headers: {
