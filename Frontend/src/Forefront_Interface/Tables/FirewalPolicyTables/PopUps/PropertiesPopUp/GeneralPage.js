@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
 
 const General = ({
   nameInput,

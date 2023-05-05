@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PortsPopup from "../PortsPopUp.js";
+import ChoseProtocol from "../ChoseProtocol.js";
+import portToProtocol from "../../../../Data/Port_to_protocolData"
 import "../NewAccessRule.css";
 
 const Page3 = ({
@@ -7,17 +9,35 @@ const Page3 = ({
   handleRuleAppliesToChange,
   items,
   handleAddItem,
+  itemsValue,
+  setItemsValue,
+  parseItems,
   handleRemoveItems,
   handleSelectItem,
   selectedItems,
   errorMessage,
   PortsPopupData,
-  handleSavePortsPopup
+  handleSavePortsPopup,
+  folderselectedItems,
+  handleFolderSelectItem,
 }) => {
   const [isPortsPopupOpen, setIsPortsPopupOpen] = useState(false);
+  const [isAddPopupOpen, setIsAddPopupOpen] = useState(false);
+
+  useEffect(() => {
+    parseItems();
+  }, [items]);
 
   const handleClosePortsPopup = () => {
     setIsPortsPopupOpen(false);
+  };
+
+  const handleCloseAddPopup = () => {
+    setIsAddPopupOpen(false);
+  };
+
+  const handleAddClick = () => {
+    setIsAddPopupOpen(true);
   };
 
   const handlePortsClick = () => {
@@ -43,23 +63,28 @@ const Page3 = ({
       <p>Protocols:</p>
       <div className="page3-container">
         <div className={`page3-items${disableLowerPart ? " disabled" : ""}`}>
-          {items.map((item, index) => (
-            <div
-              key={index}
-              onClick={(event) => handleSelectItem(index, event)}
-              className={`item${selectedItems.has(index) ? " selected" : ""}`}
-            >
-              {item}
-            </div>
-          ))}
+          {items.map((item, index) => {
+            const [port, protocol] = item.split(",");
+            let protocolNames = portToProtocol[port];
+            const displayName = protocolNames.length > 1 ? protocolNames.join(', ') : protocolNames[0];
+            return (
+              <div
+                key={index}
+                onClick={(event) => handleSelectItem(index, event)}
+                className={`item${selectedItems.has(index) ? " selected" : ""}`}
+              >
+                {displayName}
+              </div>
+            )
+          })}
         </div>
         <div className={`page3-controls${disableLowerPart ? " disabled" : ""}`}>
-            <button onClick={handleAddItem} disabled={disableLowerPart}> Add</button>
-          <button onClick={handleRemoveItems} disabled={disableLowerPart || selectedItems.size === 0}
+            <button onClick={handleAddClick} disabled={disableLowerPart}> Add</button>
+            <button onClick={handleRemoveItems} disabled={disableLowerPart || selectedItems.size === 0}
           >
             Remove
           </button>
-          <button onClick={handlePortsClick} >Ports</button>
+          <button onClick={handlePortsClick}>Ports</button>
         </div> 
       </div>
       {errorMessage && (
@@ -75,6 +100,15 @@ const Page3 = ({
         FromPortSave={Object.values(PortsPopupData)[0][0]}
         ToPortSaved={Object.values(PortsPopupData)[0][1]}
         protocolSaved={Object.values(PortsPopupData)[0][2]}
+      />
+      <ChoseProtocol
+        isOpen={isAddPopupOpen}
+        onClose={handleCloseAddPopup}
+        handleFolderSelectItem={handleFolderSelectItem}
+        folderselectedItems={folderselectedItems}
+        addItems={handleAddItem}
+        itemsValue={itemsValue}
+        setItemsValue={setItemsValue}
       />
     </>
   );

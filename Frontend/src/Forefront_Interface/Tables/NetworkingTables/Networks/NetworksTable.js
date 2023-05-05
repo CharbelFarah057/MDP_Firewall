@@ -1,5 +1,6 @@
 //NetworksTable.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import {UserContext} from "../../../../UserContext";
 import NetworksRows from "./NetworksRows";
 import ContextMenu from "../../ContextMenu";
 import initialRowData from "./NetworksData.json";
@@ -12,6 +13,7 @@ const AllFirewallPolicyTable = () => {
   const [contextMenu, setContextMenu] = useState(null);
   const [rowData] = useState(initialRowData);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
+  const [userContext] = useContext(UserContext)
 
   const handleRowContextMenu = (event, rowId) => {
     // Check if the row is selected

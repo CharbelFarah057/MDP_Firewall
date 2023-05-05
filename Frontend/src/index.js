@@ -19,7 +19,7 @@ root.render(
       <Switch>
         <Route path="/login" exact component={Login} />
         <Route path="/" exact render={() => <Redirect to="/login" />} />
-        <Route path="/first-time-user" exact component={FirstTimeUserPage} />
+        <ProtectedRoute path="/first-time-user" exact component={FirstTimeUserPage} />
         <ProtectedRoute path="/tmg" exact component = {() => <Redirect to="/tmg/firewall-policy/input-table" />} />
         <ProtectedRoute path="/tmg/firewall-policy/input-table" component={FirewallPolicyPage} />
         <ProtectedRoute path="/tmg/firewall-policy/forward-table" component={FirewallPolicyPage} />
@@ -27,10 +27,6 @@ root.render(
         <ProtectedRoute path="/tmg/web-access-policy" component={WebAccessPolicyPage} />
         <ProtectedRoute path="/tmg/logging" component={LoggingPage} />
         <ProtectedRoute path="/tmg/networking/networks" component={NetworkingPage} />
-        <ProtectedRoute path="/tmg/networking/network-sets" component={NetworkingPage} />
-        <ProtectedRoute path="/tmg/networking/network-rules" component={NetworkingPage} />
-        <ProtectedRoute path="/tmg/networking/network-adapters" component={NetworkingPage} />
-        <ProtectedRoute path="/tmg/networking/routing" component={NetworkingPage} />
       </Switch>
     </BrowserRouter>
   </UserProvider>

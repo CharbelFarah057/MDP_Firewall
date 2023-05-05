@@ -1,5 +1,6 @@
 import React from "react";
 import "../NewAccessRule.css";
+import NetworkChoicePopUp from "../NetworkChoicePopUp.js";
 
 const Page5 = ({
   destinationItems,
@@ -8,7 +9,21 @@ const Page5 = ({
   handleSelectItem,
   selectedItems,
   errorMessage,
+  destinationselectedItems,
+  handleDestinationSelectItem,
+  destinationItemsValue,
+  setDestinationItemsValue
 }) => {
+
+  const [isopenAddPopup, setIsOpenAddPopup] = React.useState(false);
+
+  const handleAddPopupOpen = () => {
+    setIsOpenAddPopup(true);
+  };
+
+  const handleAddPopupClose = () => {
+    setIsOpenAddPopup(false);
+  };
 
   return (
     <>
@@ -28,7 +43,7 @@ const Page5 = ({
           ))}
         </div>
         <div className="page3-controls">
-          <button onClick={handleAddItem}>Add</button>
+          <button onClick={handleAddPopupOpen}>Add</button>
           <button onClick={handleRemoveItems} disabled={selectedItems.size === 0}>
             Remove
           </button>
@@ -39,6 +54,15 @@ const Page5 = ({
           {errorMessage}
         </div>
       )}
+      <NetworkChoicePopUp
+        isOpen={isopenAddPopup}
+        onClose={handleAddPopupClose}
+        handleSourceSelectItem={handleDestinationSelectItem}
+        sourceselectedItems={destinationselectedItems}
+        addItems={handleAddItem}
+        itemsValue={destinationItemsValue}
+        setItemsValue={setDestinationItemsValue}
+      />
     </>
   );
 };

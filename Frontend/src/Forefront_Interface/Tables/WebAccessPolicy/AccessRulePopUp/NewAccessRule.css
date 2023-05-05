@@ -1,0 +1,151 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    border-radius: 4px;
+    padding: 1rem;
+    width: 80%;
+    max-width: 500px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    color: black;
+  }
+  
+  button:hover {
+    background-color: #e9ecef;
+  }
+  
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .rule-name-input {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 5px;
+  }
+
+  .exit-confirmation {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    width: 300px;
+  }  
+
+  .radio-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .radio-label {
+    margin-left: 10px;
+  }
+  
+  .left-aligned {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rule-applies-to-select {
+    width: 100%;
+    padding: 4px;
+    margin-bottom: 10px;
+  }
+
+  .page3-container {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .page3-controls {
+    display: flex;
+    width: 40%;
+    flex-direction: column;
+    margin-left: 10px;
+  }
+  
+  .page3-items {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    padding: 10px;
+    min-height: 120px;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 400px;
+  }
+  
+  .item {
+    padding: 4px;
+    margin: 2px;
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  .item.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .icon-text-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .configurations-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-width: 100%;
+    max-height: 200px; /* Adjust this value for the desired height */
+    overflow: auto;
+  }
+
+  .error-message-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 20px;
+    margin-bottom: 0px;
+    color : red;
+  }

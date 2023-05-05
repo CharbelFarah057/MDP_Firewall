@@ -11,7 +11,8 @@ import {handleRuleAppliesToChange,
   handleAddItem, 
   handleRemoveItems, 
   handleSelectItem, 
-  handleSavePortsPopup } from "./Utilities/Page3-4-5Utilities.js";
+  handleSavePortsPopup,
+  parseItems, } from "./Utilities/Page3-4-5Utilities.js";
 import Page6 from "./Pages/Page6";
 import Page7 from "./Pages/Page7";
 
@@ -49,19 +50,26 @@ const NewAccessRule = ({
   // Page 3 States 
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [page3ErrorMessage, setPage3ErrorMessage] = useState("");
+  const [folderselectedItems, setFolderSelectedItems] = useState(new Set());
+  const [itemsValue, setItemsValue] = useState([]);
   // Page 4 State
   const [selectedRuleSources, setSelectedRuleSources] = useState(new Set());
   const [page4ErrorMessage, setPage4ErrorMessage] = useState("");
+  const [sourceselectedItems, setSourceSelectedItems] = useState(new Set());
+  const [sourceItemsValue, setSourceItemsValue] = useState([])
   // Page 5 State
   const [selectedRuleDestinations, setSelectedRuleDestinations] = useState(new Set());
   const [page5ErrorMessage, setPage5ErrorMessage] = useState("");
   const [accessRuleErrorMessage, setAccessRuleErrorMessage] = useState("");
+  const [destinationselectedItems, setDestinationSelectedItems] = useState(new Set());
+  const [destinationItemsValue, setDestinationItemsValue] = useState([]) 
 
   const handleBack = () => {
     setStep(step - 1);
   };
 
   const handleNext = () => {
+    console.log(tcp_protocol_items)
     if (step === 1 && ruleName === "") {
       setErrorMessage("The specified name is not valid.");
     } else if (step === 3 && items.length === 0) {
@@ -75,10 +83,10 @@ const NewAccessRule = ({
           "order" : 1,
           "name" : ruleName,
           "action" : ruleAction,
-          "tcp_protocol" : { [ruleAppliesTo] : [80]},
-          "udp_protocol" : { [ruleAppliesTo] : [53]},
-          "source_network" : ["Internal"],
-          "destination_network" : ["External"],
+          "tcp_protocol" : { [ruleAppliesTo] : tcp_protocol_items},
+          "udp_protocol" : { [ruleAppliesTo] : udp_protocol_items},
+          "source_network" : sourceItems,
+          "destination_network" : destinationItems,
           "condition" : "All Users",
           "description" : "",
           "ports" : PortsPopupData,
@@ -131,8 +139,13 @@ const NewAccessRule = ({
       setDestinationItems([]);
       setSelectedRuleDestinations(new Set());
       setPage5ErrorMessage("");
-      setPortsPopupData({"anySourcePort" : ["0", "0"]});
+      setPortsPopupData({"anySourcePort" : [1, 65535, "tcp"]});
       setShowExitConfirmation(false);
+      setTcp_protocol_items([]);
+      setUdp_protocol_items([]);
+      setFolderSelectedItems(new Set());
+      setAccessRuleErrorMessage("");
+      setItemsValue([]);
       onClose();
     } else {
       setShowExitConfirmation(false);
@@ -163,33 +176,46 @@ const NewAccessRule = ({
             ruleAppliesTo={ruleAppliesTo}
             handleRuleAppliesToChange={handleRuleAppliesToChange(setRuleAppliesTo, setItems)}
             items={items}
-            handleAddItem={() => handleAddItem(setItems, items)}
+            handleAddItem={() => handleAddItem(setItems, items, itemsValue)}
+            itemsValue={itemsValue}
+            setItemsValue={setItemsValue}
+            parseItems={() => parseItems(items, setTcp_protocol_items, setUdp_protocol_items, tcp_protocol_items, udp_protocol_items)}
             handleRemoveItems={() => handleRemoveItems(setItems, items, selectedItems, setSelectedItems)}
             handleSelectItem={(index, event) => handleSelectItem(selectedItems, setSelectedItems)(index, event)}
             selectedItems={selectedItems}
             errorMessage={page3ErrorMessage}
             PortsPopupData={PortsPopupData}
             handleSavePortsPopup={handleSavePortsPopup(setPortsPopupData)}
+            folderselectedItems={folderselectedItems}
+            handleFolderSelectItem={(index, event) => handleSelectItem(folderselectedItems, setFolderSelectedItems)(index, event)}   
           />
         )}
         {step === 4 && (
           <Page4
             sourceItems={sourceItems}
-            handleAddItem={() => handleAddItem(setSourceItems, sourceItems)}
+            handleAddItem={() => handleAddItem(setSourceItems, sourceItems, sourceItemsValue)}
             handleRemoveItems={() => handleRemoveItems(setSourceItems, sourceItems, selectedRuleSources, setSelectedRuleSources)}
             handleSelectItem={(index, event) => handleSelectItem(selectedRuleSources, setSelectedRuleSources)(index, event)}
             selectedRuleSources={selectedRuleSources}
             errorMessage={page4ErrorMessage}
+            sourceselectedItems={sourceselectedItems}
+            handleSourceSelectItem={(index, event) => handleSelectItem(sourceselectedItems, setSourceSelectedItems)(index, event)}   
+            sourceItemsValue={sourceItemsValue}
+            setSourceItemsValue={setSourceItemsValue}
           />
         )}
         {step === 5 && (
           <Page5
             destinationItems={destinationItems}
-            handleAddItem={() => handleAddItem(setDestinationItems, destinationItems)}
+            handleAddItem={() => handleAddItem(setDestinationItems, destinationItems, destinationItemsValue)}
             handleRemoveItems={() => handleRemoveItems(setDestinationItems, destinationItems, selectedRuleDestinations, setSelectedRuleDestinations)}
             handleSelectItem={(index, event) => handleSelectItem(selectedRuleDestinations, setSelectedRuleDestinations)(index, event)}
             selectedItems={selectedRuleDestinations}
             errorMessage={page5ErrorMessage}
+            destinationselectedItems={destinationselectedItems}
+            handleDestinationSelectItem={(index, event) => handleSelectItem(destinationselectedItems, setDestinationSelectedItems)(index, event)}   
+            destinationItemsValue={destinationItemsValue}
+            setDestinationItemsValue={setDestinationItemsValue}
           />
         )}
         {step === 6 && <Page6/>}

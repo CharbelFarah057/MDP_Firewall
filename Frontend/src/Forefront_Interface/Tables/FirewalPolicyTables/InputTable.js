@@ -245,10 +245,10 @@ const InputTable = () => {
 
   const handleMultiCellClick = (rowId, cellIndex, MultiCellIndex) => {
     const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
-      (key) => key in rowData[rowId].protoc);
-    if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5) ||
+      (key) => key in rowData[rowId].tcp_protocol);
+    if ((cellIndex !== 3 && cellIndex !== 4 && cellIndex !== 5 && cellIndex !== 6) ||
       rowId === rowData.length - 1 ||
-      (cellIndex === 3 && JSON.stringify(rowData[rowId].protoc[availableKey]) === JSON.stringify(["All outbound traffic"]))
+      (cellIndex === 3 && JSON.stringify(rowData[rowId].tcp_protocol[availableKey]) === JSON.stringify(["All outbound traffic"]))
       ) { 
         return; }
     if ( selectedRows.includes(rowId) ) {

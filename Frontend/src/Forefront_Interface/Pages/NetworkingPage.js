@@ -4,10 +4,6 @@ import React, { useState } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import NetworkingPageTabsComponent from '../TabComponent/NetworkingPageTabsComponent';
 import NetworksTable from '../Tables/NetworkingTables/Networks/NetworksTable';
-import NetworkSetTable from '../Tables/NetworkingTables/NetworkSet/NetworkSetTable';
-import NetworkRulesTable from '../Tables/NetworkingTables/NetworkRules/NetworkRulesTable';
-import NetworkAdaptersTable from '../Tables/NetworkingTables/NetworkAdapter/NetworkAdaptersTable';
-import RoutingTable from '../Tables/NetworkingTables/Routing/RoutingTable';
 
 const NetworkingPage = () => {
   const location = useLocation();
@@ -19,10 +15,6 @@ const NetworkingPage = () => {
         <NetworkingPageTabsComponent activeTab={activeTab} setActiveTab={setActiveTab} />
         <Switch>
           <Route path="/tmg/networking/networks" component={NetworksTable} />
-          <Route path="/tmg/networking/network-sets" component={NetworkSetTable} />
-          <Route path="/tmg/networking/network-rules" component={NetworkRulesTable} />
-          <Route path="/tmg/networking/network-adapters" component={NetworkAdaptersTable} />
-          <Route path="/tmg/networking/routing" component={RoutingTable} />
         </Switch>
       </div>
     </Layout>

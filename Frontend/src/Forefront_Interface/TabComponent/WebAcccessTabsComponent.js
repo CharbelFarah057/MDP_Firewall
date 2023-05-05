@@ -9,7 +9,7 @@ import { useTheme } from '@mui/material/styles';
 import styles from './NetworkingPageTabsComponent.module.css';
 
 const TABS = [
-  { label: 'Networks', path: '/tmg/networking/networks' },
+  { label: 'WebAccess Policy', path: '/tmg/web-access-policy' },
 ];
 
 const NetworkingPageTabsComponent = ({ activeTab, setActiveTab }) => {
@@ -30,7 +30,7 @@ const NetworkingPageTabsComponent = ({ activeTab, setActiveTab }) => {
   return (
     <Box className={styles.container}>
       <Typography className={styles.title} variant="h4" component="div">
-        Networking
+        Web Access Policy
       </Typography>
       <Tabs
         className={styles.tabs}

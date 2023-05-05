@@ -23,7 +23,6 @@ const FirstTimeUserPage = () => {
     function generateUniqueId() {
       return Math.random().toString(36).substr(2, 9);
     }  
-
    
     const handleAddIpRange = () => {
         setIpRanges([
@@ -103,10 +102,10 @@ const FirstTimeUserPage = () => {
     
       // Send POST request
       fetch('http://localhost:3001/api/users/setup', {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userContext.token}`,
+          "Content-Type": "application/json",
+          Authorization : `Bearer ${userContext.token}`,
         },
         body: JSON.stringify({
           username: username,
@@ -116,13 +115,15 @@ const FirstTimeUserPage = () => {
           external_ipRanges: externalIpRanges,
         }),
       })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        // Redirect to /tmg
-        history.push('/tmg');
+      .then((response) => {
+        if (response.ok) {
+          history.push('/tmg')
+        } else {
+          return response.json().then((errorData) => {
+            console.log(errorData.message)
+          });
+        }
       })
-      .catch((err) => console.log(err));
     };
 
   return (

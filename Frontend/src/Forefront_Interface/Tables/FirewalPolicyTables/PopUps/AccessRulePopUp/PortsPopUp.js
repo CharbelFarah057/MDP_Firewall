@@ -47,6 +47,7 @@ const PortsPopup = ({ isOpen, onClose, onSave, radionSaved, FromPortSave, ToPort
       setErrorMessage("Invalid port range.");
       return;
     }
+    setSavedState([radioValue, fromPort, toPort, protocol]);
     onSave({[radioValue]: [fromPort, toPort, protocol]});
     setErrorMessage("");
     onClose();

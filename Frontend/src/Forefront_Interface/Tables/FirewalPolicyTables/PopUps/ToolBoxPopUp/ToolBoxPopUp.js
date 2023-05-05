@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { FiUsers } from 'react-icons/fi';
+import { FcGlobe } from 'react-icons/fc';
+import { FaNetworkWired } from 'react-icons/fa';
 import Protocols from './ProtocolPage';
 import './ToolBoxPopUp.css'
 import { handleSelectItem } from '../AccessRulePopUp/Utilities/Page3-4-5Utilities';
@@ -59,6 +61,22 @@ const ToolBoxPopUp = ({
             <div className="icon-text-container-toolbar">
                 <FiUsers/> 
                 <p> All Users</p>
+            </div>
+          </>
+        )}
+        {selectedTab === 2 && (
+          <>
+            <div className="icon-text-container-toolbar">
+                <FcGlobe/>
+                <p>External</p>
+            </div>
+            <div className="icon-text-container-toolbar">
+                <FaNetworkWired></FaNetworkWired>
+                <p>Internal Network</p>
+            </div>
+            <div className="icon-text-container-toolbar">
+                <FaNetworkWired></FaNetworkWired>
+                <p>Local Host</p>
             </div>
           </>
         )}

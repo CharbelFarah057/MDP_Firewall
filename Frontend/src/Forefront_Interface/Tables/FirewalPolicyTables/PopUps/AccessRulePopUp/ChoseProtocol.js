@@ -2,6 +2,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {AiOutlineFolder} from 'react-icons/ai';
 import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 import searchIcon from "../../../../../Images/search-magnifying-glass.svg";
 import closeIcon from "../../../../../Images/cross-close.svg";
 import Authentication from '../../../Data/Authentication.json'
@@ -17,13 +22,30 @@ import StreamingMedia from '../../../Data/streamingMedia.json'
 import VPNandIPsec from '../../../Data/vpnAndIPsec.json'
 import Web from '../../../Data/web.json'
 import { filterRows } from '../../TableUtilities';
-import './ProtocolPage.css'
+import './ChoseProtocol.css'
 
-const Protocols = ({
-  items,
-  handleSelectItem,
-  selectedItems
+const ChoseProtocol = ({
+    isOpen,
+    onClose,
+    handleFolderSelectItem,
+    folderselectedItems,
+    addItems,
+    itemsValue,
+    setItemsValue
 }) => {
+    const items = ['Common Protocols',
+    'Infrastructure',
+    'Mail',
+    'Instant Messaging',
+    'Remote Terminal',
+    'Streaming Media',
+    'VPN and IPsec',
+    'Web',
+    'Authentication',
+    'Server Protocols',
+    'IPv6 Infrastructure',
+    'All Protocols'];
+
   const [inputValue, setInputValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [tableData, setTableData] = useState([]);
@@ -38,7 +60,7 @@ const Protocols = ({
   };
 
   const handleSelectCategory = (index, event) => {
-    handleSelectItem(index, event);
+    handleFolderSelectItem(index, event);
     setSelectedCategory(index);
   };
 
@@ -92,10 +114,25 @@ const Protocols = ({
     setTableData(getTableData());
   }, [selectedCategory, inputValue, getTableData]);
 
+  const handleCancel = () => {
+    setInputValue('');
+    setSelectedCategory(0);
+    setSelectedRowIndex(null);
+    onClose();
+  };
+
+  useEffect(() => {
+    if (selectedRowIndex !== null && tableData.length > 0) {
+      const selectedRow = tableData[selectedRowIndex];
+      setItemsValue(`${selectedRow.Port},${selectedRow.Protocol}`);
+    }
+  }, [selectedRowIndex, tableData]);
+
   return (
+    <Dialog open={isOpen} onClose={handleCancel}>
+    <DialogTitle>Select Protocol</DialogTitle>
+    <DialogContent>
     <Box sx = {{minHeight : "500px"}}>
-      <Box sx={{ marginBottom: 1 }}>
-      </Box>
         <div className="tool-bar-container">
           {inputValue ? (
             <img
@@ -120,7 +157,7 @@ const Protocols = ({
             <div
               key={index}
               onClick={(event) => handleSelectCategory(index, event)}
-              className={`item-toolbar${selectedItems.has(index) ? " selected" : ""}`}
+              className={`item-toolbar${folderselectedItems.has(index) ? " selected" : ""}`}
               >
               <AiOutlineFolder/>
               <span style={{ marginLeft: "5px" }}>{item}</span>
@@ -153,7 +190,20 @@ const Protocols = ({
         </div>
       </div>
     </Box>
+    </DialogContent>
+      <DialogActions>
+      <Button
+        onClick={() => {
+            addItems(itemsValue);
+            handleCancel();
+        }}
+        >
+        Add
+        </Button>
+        <Button onClick={handleCancel}>Cancel</Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default Protocols;
+export default ChoseProtocol;
