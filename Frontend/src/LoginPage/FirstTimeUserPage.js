@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
+import { UserContext } from '../UserContext';
 import './FirstTimeUserPage.css';
 
 const FirstTimeUserPage = () => {
+    const [userContext] = useContext(UserContext)
     const history = useHistory();
     const [username, setUsername] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [password, setPassword] = useState('');
     const [ipRangeFrom, setIpRangeFrom] = useState(['', '', '', '']);
-    const [subnetMask, setSubnetMask] = useState(['', '', '', '']);
+    const [subnetMask, setSubnetMask] = useState('');
     const [defaultGateWay, setDefaultGateWay] = useState(['', '', '', '']);
     const [ipRanges, setIpRanges] = useState([]);
     
     const [externalIpRangeFrom, setExternalIpRangeFrom] = useState(['', '', '', '']);
-    const [externalSubnetMask, setExternalSubnetMask] = useState(['', '', '', '']);
+    const [externalSubnetMask, setExternalSubnetMask] = useState('');
     const [externalDefaultGateWay, setExternalDefaultGateWay] = useState(['', '', '', '']);
     const [dnsServer, setDnsServer] = useState(['', '', '', '']);
     const [externalIpRanges, setExternalIpRanges] = useState([]);
@@ -22,25 +24,18 @@ const FirstTimeUserPage = () => {
       return Math.random().toString(36).substr(2, 9);
     }  
 
-    const handleNext = () => {
-        // Save data here
-        console.log('Saving data...'); // Replace with your saving logic
-    
-        // Redirect to /tmg
-        history.push('/tmg');
-      };
-    
+   
     const handleAddIpRange = () => {
         setIpRanges([
           ...ipRanges,
           {
             networkDestination: ipRangeFrom.join('.'),
-            netmask: subnetMask.join('.'),
+            netmask: subnetMask,
             gateway: defaultGateWay.join('.'),
           },
         ]);
         setIpRangeFrom(['', '', '', '']);
-        setSubnetMask(['', '', '', '']);
+        setSubnetMask('');
         setDefaultGateWay(['', '', '', '']);
       };
 
@@ -66,14 +61,14 @@ const FirstTimeUserPage = () => {
         setExternalIpRanges([
         ...externalIpRanges,
         {
-          from: externalIpRangeFrom.join('.'),
-          subnet: externalSubnetMask.join('.'),
+          networkDestination: externalIpRangeFrom.join('.'),
+          netmask: externalSubnetMask,
           gateway: externalDefaultGateWay.join('.'),
-          dns: dnsServer.join('.'),
+          dnsServer: dnsServer.join('.'),
         },
       ]);
       setExternalIpRangeFrom(['', '', '', '']);
-      setExternalSubnetMask(['', '', '', '']);
+      setExternalSubnetMask('');
       setExternalDefaultGateWay(['', '', '', '']);
       setDnsServer(['', '', '', '']);
     };
@@ -101,7 +96,34 @@ const FirstTimeUserPage = () => {
       updatedDnsServer[index] = value;
       setDnsServer(updatedDnsServer);
     };
-  
+
+    const handleNext = () => {
+      // Save data here
+      console.log('Saving data...'); // Replace with your saving logic
+    
+      // Send POST request
+      fetch('http://localhost:3001/api/users/setup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userContext.token}`,
+        },
+        body: JSON.stringify({
+          username: username,
+          currentPassword: currentPassword,
+          newPassword: password,
+          internal_ipRanges: ipRanges,
+          external_ipRanges: externalIpRanges,
+        }),
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        // Redirect to /tmg
+        history.push('/tmg');
+      })
+      .catch((err) => console.log(err));
+    };
 
   return (
     <div className="first-time-user-page">
@@ -165,18 +187,12 @@ const FirstTimeUserPage = () => {
         <label htmlFor="subnet-id" className="input-label">
             Subnet Mask:
         </label>
-        {subnetMask.map((ip, index) => (
-            <>
-                <input
-                key={generateUniqueId}
-                type="number"
-                className="input-field ip"
-                value={ip}
-                onChange={(e) => updateMask(index, e.target.value)}
-                />
-                {index !== subnetMask.length - 1 && <span className="dot">.</span>}
-            </>
-        ))}
+        <input
+            type="number"
+            className="input-field ip"
+            value={subnetMask}
+            onChange={(e) => updateMask(0, e.target.value)}
+        />
         </div>
         <div className="form-group ip-range">
         <label htmlFor="subnet-id" className="input-label">
@@ -238,18 +254,13 @@ const FirstTimeUserPage = () => {
         <label htmlFor="ip-range-from" className="input-label">
             Subnet Mask:
         </label>
-        {externalSubnetMask.map((ip, index) => (
-            <>
-                <input
-                key={index}
-                type="number"
-                className="input-field ip"
-                value={ip}
-                onChange={(e) => updateExternalMask(index, e.target.value)}
-                />
-                {index !== externalSubnetMask.length - 1 && <span className="dot">.</span>}
-            </>
-        ))}
+        <input
+            type="number"
+            className="input-field ip"
+            value={externalSubnetMask}
+            onChange={(e) => updateExternalMask(0, e.target.value)}
+        />
+
         </div>
         <div className="form-group ip-range">
         <label htmlFor="ip-range-from" className="input-label">

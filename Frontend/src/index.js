@@ -19,7 +19,7 @@ root.render(
       <Switch>
         <Route path="/login" exact component={Login} />
         <Route path="/" exact render={() => <Redirect to="/login" />} />
-        <ProtectedRoute path="/first-time-user" exact component={FirstTimeUserPage} />
+        <Route path="/first-time-user" exact component={FirstTimeUserPage} />
         <ProtectedRoute path="/tmg" exact component = {() => <Redirect to="/tmg/firewall-policy/input-table" />} />
         <ProtectedRoute path="/tmg/firewall-policy/input-table" component={FirewallPolicyPage} />
         <ProtectedRoute path="/tmg/firewall-policy/forward-table" component={FirewallPolicyPage} />
