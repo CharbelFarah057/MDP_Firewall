@@ -3,13 +3,12 @@ import React, { useCallback, useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../UserContext"
 import RowRendering from "./RowRendering";
 import ContextMenu from "../ContextMenu";
-import {areSelectedRowsContiguous,
+import {
         requestSort,
         sortRows,
         renderArrowIcon,
         filterRows,
         SingleRowContextMenu,
-        MultiRowContextMenu,
         CellContextMenu,
         MultiCellContextMenu} from "./TableUtilities.js";
 import ToolBarComponent from "./ToolBarComponent.js";
@@ -89,22 +88,15 @@ const InputTable = () => {
     event.preventDefault();
     const x = event.clientX;
     const y = event.clientY;
-  
-    const isRowDisabled = rowData[rowId].disabled;
-  
-    let items;
+    
+    let items = [];
 
     if (selectedRows.length === 1) {
       items = itemsselectedRows.map((label) => ({
         label : label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setSelectedRows, rowId, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[label],
       }));
-    } else {
-      items = itemsselectedRows.map((label) => ({
-        label : label,
-        onClick: MultiRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows)[label],
-      }));
-    }
+    } 
     setContextMenu({ x, y, items });
   };
   
@@ -189,38 +181,15 @@ const InputTable = () => {
       const isLastRow = rowId === rowData.length - 1;
       const isFirstRow = rowId === 0;
       const isSecondToLastRow = rowId === rowData.length - 2;
-      const isRowDisabled = rowData[rowId].disabled;
   
       setItemsSelectedRows([
         "Properties",
         ...(isLastRow ? [] : ["Delete", 
         ...(isFirstRow ? [] : ["Move Up"]),
-        ...(isSecondToLastRow ? [] : ["Move Down", isRowDisabled ? "Enable" : "Disable"]), ]),
+        ...(isSecondToLastRow ? [] : ["Move Down"]), ]),
         
       ]);
-    } else {
-      const firstSelectedRow = Math.min(...selectedRows);
-      const lastSelectedRow = Math.max(...selectedRows);
-      const areAllSelectedRowsEnabled = selectedRows.every((rowId) => !rowData[rowId].disabled);
-      const areAllSelectedRowsDisabled = selectedRows.every((rowId) => rowData[rowId].disabled);
-
-      let multiSelectedItems = [
-        "Delete",
-        ...(areSelectedRowsContiguous(selectedRows) ? ["Create Group"] : []),
-        ...(firstSelectedRow === 0 ? [] : ["Move Up"]),
-        ...(lastSelectedRow === rowData.length - 2 ? [] : ["Move Down"]),
-      ];
-  
-      if (areAllSelectedRowsEnabled) {
-        multiSelectedItems.push("Disable");
-      } else if (areAllSelectedRowsDisabled) {
-        multiSelectedItems.push("Enable");
-      } else {
-        multiSelectedItems.push("Enable", "Disable");
-      }
-  
-      setItemsSelectedRows(multiSelectedItems);
-    }
+    } 
   }, [selectedRows, rowData, setItemsSelectedRows]);
 
   useEffect(() => {
@@ -294,7 +263,6 @@ const InputTable = () => {
         setSelectedCells = {setSelectedCells}
         rowId = {selectedRows[0]}
         cellrowId = {selectedCells[0]?.rowId}
-        isRowDisabled = {rowData[selectedRows[0]]?.disabled}
         openPopup = {() => setShowPopup(true)}
         openToolBoxPopUp = {() => setShowToolBoxPopUp(true)}
         setShowPropertiesPopUp = {setShowPropertiesPopUp}

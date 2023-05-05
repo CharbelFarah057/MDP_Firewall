@@ -5,69 +5,11 @@ import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import propertiesIcon from '../../../Images/properties-icon.svg';
 import deleteIcon from '../../../Images/delete-icon.svg';
 import multicelldeleteIcon from '../../../Images/delete-icon.svg';
-import createGroupIcon from '../../../Images/create-group-icon.svg';
 import moveUpIcon from '../../../Images/move-up-icon.svg';
 import moveDownIcon from '../../../Images/move-down-icon.svg';
-import enableIcon from '../../../Images/enable-icon.svg';
-import disableIcon from '../../../Images/disable-icon.svg';
 import checkIcon from '../../../Images/check-circle.svg';
 import denyIcon from '../../../Images/deny-icon.svg';
 
-
-const toggleDisableEnable = (rowData, selectedRows, setRowData, action) => {
-    const updatedData = [...rowData];
-    selectedRows.forEach((selectedRowId) => {
-      updatedData[selectedRowId].disabled = !action;
-    });
-    setRowData(updatedData);
-};
-
-const moveSelectedRowsUp = (rowData, selectedRows, setRowData, setSelectedRows) => {
-    const updatedData = [...rowData];
-    const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
-  
-    sortedSelectedRows.forEach((rowId, index) => {
-      if (rowId > index) {
-        const temp = updatedData[rowId - 1];
-        updatedData[rowId - 1] = updatedData[rowId];
-        updatedData[rowId] = temp;
-  
-        // Swap the order and id values
-        updatedData[rowId - 1].order = rowId;
-        updatedData[rowId].order = rowId + 1;
-  
-        // Update selected rows array
-        sortedSelectedRows[index] = rowId - 1;
-      }
-    });
-  
-    setRowData(updatedData);
-    setSelectedRows(sortedSelectedRows);
-};
-  
-const moveSelectedRowsDown = (rowData, selectedRows, setRowData, setSelectedRows) => {
-    const updatedData = [...rowData];
-    const sortedSelectedRows = [...selectedRows].sort((a, b) => b - a);
-  
-    sortedSelectedRows.forEach((rowId, index) => {
-      if (rowId < rowData.length - 1 - index) {
-        const temp = updatedData[rowId + 1];
-        updatedData[rowId + 1] = updatedData[rowId];
-        updatedData[rowId] = temp;
-  
-        // Swap the order and id values
-        updatedData[rowId + 1].order = rowId + 2;
-        updatedData[rowId].order = rowId + 1;
-  
-        // Update selected rows array
-        sortedSelectedRows[index] = rowId + 1;
-      }
-    });
-  
-    setRowData(updatedData);
-    setSelectedRows(sortedSelectedRows);
-};
-  
 const deleteSelectedRows = (rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails, ruleType) => {
   console.log(rowData)
   const data = {
@@ -130,22 +72,9 @@ export const SingleRowContextMenu = (rowData, selectedRows, setSelectedRows, row
   return {
     Properties: () => setShowPropertiesPopUp(true),
     Delete: () => deleteSelectedRows(rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails, ruleType),
-    "Create Group": () => console.log("Create Group clicked"),
     "Move Up": () => moveRow(rowData, setSelectedRows, rowId, userContext,  fetchRowDetails, ruleType, "up"),
     "Move Down": () => moveRow(rowData, setSelectedRows, rowId, userContext,  fetchRowDetails, ruleType, "down"),
-    Enable: () => toggleDisableEnable(rowData, selectedRows, isRowDisabled),
-    Disable: () => toggleDisableEnable(rowData, selectedRows, isRowDisabled),
   };
-};
-
-export const areSelectedRowsContiguous = (selectedRows) => {
-    const sortedSelectedRows = [...selectedRows].sort((a, b) => a - b);
-    for (let i = 1; i < sortedSelectedRows.length; i++) {
-      if (sortedSelectedRows[i] !== sortedSelectedRows[i - 1] + 1) {
-        return false;
-      }
-    }
-    return true;
 };
 
 export const requestSort = (key, sortConfig, setSortConfig) => {
@@ -221,50 +150,25 @@ export const filterRows = (rows, searchValue) => {
   );
 };
 
-export const MultiRowContextMenu = (rowData, selectedRows, setRowData, setSelectedRows) => {
-  return {
-    Delete: () => deleteSelectedRows(rowData, selectedRows, setRowData, setSelectedRows),
-    "Create Group": () => console.log("Create Group clicked"),
-    "Move Up":  () => moveSelectedRowsUp(rowData, selectedRows, setRowData, setSelectedRows),
-    "Move Down":  () => moveSelectedRowsDown(rowData, selectedRows, setRowData, setSelectedRows),
-    Enable: () => toggleDisableEnable(rowData, selectedRows, setRowData, true),
-    Disable: () => toggleDisableEnable(rowData, selectedRows, setRowData, false),
-  };
-};
-
 export const SingleRowToolbarIcons = {
   Properties: propertiesIcon,
   Delete: deleteIcon,
-  "Create Group": createGroupIcon,
   "Move Up": moveUpIcon,
   "Move Down": moveDownIcon,
-  Enable: enableIcon,
-  Disable: disableIcon,
 };
 
-export const MultiRowToolbarIcons = {
-  Delete: deleteIcon,
-  "Create Group": createGroupIcon,
-  "Move Up": moveUpIcon,
-  "Move Down": moveDownIcon,
-  Enable: enableIcon,
-  Disable: disableIcon,
-};
 
 export const tooltip_text = {
   Properties: "Properties",
   Delete: "Delete",
-  "Create Group": "Create Group",
   "Move Up": "Move Up",
   "Move Down": "Move Down",
-  Enable: "Enable",
-  Disable: "Disable",
 }
 
 const toggleAcceptDrop = (rowData, rowId, setSelectedCells, userContext, fetchRowDetails, ruleType, action) => {
   const data = {...rowData[rowId], 
     "id" : rowData[rowId]._id,
-    "act" : action,
+    "action" : action,
     "rule_type" : ruleType
   };
   fetch("http://localhost:3001/api/rules/edit", {
@@ -310,23 +214,30 @@ const handleRemoveItems = (rowId, rowData, cellIndex, MultiCellIndex, setselecte
   
   if (cellIndex === 3) {
     const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
-      (key) => key in newRowData.protoc
+      (key) => key in newRowData.tcp_protocol
     );
-    newRowData.protoc[availableKey].splice(MultiCellIndex, 1);
+    newRowData.tcp_protocol[availableKey].splice(MultiCellIndex, 1);
   }
   else if (cellIndex === 4) {
-    newRowData.FL.splice(MultiCellIndex, 1);
+    const availableKey = ["selectedProtocols", "allOutbound", "allOutboundExcept"].find(
+      (key) => key in newRowData.udp_protocol
+    );
+    newRowData.udp_protocol[availableKey].splice(MultiCellIndex, 1);
   }
   else if (cellIndex === 5) {
-    newRowData.to.splice(MultiCellIndex, 1);
+    newRowData.source_network.splice(MultiCellIndex, 1);
+  }
+  else if (cellIndex === 6) {
+    newRowData.destination_network.splice(MultiCellIndex, 1);
   }
   
   const data = {...newRowData, 
     "id" : rowData[rowId]._id,
     "rule_type" : ruleType,
-    "protoc" : newRowData.protoc,
-    "FL" : newRowData.FL,
-    "to" : newRowData.to
+    "tcp_protocol" : newRowData.tcp_protocol,
+    "udp_protocol" : newRowData.udp_protocol,
+    "source_network" : newRowData.FL,
+    "destination_network" : newRowData.to
   };
   
   fetch("http://localhost:3001/api/rules/edit", {

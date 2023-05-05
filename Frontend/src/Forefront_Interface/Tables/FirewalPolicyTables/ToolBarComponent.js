@@ -6,10 +6,9 @@ import closeIcon from "../../../Images/cross-close.svg";
 import placeholderIcon from "../../../Images/plus-circle.svg";
 import communismIcon from "../../../Images/sickle-and-hammer.svg";
 
-import {MultiRowContextMenu,
+import {
         SingleRowContextMenu, 
         SingleRowToolbarIcons, 
-        MultiRowToolbarIcons,
         tooltip_text,
         CellContextMenu,
         CellTooltipText,
@@ -30,7 +29,6 @@ const ToolBarComponent = ({
   setSelectedCells,
   rowId,
   cellrowId,
-  isRowDisabled,
   openPopup,
   openToolBoxPopUp,
   setShowPropertiesPopUp,
@@ -63,12 +61,12 @@ const ToolBarComponent = ({
     if (length === 1) {
       return {
         label : chosen_label,
-        onClick: SingleRowContextMenu(rowData, selectedRows, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[chosen_label],
+        onClick: SingleRowContextMenu(rowData, selectedRows, setSelectedRows, rowId, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType)[chosen_label],
       };
     } else {
       return {
         label: chosen_label,
-        onClick: MultiRowContextMenu(rowData, selectedRows, setRowData, setSelectedRows)[chosen_label],
+        onClick: () => {}, // Return an empty function when length is not equal to 1
       };
     }
   };
@@ -77,7 +75,7 @@ const ToolBarComponent = ({
       if (length === 1) {
         return SingleRowToolbarIcons[chosen_label];
       } else {
-        return MultiRowToolbarIcons[chosen_label];
+        return "";
       }
   };
 
