@@ -64,8 +64,8 @@ const ToolBarComponent = ({
       };
     } else {
       return {
-        label: chosen_label,
-        onClick: () => {}, // Return an empty function when length is not equal to 1
+        label: "",
+        onClick: () => null, // Return an empty function when length is not equal to 1
       };
     }
   };
@@ -82,7 +82,7 @@ const ToolBarComponent = ({
     <div className="icon-container" key={label}>
       <img
         src={labelToIconMap(label, selectedRows.length)}
-        alt={label}
+        alt={""}
         className="icon"
         onClick={labelToFunctionMap(label, selectedRows.length).onClick}
         onMouseEnter={() => setShowTooltip({ ...showTooltip, [label]: true })}

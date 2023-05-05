@@ -68,7 +68,7 @@ const moveRow = (rowData, setSelectedRows, rowId, userContext, fetchRowDetails, 
     })
 };
 
-export const SingleRowContextMenu = (rowData, selectedRows, setSelectedRows, rowId, isRowDisabled, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType) => {
+export const SingleRowContextMenu = (rowData, selectedRows, setSelectedRows, rowId, setShowPropertiesPopUp, userContext, fetchRowDetails, ruleType) => {
   return {
     Properties: () => setShowPropertiesPopUp(true),
     Delete: () => deleteSelectedRows(rowData, selectedRows, userContext, setSelectedRows, fetchRowDetails, ruleType),
