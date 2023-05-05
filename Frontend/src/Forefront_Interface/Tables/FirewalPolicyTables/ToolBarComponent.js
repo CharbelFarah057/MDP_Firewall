@@ -24,7 +24,6 @@ const ToolBarComponent = ({
   itemsselectedCells,
   rowData, 
   selectedRows, 
-  setRowData, 
   setSelectedRows, 
   setSelectedCells,
   rowId,
@@ -189,8 +188,8 @@ const ToolBarComponent = ({
             src={communismIcon}
             alt="Toolbar Popup"
             className="icon"
-            onMouseEnter={() => setShowToolbartip({ ...showTooltip, OpenToolBar: true })}
-            onMouseLeave={() => setShowToolbartip({ ...showTooltip, OpenToolBar: false })}
+            onMouseEnter={() => setShowToolbartip({ ...showToolbartip, OpenToolBar: true })}
+            onMouseLeave={() => setShowToolbartip({ ...showToolbartip, OpenToolBar: false })}
             onClick={openToolBoxPopUp}
           />
           {showToolbartip.OpenToolBar && (

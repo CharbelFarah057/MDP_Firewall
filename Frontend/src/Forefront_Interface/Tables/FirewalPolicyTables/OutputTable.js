@@ -258,7 +258,6 @@ const OutputTable = () => {
         itemsselectedCells={itemsselectedCells}
         rowData = {rowData}
         selectedRows = {selectedRows}
-        setRowData = {setRowData}
         setSelectedRows = {setSelectedRows}
         setSelectedCells = {setSelectedCells}
         rowId = {selectedRows[0]}
