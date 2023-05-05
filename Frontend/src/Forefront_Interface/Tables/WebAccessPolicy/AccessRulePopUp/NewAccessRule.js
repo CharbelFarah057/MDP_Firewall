@@ -42,7 +42,7 @@ const NewAccessRule = ({
     } else if (step === 3) {
         const data =  {
           "name" : Name,
-          "domain" : domain,
+          "domains" : domain,
         }
         // Send data to the server to check for duplicate names
         fetch("http://localhost:3001/api/rules/add/", {
