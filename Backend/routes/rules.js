@@ -259,6 +259,17 @@ async function createRule(rule_set, rule_type, modelName) {
 }
 
 
+
+// get all squid rules
+router.get("/squid_rules", verifyUser, async (req, res) => {
+    try {
+        const rules = await SquidRule.find();
+        res.json(rules);
+    } catch (err) {
+        res.json({ message: err });
+    }
+});
+
 // GET all rules from the database based on the rule type
 router.get("/:rule_type", verifyUser, async (req, res) => {
     try {
@@ -512,17 +523,19 @@ router.post("/edit", verifyUser, async (req, res) => {
             {
                 $set: {
                     name: req.body.name,
-                    act: req.body.act,
-                    protoc: req.body.protoc,
-                    FL: req.body.FL,
-                    to: req.body.to,
-                    cond: req.body.cond,
-                    desc: req.body.desc,
-                    pol: req.body.pol,
-                    disabled: req.body.disabled,
+                    action: req.body.action,
+                    tcp_protocol: req.body.tcp_protocol,
+                    udp_protocol: req.body.udp_protocol,
+                    source_network: req.body.source_network,
+                    destination_network: req.body.destination_network,
+                    description: req.body.description,
+                    ports: req.body.ports,
+
                 },
             }
         );
+
+
         res.json(updatedRule);
     } catch (err) {
         res.json({ message: err });
@@ -725,15 +738,6 @@ router.post("/squid_delete", verifyUser, async (req, res) => {
 });
 
 
-// get all squid rules
-router.get("/squid_rules", verifyUser, async (req, res) => {
-    try {
-        const rules = await SquidRule.find();
-        res.json(rules);
-    } catch (err) {
-        res.json({ message: err });
-    }
-});
 
 
 
