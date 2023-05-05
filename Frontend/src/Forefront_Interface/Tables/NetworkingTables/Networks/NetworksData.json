@@ -3,13 +3,13 @@
       "id" : 0,
       "name": "External",
       "description": "Built-in network object representing the Internet.",
-      "addressRanges": ["IP addresses external tot he Forefront TMG networks."]
+      "addressRanges": ["IP addresses external to the Forefront TMG networks."]
     },
     {
       "id" : 1,
       "name": "Internal",
       "description": "Built-in network object representing the Forefront TMG computer.",
-      "addressRanges": ["10.0.5.0-10.0.5.255", "172.16.0.0"]
+      "addressRanges": []
     },
     {
       "id" : 2,

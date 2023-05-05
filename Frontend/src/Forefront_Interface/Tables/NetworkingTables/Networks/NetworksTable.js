@@ -1,5 +1,5 @@
 //NetworksTable.js
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import {UserContext} from "../../../../UserContext";
 import NetworksRows from "./NetworksRows";
 import ContextMenu from "../../ContextMenu";
@@ -11,10 +11,50 @@ import "./NetworksTable.css";
 const AllFirewallPolicyTable = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
-  const [rowData] = useState(initialRowData);
+  const [rowData, setRowData] = useState(initialRowData);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
   const [userContext] = useContext(UserContext)
 
+  const formatAddressRanges = (internalNetworks) => {
+    return internalNetworks.map(network => `${network.ip}/${network.subnetMask}`);
+  };
+
+  const fetchRowDetails = useCallback(() => {
+    fetch("http://localhost:3001/api/users/me", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    }).then(async response => {
+      if (response.ok) {
+        const data = await response.json();  
+        // Update rowData's "Internal" object with the new addressRanges
+        setRowData(rowData.map((row) => {
+          if (row.name === "Internal") {
+            return {
+              ...row,
+              addressRanges: formatAddressRanges(data.internalNetworks),
+            };
+          } else {
+            return row;
+          }
+        }));
+      } else {
+        if (response.status === 401) {
+          window.location.reload();
+        }
+      }
+    });
+  }, [userContext.token]);
+
+  useEffect(() => {
+    if (rowData[1].addressRanges.length === 0) {
+      fetchRowDetails();
+    }
+  }, [rowData]);
+  
   const handleRowContextMenu = (event, rowId) => {
     // Check if the row is selected
     if (!selectedRows.includes(rowId)) {
