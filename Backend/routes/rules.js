@@ -673,7 +673,15 @@ router.post("/squid_add", verifyUser, async (req, res) => {
         
         fs.writeFileSync("/etc/squid/squid.conf", squidConfig);
         // restart squid service
-        await exec("sudo systemctl restart squid");
+        exec("systemctl restart squid", (err, stdout, stderr) => {
+            if (err) {
+                console.log(err);
+                res.json({ message: err });
+            }
+            console.log(stdout);
+            console.log(stderr);
+        });
+
 
         res.json({ message: "ACL rule added successfully" });
     } catch (err) {
@@ -726,7 +734,15 @@ router.post("/squid_delete", verifyUser, async (req, res) => {
         squidConfig = squidConfigArray.join("\n");
         fs.writeFileSync("/etc/squid/squid.conf", squidConfig);
         // restart squid service
-        await exec("sudo systemctl restart squid");
+        exec("systemctl restart squid", (err, stdout, stderr) => {
+            if (err) {
+                console.log(err);
+                res.json({ message: err });
+            }
+            console.log(stdout);
+            console.log(stderr);
+        });
+        
 
         // delete from SquidRule database
         await SquidRule.deleteOne({ name: req.body.name });
